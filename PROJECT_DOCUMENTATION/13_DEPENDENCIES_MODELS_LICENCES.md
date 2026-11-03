@@ -34,7 +34,7 @@ The web client uses **no external JavaScript libraries and no CDN**.
 | WOAD demo recordings | `demo_data/detec_test/` (600 IR + depth pairs) | 189 MB | the WOAD authors' Google Drive `detec_test.rar` (SHA-256 `53cd2d29…febfd`) | as published by the authors |
 | WOAD published dataset (evaluation only) | `datasets/VOCdetiv_data/` | 1.4 GB | the authors' Google Drive `VOCdetiv_data.rar` (SHA-256 `b2109f20…e391`) | as published by the authors |
 
-## 13.3 Licence implications (for the viva)
+## 13.3 Licence implications
 
 * **GPL/AGPL:** Piper (GPL-3.0+) and the voice model (AGPL-3.0) are fine for research and local use. If
   NeuroSonic were distributed, or offered to others as a network service, the source-availability obligations of

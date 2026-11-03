@@ -654,7 +654,7 @@ followed silently.
 ### 5.12 Walking guidance and product refinement (`neurosonic/pathguide.py`)
 
 In the final stage the camera output was redesigned around the user's question "can I keep walking?". The full
-description is in `17_PRODUCT_REFINEMENT.md`.
+description is in `16_PRODUCT_REFINEMENT.md`.
 
 * **Walking-path region.** The lower-central trapezoid of the image stands for the walking path. For each detected
   object, the fraction of the region it covers and the fraction of the object inside the region are computed. Large
@@ -689,7 +689,7 @@ The direction was changed to online-first AI environmental intelligence. On requ
 has allowed it, one camera photo goes from the laptop to a cloud vision model (Gemini by default, behind a
 provider-independent interface) and the answer is spoken as "AI description: …". Local walking guidance does
 not depend on it. The only approved live request timed out after 25.9 s, so no real description quality has been
-measured yet. Details: `18_ONLINE_VISION.md` and `docs/ONLINE_VISION.md`.
+measured yet. Details: `17_ONLINE_VISION.md` and `docs/ONLINE_VISION.md`.
 
 ## 6. Testing and evaluation
 

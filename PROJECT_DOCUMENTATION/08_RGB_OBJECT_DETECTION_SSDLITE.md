@@ -17,7 +17,7 @@ The WOAD model needs a Synexens CS30 sensor (near-infrared + depth), which ordin
 `a79551df`, matching the hash in the file name. Accuracy per the torchvision metadata: **COCO val2017 box mAP
 21.3**, a modest detector. This figure is torchvision's published metadata; it was not re-measured in this project.
 
-## 8.3 How SSDLite / MobileNetV3 works (for the viva)
+## 8.3 How SSDLite / MobileNetV3 works
 
 * **CNN backbone, MobileNetV3-Large.** A convolutional neural network designed for phones. It uses
   depthwise-separable convolutions (a cheap per-channel convolution followed by a 1×1 convolution), inverted
@@ -51,7 +51,7 @@ The WOAD model needs a Synexens CS30 sensor (near-infrared + depth), which ordin
 * **Urgency (replaced on 2026-11-02).** Originally, an object in the middle third covering ≥ 25 % of the image got
   the prefix "Caution.". Since the product refinement, urgency comes from the walking-path state BLOCKED_VIEW
   ("Stop. The walking path may be blocked."), and object names are spoken only in the optional Object Description
-  mode, never as urgent. See `17_PRODUCT_REFINEMENT.md`. The original code was:
+  mode, never as urgent. See `16_PRODUCT_REFINEMENT.md`. The original code was:
 
 ```python
 urgent = (e.kind == "object" and e.data.get("position") == "ahead"
@@ -92,13 +92,3 @@ if urgent:
   path *appears* clear. Continue carefully.", which means "no recognised object in the path region", never "safe".
 * **No distance**, because a single RGB camera cannot measure it.
 * Inference runs on the laptop: about 2.5 frames/s over Wi-Fi, so latency depends on the network.
-
-## 8.7 Likely questions
-
-* *Why not use YOLO here too?* WOAD *is* a YOLOv5-based two-stream model, but it needs IR + depth. A YOLO COCO
-  model for RGB would need another dependency or download. SSDLite was already available in torchvision; it is
-  less accurate and that is documented.
-* *What does 21.3 mAP mean?* The mean Average Precision over COCO's 80 classes and over IoU thresholds
-  0.50–0.95. Roughly, it indicates how well boxes are found *and* localised. 21.3 is modest.
-* *How do you avoid speaking every frame?* The shared `AlertEngine`: 2-of-3 confirmation, cooldowns, repetition
-  rules, merging.

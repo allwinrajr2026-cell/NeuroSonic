@@ -94,7 +94,7 @@ SEC_FULL = ["d1_intro", "d1_stats", "d1_pubs", "d1_patents", "d1_products", "d1_
 
 DOCS = {
     "DA1": dict(
-        file="DA1_Review1_Survey_and_Comparative_Analysis.pdf", style="ieee", min_pages=7,
+        file="01_DA1_Review1_Survey_and_Comparative_Analysis.pdf", style="ieee", min_pages=7,
         short="Review 1 Survey",
         title="Assistive Navigation and Obstacle Awareness for Visually Impaired Pedestrians: A Survey of Publications, "
               "Patents and Products, and Technology Trends",
@@ -103,7 +103,7 @@ DOCS = {
         abstract=ABS_DA1,
         sections=["d1_intro", "d1_stats", "d1_pubs", "d1_patents", "d1_products", "d1_trends", "d1_conclusion"]),
     "DA2": dict(
-        file="DA2_Review2_Base_Paper_Reimplementation_Gaps_and_Proposed_Work.pdf", style="ieee", min_pages=7,
+        file="02_DA2_Review2_Base_Paper_Reimplementation_Gaps_and_Proposed_Work.pdf", style="ieee", min_pages=7,
         short="Review 2 Base Paper",
         title="Re-implementing a Cross-Modal Wearable Obstacle Detector: Reproducibility, Gaps and a Proposed "
               "Phone-Based Alternative",
@@ -112,7 +112,7 @@ DOCS = {
         abstract=ABS_DA2,
         sections=["d2_intro", "d2_base", "d2_reimpl", "d2_extra", "d2_gaps", "d2_proposed", "d2_conclusion"]),
     "DA3": dict(
-        file="DA3_Review3_Implementation_Architecture_and_Results.pdf", style="ieee", min_pages=7,
+        file="03_DA3_Review3_Implementation_Architecture_and_Results.pdf", style="ieee", min_pages=7,
         short="Review 3 Implementation",
         title="NeuroSonic: Implementation and Evaluation of a Laptop-Assisted, Offline Smartphone Prototype for Spoken "
               "Walking-Path Awareness and Navigation",
@@ -121,7 +121,7 @@ DOCS = {
         abstract=ABS_DA3,
         sections=["d3_intro", "d3_arch", "fig_proparch", "d3_methods", "d3_results", "d3_discussion"]),
     "Lab10": dict(
-        file="Lab10_IEEE_Two_Column_Paper_Draft.pdf", style="ieee", min_pages=14,
+        file="06_Lab10_IEEE_Two_Column_Paper_Draft.pdf", style="ieee", min_pages=14,
         short="Lab 10 IEEE Draft", title=TITLE_FULL,
         authors=AUTHORS + '<div class="note-top">Lab 10: IEEE two-column manuscript draft (survey, base-paper '
                           're-implementation, proposed work, implementation and results).</div>',
@@ -140,22 +140,22 @@ REPORT_SECTIONS = ["d1_intro", "d1_stats", "d1_pubs", "d1_patents", "d1_products
                    "d3_results", "d3_discussion", "demo", "r_appx"]
 
 DOCS.update({
-    "Report": dict(file="Final_Consolidated_Project_Report.pdf", style="report", min_pages=20,
+    "Report": dict(file="05_Final_Consolidated_Project_Report.pdf", style="report", min_pages=20,
                    short="NeuroSonic Final Report", front=open(__import__("pathlib").Path(__file__).parent /
                                                                "sections" / "r_front.html", encoding="utf-8").read(),
                    toc=True, sections=REPORT_SECTIONS, subs=COMBINED_SUBS),
-    "Lab9": dict(file="Lab9_IPR_IDF_B_Draft.pdf", style="form", short="Lab 9 IDF B Draft",
+    "Lab9": dict(file="09_Lab9_IPR_IDF_B_Draft.pdf", style="form", short="Lab 9 IDF B Draft",
                  front=form_front("Invention Disclosure Form (IDF) &ndash; Part B: Technical Disclosure (Draft)", META),
                  sections=["lab9_idf"]),
-    "Demo": dict(file="Project_Demo_Existing_vs_Proposed.pdf", style="form", short="Project Demo",
+    "Demo": dict(file="04_Project_Demo_Existing_vs_Proposed.pdf", style="form", short="Project Demo",
                  front=form_front("Project Demo: Existing Implementation and Proposed Work (Differentiation)", META),
                  sections=["demo"]),
-    "Links": dict(file="GitHub_Dataset_and_Video_Links.pdf", style="form", short="GitHub and Video Links",
+    "Links": dict(file="07_GitHub_Dataset_and_Video_Links.pdf", style="form", short="GitHub and Video Links",
                   front=form_front("GitHub Repository, Dataset and Demonstration Video", META),
                   sections=["links"]),
-    "Venues": dict(file="Publication_Venue_Identification.pdf", style="form", short="Publication Venues",
+    "Venues": dict(file="08_Publication_Venue_Identification.pdf", style="form", short="Publication Venues",
                    front=form_front("Identification of Scopus-Indexed Venues (Q1&ndash;Q4), Book Chapter and IPR", META),
                    sections=["venues"]),
-    "Checklist": dict(file="00_README_Submission_Checklist.pdf", style="form", short="Submission Checklist",
+    "Checklist": dict(file="00_Submission_Checklist.pdf", style="form", short="Submission Checklist",
                       front=form_front("Submission Checklist", META), sections=["checklist"]),
 })

@@ -1,17 +1,17 @@
-# 17. Product refinement (2026-11-02): walking guidance, voice, GPS, iPhone interface
+# 16. Product refinement (2026-11-02): walking guidance, voice, GPS, iPhone interface
 
 This document describes the changes of the final product-refinement stage. A backup of the implementation before
 the changes is in `backups/20261102-134759-before-product-refinement/`. The original WOAD code and checkpoint were not
 changed.
 
-## 17.1 Why the change
+## 16.1 Why the change
 
 Before this stage, the camera spoke object names for every confirmed detection ("Person ahead.", "Person on the
 left."). In a street this means a stream of names that does not answer the user's real question: *can I keep
 walking?* The refinement makes **Walking Guidance** the default. It speaks only about the walking path, and only when
 the situation changes. Object names became an optional **Object Description** mode.
 
-## 17.2 Walking-path assessment: `neurosonic/pathguide.py`
+## 16.2 Walking-path assessment: `neurosonic/pathguide.py`
 
 ### Region
 
@@ -86,7 +86,7 @@ validated with users or in Vellore streets (manual test C1).
   * the path logic takes 0.43 ms per frame;
   * the whole `process_frame` on a 320 × 240 frame takes a median of 52 ms (p90 70 ms) on the laptop CPU.
 
-## 17.3 Voice
+## 16.3 Voice
 
 * **Piper speaking style** (`neurosonic/tts.py`, `STYLE`):
   * `length_scale` 1.08 (slightly slower), `noise_scale` 0.6, `noise_w_scale` 0.7 (less random variation);
@@ -104,7 +104,7 @@ validated with users or in Vellore streets (manual test C1).
 * **No technical words:** messages contain no class numbers, "bounding box", "confidence" or distances. This is
   checked by `test_messages_have_no_technical_terms`.
 
-## 17.4 GPS and navigation
+## 16.4 GPS and navigation
 
 **Fix quality** (`nav.js::assessFix`, pure function):
 
@@ -146,7 +146,7 @@ validated with users or in Vellore streets (manual test C1).
 * The route start and the destination name are drawn.
 * The canvas backing store is reset only when the size really changes.
 
-## 17.5 iPhone interface
+## 16.5 iPhone interface
 
 * **Five screens** in a fixed bottom bar, with a central **Speak** button: Home (awareness), Navigate, History,
   Settings, How it works. The research tools (WOAD replay, image-pair check, event-camera simulation) moved to a
@@ -186,7 +186,7 @@ validated with users or in Vellore streets (manual test C1).
   * event polling is 1 s (3 s when hidden);
   * the fps is shown on screen.
 
-## 17.6 Verification (2026-11-02)
+## 16.6 Verification (2026-11-02)
 
 | Check | Result |
 |---|---|

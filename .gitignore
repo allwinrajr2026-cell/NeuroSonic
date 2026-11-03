@@ -29,9 +29,7 @@ outputs/*
 !outputs/benchmarks/
 !outputs/eval/
 backups/
-PROJECT_DOCUMENTATION/handbook_src/handbook.html
-PROJECT_DOCUMENTATION/handbook_src/_pass1.pdf
-Assignment_Submission/_build/html/
+submission/_build/html/
 
 # --- editors / OS ---
 .vscode/

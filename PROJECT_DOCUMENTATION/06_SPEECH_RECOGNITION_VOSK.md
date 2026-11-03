@@ -14,7 +14,7 @@ The user must be able to control NeuroSonic by voice, without internet.
   37,573,330 bytes; 55 MB unpacked.
 * **Engine:** `vosk` 0.3.45 (pip).
 
-## 6.2 How Kaldi/Vosk recognition works (for the viva)
+## 6.2 How Kaldi/Vosk recognition works
 
 1. **Features:** the audio (16 kHz mono) is cut into ~25 ms frames, and acoustic features (MFCC-like, plus
    i-vectors for speaker adaptation; see the `ivector/` folder of the model) are computed.
@@ -97,12 +97,3 @@ The user must be able to control NeuroSonic by voice, without internet.
   start"). Fixed commands are reliable; spoken destinations are not.
 * Push-to-talk only; there is no wake word.
 * Vosk runs on the laptop, so voice commands need the phone ↔ laptop connection.
-
-## 6.6 Likely questions
-
-* *Why two recognisers?* Grammar mode is reliable for the closed set of commands but cannot output unknown
-  place names. Free mode can, but mangles words. Combining them takes the strength of each.
-* *What is a phonetic key?* A string that represents how a word *sounds* rather than how it is spelled, so that
-  misspellings from the recogniser still match the right place.
-* *Why not just trust the top result?* Because measured top-1 accuracy is only ~42 % on synthetic speech. The
-  design makes errors audible and requires confirmation.

@@ -4,8 +4,7 @@ Line numbers come from `SYMBOL_INDEX.md`, generated from the code on 2026-11-02.
 `F:\Projects\WOAD-Research\implementation\`.
 
 Each module is described with the same headings: **Problem**, **Why this technology**, **Input → output**,
-**Main algorithm**, **Key functions/classes**, **Execution flow**, **Talks to**, **Excerpt**, and
-**Likely questions**. Modules whose algorithms have their own document (map, GPS, Vosk, Piper, SSDLite, WOAD)
+**Main algorithm**, **Key functions/classes**, **Execution flow**, **Talks to** and **Excerpt**. Modules whose algorithms have their own document (map, GPS, Vosk, Piper, SSDLite, WOAD)
 are summarised here and covered in depth in documents 04–09.
 
 ---
@@ -26,10 +25,6 @@ are summarised here and covered in depth in documents 04–09.
   `ERROR: cannot listen on …: … (is the app already running?)` and returns exit code 2.
 * **Talks to:** `neurosonic.server`, `service`, `store`, `tts`, `maps`, `voicecmd`, `awareness`, `tls`,
   `netcheck`.
-* **Likely question:** *What happens if the voice model is missing?*
-  * `PiperTTS.warm_up()` returns False, and the console prints "local neural voice UNAVAILABLE (…)".
-  * The server still starts. Phones fall back to their built-in voice, because `/api/tts/status` reports
-    `available: false`.
 
 ### A2. `neurosonic/server.py`: HTTP(S) server and REST API
 
@@ -76,12 +71,6 @@ are summarised here and covered in depth in documents 04–09.
       except (ssl.SSLError, OSError):
           return  # failed, rejected or timed-out handshake: drop only this connection
   ```
-* **Likely questions:**
-  * *Why not wrap the listening socket with TLS?* Then every handshake runs inside `accept()` on the single main
-    thread. One idle client froze the whole server; this was reproduced (requests timed out after 8 s), and
-    `tests/test_mobile_access.py::test_idle_connection_does_not_block_other_clients` fails on the old design.
-  * *Is it REST?* It is a resource-oriented HTTP/JSON API: GET for reads, POST for actions and uploads, status
-    codes for errors. It's not strictly RESTful in every respect; for example, `/api/places/delete` is a POST.
 
 ### A3. `neurosonic/service.py`: WOAD detection service
 
@@ -110,9 +99,6 @@ are summarised here and covered in depth in documents 04–09.
           dets = svc.detector.detect_arrays(frame.ir, frame.depth)["detections"]
   events = self.engine.process(time=..., detections=dets, quality=q, segment_start=frame.segment_start, error=err)
   ```
-* **Likely question:** *Why is the replay not the live sensor?* The CS30 near-IR + depth sensor that WOAD needs
-  is not connected. The replay feeds recorded frames from that sensor (`demo_data/detec_test`) through exactly
-  the path a live sensor would use.
 
 ### A4. `neurosonic/store.py`: SQLite store
 
@@ -122,8 +108,6 @@ See `11_DATA_STORAGE.md`.
   `delete_place` L99–103.
 * **Validation:** a whitelist for `source`/`kind` (`ALLOWED_SOURCES` L28), latitude/longitude range checks and
   SQL CHECK constraints.
-* **Likely question:** *Is it safe against SQL injection?* Yes. All queries use `?` parameters, never string
-  formatting.
 
 ### A5. `neurosonic/tts.py`: Piper neural text-to-speech
 
@@ -158,7 +142,7 @@ See `08_RGB_OBJECT_DETECTION_SSDLITE.md`.
 
 ### A8b. `neurosonic/pathguide.py`: walking-path assessment (2026-11-02 refinement)
 
-See `17_PRODUCT_REFINEMENT.md`. `assess_frame` turns detections, quality and sharpness into one frame level;
+See `16_PRODUCT_REFINEMENT.md`. `assess_frame` turns detections, quality and sharpness into one frame level;
 `PathGuide.update` confirms it over frames (clear 3/3, warnings 2/3, uncertain 2 consecutive) and decides what is
 spoken; `box_path_overlap` measures a box against the trapezoid `PATH_POLYGON`.
 
@@ -191,9 +175,6 @@ See `12_HTTPS_NETWORK_IPHONE.md`.
   if verify_hash and weights.resolve() == DEFAULT_WEIGHTS.resolve() and digest != EXP72_BEST_SHA256:
       raise CheckpointError(f"Checkpoint {weights} has SHA-256 {digest}, expected exp72 best.pt "
   ```
-* **Likely question:** *Why `weights_only=False`, is that dangerous?*
-  * It is required because the YOLOv5-format checkpoint pickles a full `nn.Module`.
-  * Unpickling can execute code, so only the hash-verified, trusted file is loaded by default.
 
 ### B2. `woad/arch/yolo.py` and `woad/arch/common.py`: the network
 
@@ -221,18 +202,12 @@ See `09_WOAD_MODEL.md`.
       d, _, _ = letterbox(d, img_size, auto=False)
       return d
   ```
-* **Likely question:** *How do you know the preprocessing matches?*
-  * It was copied from the original `utils/datasets.py` validation path.
-  * Mutation tests show that removing the median blur, the BGR→RGB swap, or swapping the inputs each makes
-    at least 2 tests fail.
 
 ### B4. `woad/ops.py`: letterbox, NMS, coordinate mapping
 
 * `letterbox` L21–51 and `non_max_suppression` L74–158 are the original YOLOv5 versions.
 * `scale_coords` L161–174 maps boxes from 640×640 back to the original image.
 * `box_iou` L64–71.
-* **Likely question:** *What is NMS?* Non-maximum suppression. Among overlapping boxes of the same class
-  (IoU above a threshold, 0.45 here), it keeps the highest-scoring box and removes the rest.
 
 ### B5. `woad/detector.py`: `WOADDetector`
 
@@ -263,9 +238,6 @@ See `09_WOAD_MODEL.md`.
 * **Talks to:**
   * Fed by `service.ReplayRunner` (WOAD), `service.detect_upload` and `awareness.RGBAwareness` (SSDLite).
   * Results go to clients as events.
-* **Likely question:** *Why 2-of-3 confirmation?* A single-frame false positive should not be spoken. Requiring
-  two hits in three frames suppresses flicker and costs about one frame of delay. The values are engineering
-  defaults, **not validated with users** (`docs/STAGE2_ALERTS.md`).
 
 ### B7. `woad/quality.py`: input quality gate
 
@@ -319,11 +291,6 @@ See `04_OFFLINE_MAP_AND_ROUTING.md`.
   | permissions + offline status | L872 | `checkPermissions`, `askMedia`, `renderOffline` |
   | settings UI | L926 | `updateVoiceBadge` L934, `checkVoiceEngine` L953, Test Voice handler L982 |
 * **Communication:** `api()` (L32) wraps `fetch` for JSON. Binary uploads (WAV, JPEG) use `fetch` directly.
-* **Likely question:** *Why polling instead of WebSockets?*
-  * Polling (`/api/events?since=` every 1 s) works with the standard-library server and survives
-    reconnects trivially.
-  * The traffic is tiny.
-  * WebSockets would need a framework or a custom upgrade handler.
 
 ### C2. `speech.js`: speech queue and announcer
 

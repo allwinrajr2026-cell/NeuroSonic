@@ -75,7 +75,7 @@ the sound-alike matching for voice input lives in `voicecmd.py` (document 06).
 
 ## 4.6 Routing algorithm: A* search
 
-### Theory (for the viva)
+### Theory
 
 * **The problem:** find the shortest path in a weighted graph. Nodes are street points; edge weights are
   lengths in metres.
@@ -172,15 +172,3 @@ def _astar(self, s, t):
 * There are no pedestrian costs: every metre counts the same on a footway or a trunk road. Major-road metres
   are only *reported*.
 * **No real walking test has been done.**
-
-## 4.9 Likely questions
-
-* *Why is A\* better than Dijkstra here?* Both give the same optimal path, and our test shows they are equal.
-  A* expands fewer nodes because the haversine heuristic guides it towards the goal (9.5 vs 13.0 ms measured).
-* *Is your heuristic admissible?* Yes. The straight-line great-circle distance is a lower bound of any path
-  length on the Earth's surface.
-* *What is the time complexity?* O((V + E) log V) with a binary heap in the worst case, the same as Dijkstra;
-  in practice fewer nodes are expanded.
-* *How do you find the nearest street to the user?* A vectorised nearest-node search over all nodes
-  (`nearest_node`), linear in V (about 31k). That's fast enough in NumPy; a k-d tree would be the next step for
-  bigger maps.

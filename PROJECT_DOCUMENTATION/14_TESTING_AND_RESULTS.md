@@ -23,7 +23,7 @@ cd F:\Projects\WOAD-Research\implementation
 After Sprint 1 (online scene description, 2026-11-02 evening): `Ran 204 tests … OK` (Node 32/32), with
 `test_vision` (40 tests, mock provider and a fake Gemini client) and `tests/js/vision.test.mjs` (3) added;
 `ui_vision_cdp.mjs`, `ui_vision_slow_cdp.mjs` (added with the deadline fix) and the four earlier browser tests PASS. The opt-in live test (`test_vision_live`, skipped by
-default) made the single approved Gemini request: **timeout after 25.9 s** (see `18_ONLINE_VISION.md`).
+default) made the single approved Gemini request: **timeout after 25.9 s** (see `17_ONLINE_VISION.md`).
 
 After the product refinement (2026-11-02, about 14:30):
 
@@ -35,7 +35,7 @@ OK
 Node unit tests: `tests 29, pass 29, fail 0` (17 in `web_logic.test.mjs`, 12 in `refinement.test.mjs`).
 New modules: `test_pathguide` (20), `test_refinement_ui_nav` (7); `test_voice_and_map` now counts 14 including the
 A*/Dijkstra test. Browser E2E: `ui_smoke_cdp`, `ui_voice_map_cdp`, `ui_final_cdp` (updated for Walking Guidance)
-and the new `ui_refine_cdp` (iPhone 17 Pro Max metrics) all PASS. Details: `17_PRODUCT_REFINEMENT.md` §17.6.
+and the new `ui_refine_cdp` (iPhone 17 Pro Max metrics) all PASS. Details: `16_PRODUCT_REFINEMENT.md` §16.6.
 
 Earlier run (2026-11-02 13:20, before the refinement): `Ran 114 tests in 96.724s OK`, Node 17/17.
 

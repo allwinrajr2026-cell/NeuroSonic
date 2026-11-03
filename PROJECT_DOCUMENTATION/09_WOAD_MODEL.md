@@ -116,15 +116,3 @@ att = torch.softmax(att, -1)
 * Accuracy on new scenes is low (person AP@0.5 ≈ 0.17–0.22, cross-dataset). The authors' numbers are
   unverified.
 * No distance output, although the depth stream exists. Metric distance would need the raw 16-bit depth.
-
-## 9.8 Likely questions
-
-* *What is cross-modal fusion here?* Two input modalities (near-IR and depth) are processed separately, then
-  combined with transformer self-attention. Each modality re-weights the other's features before the shared
-  YOLO detector.
-* *Why YOLO?* It is a single-stage detector: one forward pass gives all boxes, which is fast enough for a
-  wearable.
-* *Is the 0.669 mAP yours?* No. It is the authors' training-time figure, and we could not reproduce it. Our own
-  measurement is the cross-dataset person AP above.
-* *Why does the WOAD part of the app use recordings?* Because the sensor is not available. The pipeline (quality
-  gate → detector → alert engine → speech) is the one a live sensor would use.

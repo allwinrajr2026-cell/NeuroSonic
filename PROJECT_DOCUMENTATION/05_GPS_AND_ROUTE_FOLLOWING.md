@@ -25,7 +25,7 @@ All of this runs **in the browser on the phone**; the server is only called to (
   `onPosition`; the location panel shows position, accuracy, fix age and status. A 2 s timer (L223–229) updates the
   fix age and runs `gpsWatch`: during guidance, 20 s without a usable fix speaks "GPS signal lost. Guidance
   paused…", and "GPS signal restored." afterwards. An old position is never presented as current.
-  See `17_PRODUCT_REFINEMENT.md` §17.4.
+  See `16_PRODUCT_REFINEMENT.md` §16.4.
 * **Insecure page:** if `window.isSecureContext` is false, "Location needs HTTPS or localhost" is spoken (L174).
 
 ## 5.2 Straight-line fallback guidance: `web/js/nav.js::guidance` (L42–63)
@@ -117,11 +117,3 @@ if (ahead <= preM && !s.announced[i]) { s.announced[i] = "pre"; texts.push(`In a
   phone's compass / heading is not used, so "turn left" assumes the user walks along the route direction.
 * **Background on iOS:** browsers on iOS suspend JavaScript when the screen locks. Continuous guidance in the
   background needs a native app (future work).
-
-## 5.7 Likely questions
-
-* *How do you detect that the user left the route?* Distance from the position to the nearest point of the
-  route polyline (`projectOnPolyline`) is above max(35 m, 1.5 × GPS accuracy) on two consecutive fixes.
-* *Why two fixes?* A single GPS jump would otherwise trigger needless re-routing.
-* *What happens after "Recalculating"?* A new A* route is requested from the current position (`planRoute`), and
-  the first new instruction is spoken.

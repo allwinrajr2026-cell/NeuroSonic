@@ -61,10 +61,3 @@ CREATE TABLE IF NOT EXISTS places (
   only.
 * **Audio and camera:** voice-command audio and camera frames are processed in memory and **not stored**.
 * **Deleting the history:** `POST /api/history/clear` or the History tab's "Clear history".
-
-## 11.5 Likely questions
-
-* *Where does the history survive a restart?* In `data/neurosonic.sqlite3`. The in-memory `EventLog` only feeds
-  the live polling.
-* *Can two phones use it at once?* Yes. Requests are handled in threads; the store serialises writes with a
-  lock. The camera alert engines are kept per phone *session* (`awareness.py::_engine`).

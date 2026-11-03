@@ -19,7 +19,7 @@ and on an iPhone.
   * **Licence AGPL-3.0.** The licence of its training data ("spicor") is not stated on the model card.
   * Fine-tuned from the Piper LJSpeech base; 22,050 Hz mono, single speaker.
 
-## 7.2 How Piper works (for the viva)
+## 7.2 How Piper works
 
 1. **Text → phonemes:** espeak-ng converts the text into phonemes (voice `en-us` rules, per the model config).
 2. **Phonemes → IDs:** `phoneme_id_map` in `en_IN-spicor.onnx.json`.
@@ -87,13 +87,3 @@ and on an iPhone.
 | Offline | 0 network attempts | `test_works_without_internet` |
 | Real browser | Test Voice played 5.24 s to `ended`; report PLAYED | `ui_voice_map_cdp.mjs`, `ui_final_cdp.mjs` |
 | **iPhone audible playback** | **not yet confirmed** | acceptance test A1 |
-
-## 7.5 Likely questions
-
-* *Why generate audio on the laptop and not on the phone?* Piper runs in Python with onnxruntime on the laptop.
-  Running it on the phone would need a WebAssembly or native build (future work). The cost is that speech needs
-  the Wi-Fi link.
-* *How do you avoid repeating the same synthesis?* The SHA-256 cache key over voice + text, in memory, on disk
-  and on the client.
-* *What if two alerts arrive at once?* The client queue speaks them one after another by priority. The server
-  serialises synthesis with a lock.

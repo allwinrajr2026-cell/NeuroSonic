@@ -1,133 +1,80 @@
-# NeuroSonic: technical documentation and viva preparation (index)
+# NeuroSonic: technical documentation (index)
 
-Prepared 2026-11-02 from the actual source code of `F:\Projects\WOAD-Research\implementation`. The product-refinement changes made later the same day are documented in `17_PRODUCT_REFINEMENT.md`; this
-documentation was updated to match them. Writing the documentation itself changed no application code.
+These documents describe the NeuroSonic source code as it is in this repository. Function names and line numbers
+were checked against the code with an automatically generated symbol index (`SYMBOL_INDEX.md`). Measured results come
+from test runs, captured API responses and the result files in `../outputs/`.
 
-* **How the line numbers were checked:**
-  * every Python/JavaScript symbol was indexed automatically (`SYMBOL_INDEX.md`);
-  * the 280 name + line references in these documents were checked against that index by a script (re-checked
-    after the product refinement on 2026-11-02, when the index was regenerated), with
-    JavaScript end lines checked by brace matching;
-  * mismatches were corrected.
-* **Where the results come from:** a test run (after Sprint 1: 204 Python test cases OK, one opt-in live test skipped; one of them runs 32 Node tests, all OK) and API responses captured
-  from the running server, both on 2026-11-02.
-* **Product refinement (later on 2026-11-02):** walking guidance, GPS handling and the compact iPhone interface are
-  described in `17_PRODUCT_REFINEMENT.md`; manual phone and outdoor tests are in `../docs/MANUAL_TESTING.md`.
-
-## 1. Documentation files
+## 1. Documents
 
 | File | Content |
 |---|---|
-| `00_INDEX.md` | this page: file list, launch commands, demo, top-10 questions, limitations |
-| `01_PROJECT_OVERVIEW.md` | problem statement, objectives, **status vocabulary** (implemented / automated-tested / browser-E2E / simulated / physically verified), safety position |
-| `02_SYSTEM_ARCHITECTURE.md` | Mermaid deployment and sequence diagrams, start-up sequence, design decisions |
-| `03_MODULE_REFERENCE.md` | every major Python and JavaScript module: problem, technology, I/O, algorithm, functions with line numbers, flow, excerpt, questions |
-| `04_OFFLINE_MAP_AND_ROUTING.md` | OpenStreetMap / Overpass data, map package build, place search, **A\*** with proof of admissibility, verification |
-| `05_GPS_AND_ROUTE_FOLLOWING.md` | Geolocation API, stale-fix guard, `followRoute` rules, off-route detection, re-routing, simulation |
-| `06_SPEECH_RECOGNITION_VOSK.md` | Vosk/Kaldi, recorder, two-pass recognition, intent parser, sound-alike matching, measured accuracy |
-| `07_TEXT_TO_SPEECH_PIPER.md` | Piper/VITS, cache, byte ranges, iOS playback, fallback, measurements |
-| `08_RGB_OBJECT_DETECTION_SSDLITE.md` | SSDLite320-MobileNetV3, obstacle classes, carrying modes, urgency heuristic, results |
-| `09_WOAD_MODEL.md` | WOAD two-stream transformer-fusion architecture (verified dimensions), inputs, classes, equivalence, evaluation, limitations |
-| `10_API_REFERENCE.md` | all 28 endpoints (incl. the 2 online-vision endpoints) with parameters, **real captured responses** and error codes |
+| `01_PROJECT_OVERVIEW.md` | problem statement, objectives, status vocabulary (implemented / automated-tested / browser-E2E / simulated / physically verified), safety position |
+| `02_SYSTEM_ARCHITECTURE.md` | deployment and sequence diagrams, start-up sequence, design decisions |
+| `03_MODULE_REFERENCE.md` | every major Python and JavaScript module: problem, technology, input/output, algorithm, functions with line numbers, flow, excerpt |
+| `04_OFFLINE_MAP_AND_ROUTING.md` | OpenStreetMap data, map package build, place search, A\* routing and its verification |
+| `05_GPS_AND_ROUTE_FOLLOWING.md` | Geolocation API, stale-fix guard, route following, off-route detection, re-routing |
+| `06_SPEECH_RECOGNITION_VOSK.md` | Vosk/Kaldi, recorder, two-pass recognition, intent parser, place matching, measured accuracy |
+| `07_TEXT_TO_SPEECH_PIPER.md` | Piper/VITS voice, cache, byte ranges, iOS playback, fallback, measurements |
+| `08_RGB_OBJECT_DETECTION_SSDLITE.md` | SSDLite320-MobileNetV3 (CPU fallback detector), obstacle classes, carrying modes |
+| `09_WOAD_MODEL.md` | WOAD two-stream transformer-fusion architecture, inputs, classes, equivalence, evaluation |
+| `10_API_REFERENCE.md` | all 28 HTTP endpoints with parameters, captured responses and error codes |
 | `11_DATA_STORAGE.md` | SQLite schema, caches, TLS files, browser settings, privacy |
-| `12_HTTPS_NETWORK_IPHONE.md` | honest server-dependent architecture, local CA, TLS robustness fixes, firewall, iOS measures, security |
+| `12_HTTPS_NETWORK_IPHONE.md` | local certificate authority, TLS robustness, firewall, iOS measures, security |
 | `13_DEPENDENCIES_MODELS_LICENCES.md` | packages, models, sizes, sources, licences and their implications |
-| `14_TESTING_AND_RESULTS.md` | test levels, per-module counts, browser E2E results, bugs found, what is *not* proven |
-| `15_LIMITATIONS_AND_FUTURE_WORK.md` | 16 limitations, 9 prioritised future items |
-| `16_VIVA_QUESTION_BANK.md` | **63** questions with answers across 14 topics |
-| `../docs/NEUROSONIC_FINAL_TECHNICAL_DOCUMENTATION.md` | **presentation document (2026-11-03)**: architecture, modules, RF-DETR selection, tracking and events, tests (204 + 7 browser), measured results, commands, screenshots, limitations |
-| `18_ONLINE_VISION.md` | Sprint 1: online scene description (cloud, opt-in, provider-independent), the single live Gemini result, viva questions |
-| `17_PRODUCT_REFINEMENT.md` | walking-path states, Object Description, voice pacing, GPS quality and loss, turn instructions, iPhone interface, How It Works, verification |
-| `CODE_DEMO_GUIDE.md` | exact files, functions and line ranges to open; **five-minute demo script** |
-| `PROJECT_DEMO_EXISTING_VS_PROPOSED.md` | differentiation: inherited WOAD research vs. this project's implementation vs. proposed work |
-| `FINAL_PROJECT_REPORT.md` | consolidated report (~8,900 words plus tables and code, about 20–25 pages at 12 pt / 1.5 spacing): abstract, background, design, WOAD, implementation, testing, discussion, future work, references, appendices |
-| `SYMBOL_INDEX.md` | generated index of all classes and functions with line ranges (regenerated 2026-11-03 after the final phase) |
-| `HANDOFF_STATUS.md` | **current state, verified results, iPhone tests still to do, launch command** (2026-11-03, final phase) |
-| `../publication/` | **publication package:** `NeuroSonic_Manuscript.html/.pdf`, `NeuroSonic_Slides.html/.pdf`, `TESTING_AND_VALIDATION_REPORT.md`, `INSTALLATION_AND_DEPLOYMENT.md`, `USER_GUIDE.md`, `figures/` (generated by `tools/make_publication_figures.py`) |
-| `../docs/IPHONE_VALIDATION_PROTOCOL.md` | 23 iPhone / field scenarios × 5 trials, safety rules; results template `../docs/validation_results_template.csv` |
+| `14_TESTING_AND_RESULTS.md` | test levels, per-module counts, browser end-to-end results, bugs found, what is not yet proven |
+| `15_LIMITATIONS_AND_FUTURE_WORK.md` | limitations and prioritised future work |
+| `16_PRODUCT_REFINEMENT.md` | walking-path states, object description, voice pacing, GPS quality, iPhone interface |
+| `17_ONLINE_VISION.md` | optional online scene description (cloud, opt-in, provider-independent) |
+| `FINAL_PROJECT_REPORT.md` | consolidated project report (Markdown version) |
+| `PROJECT_DEMO_EXISTING_VS_PROPOSED.md` | differentiation: base-paper WOAD work vs. this implementation vs. proposed work |
+| `SYMBOL_INDEX.md` | generated index of all classes and functions with line ranges |
 
-Related engineering notes (pre-existing): `../docs/EVALUATION.md`, `../docs/FEATURE_STATUS.md`,
-`../docs/NEUROSONIC_APP.md`, `../docs/ARCHITECTURE_AND_ROADMAP.md`, `../docs/STAGE2_ALERTS.md`.
+Related documents:
 
-## 2. Important source files to demonstrate
+* `../docs/NEUROSONIC_FINAL_TECHNICAL_DOCUMENTATION.md`: architecture, RF-DETR selection, tracking and events, tests,
+  measured results, screenshots.
+* `../docs/PHASE1_GPU_DETECTOR_BENCHMARK.md`, `../docs/EVALUATION.md`: detector benchmark and WOAD evaluation.
+* `../docs/IPHONE_VALIDATION_PROTOCOL.md`: planned iPhone and field validation (23 scenarios × 5 trials).
+* `../publication/`: manuscript, slides, testing report, installation guide, user guide.
+* `../submission/`: university review documents (PDF).
 
-| File | Show |
+## 2. Key source files
+
+| File | Main parts |
 |---|---|
-| `neurosonic_app.py` | `main` L28–139: start-up order of all engines |
-| `neurosonic/server.py` | routing tables L392–402; `NeuroSonicHTTPServer.finish_request` L444–459; `_send_media` L255–272 |
-| `woad/arch/yolo.py` | `Model._forward_once` L165–223 (cross-modal fusion); `SelfAttention.forward` L131–148 |
-| `woad/alerts.py` | `AlertConfig` L33–62; `AlertEngine.process` L140–249 |
-| `neurosonic/pathguide.py` | `assess_frame` (per-frame path level), `PathGuide.update` (temporal states and announcements) |
-| `neurosonic/awareness.py` | `detect`; `process_frame` (path guidance + optional object description) |
-| `neurosonic/tts.py` | `synthesize` L95–130 |
-| `neurosonic/voicecmd.py` | `transcribe` L184–196; `parse_intent` L74–124; `phonetic`/`place_score` L45–71 |
-| `neurosonic/maps.py` | `_astar` L184–205; `route` L140–182 |
-| `web/js/speech.js` | `SpeechQueue` L18–75 (interruption L61–74); `unlock` L118–135 |
-| `web/js/nav.js` | `followRoute` L116–159 |
-| `web/js/recorder.js` | `EndOfSpeech` L42–62 |
-| `tests/test_voice_and_map.py`, `tests/test_final_integration.py`, `tests/_offline.py`, `tests/js/ui_final_cdp.mjs` | how correctness and offline operation are tested |
+| `neurosonic_app.py` | `main`: start-up order of all engines |
+| `neurosonic/server.py` | routing tables, `NeuroSonicHTTPServer.finish_request` (per-connection TLS), `_send_media` |
+| `neurosonic/awareness.py` | `RGBAwareness.process_frame`: the live camera pipeline |
+| `neurosonic/detectors.py` | `RFDETRDetector` (GPU, FP16), `SSDLiteDetector` (CPU), `FallbackDetector`, `make_detector` |
+| `neurosonic/pathguide.py` | `assess_frame` (per-frame path level), `PathGuide.update` (confirmed states, announcements) |
+| `neurosonic/tracking.py`, `events.py` | camera-motion estimate, ByteTrack-style tracker, entering / crossing events |
+| `woad/arch/yolo.py` | `Model._forward_once`: cross-modal transformer fusion |
+| `woad/alerts.py` | `AlertConfig`, `AlertEngine.process` |
+| `neurosonic/tts.py`, `voicecmd.py`, `maps.py` | Piper synthesis, Vosk intents, A\* routing |
+| `web/js/app.js`, `speech.js`, `nav.js` | camera loop, speech priority queue, route following |
 
-## 3. Exact launch commands
+## 3. Commands
 
-```bat
-cd F:\Projects\WOAD-Research\implementation
+```powershell
+# tests (about 1.5 min)
+..\.venv-gpu\Scripts\python -m unittest discover -s tests -t .
 
-:: run all automated tests (204 incl. 32 Node tests, 1 opt-in live test skipped; about 1.5 min)
-..\.venv\Scripts\python -m unittest discover -s tests -t .
+# app: laptop only (http://127.0.0.1:8765)
+..\.venv-gpu\Scripts\python neurosonic_app.py
 
-:: laptop demo (open http://127.0.0.1:8765 in Chrome, tap once to enable sound)
-..\.venv\Scripts\python neurosonic_app.py
-
-:: phone on the same Wi-Fi (one-time firewall rule + CA install: see 12_HTTPS_NETWORK_IPHONE.md)
-..\.venv\Scripts\python neurosonic_app.py --host 0.0.0.0 --https
-::   phone: https://<laptop-ip>:8765   one-time setup page: http://<laptop-ip>:8766
-
-:: optional browser end-to-end test (app running on 8765 in another terminal)
-..\.venv\Scripts\python tools\make_e2e_media.py --out e2e_media
-node tests\js\ui_final_cdp.mjs http://127.0.0.1:8765 "C:/Program Files/Google/Chrome/Application/chrome.exe" e2e_media\fake_mic.wav e2e_media\fake_cam.y4m
+# app: phone on the same Wi-Fi (one-time CA install: see 12_HTTPS_NETWORK_IPHONE.md)
+..\.venv-gpu\Scripts\python neurosonic_app.py --host 0.0.0.0 --https
+#   phone: https://<laptop-ip>:8765    one-time setup page: http://<laptop-ip>:8766
 ```
 
-## 4. Five-minute demonstration sequence
+## 4. Main limitations (details in `15_LIMITATIONS_AND_FUTURE_WORK.md`)
 
-The details, with what to say at each step, are in `CODE_DEMO_GUIDE.md`.
-
-1. **0:00** Console start-up lines: every engine is local, no internet.
-2. **0:30** Settings → **Test Voice**: the Indian-English Piper voice; console shows `[voice] … PLAYED`.
-3. **1:00** Settings → Research tools → **WOAD replay**: recorded near-IR + depth frames → spoken alerts.
-4. **2:00** Navigate → search "CMC Hospital" → simulated start → **Start guidance** → "Move 20 m" steps: offline
-   map, A* route, spoken turns (say "simulated").
-5. **3:00** **🎤 Speak** "status" / "repeat instruction": offline Vosk.
-6. **3:45** Home → **Start** with the webcam: Walking Guidance ("Caution. An object is detected in the walking
-   path."), then switch to **Object description** ("Person ahead."); not WOAD, no distance. Show **How it works**.
-7. **4:30** Optional: Home → **Describe** (online scene description; say it needs internet and permission,
-   and that the live service timed out in the only approved test). Show `Ran 204 tests … OK`, and state what is still not physically verified.
-
-## 5. Ten most important viva questions (full answers in `16_VIVA_QUESTION_BANK.md`)
-
-| # | Question | One-line answer |
-|---|---|---|
-| Q1 | Describe the architecture. | Laptop runs all AI engines behind a Python HTTPS API; the phone is a thin browser client using GPS/camera/mic/speaker; no internet needed. |
-| Q20 | Why not WOAD on the phone camera? | WOAD needs near-IR + colour-mapped depth from a CS30 sensor; RGB is out of distribution, so SSDLite serves the phone camera. |
-| Q23 | What accuracy does it have? | WOAD: authors' 0.669 mAP unverifiable; our cross-dataset person AP@0.5 = 0.218/0.173. SSDLite: COCO mAP 21.3 (not measured locally). Voice: 8/8 commands, 10/24 destinations (synthetic). |
-| Q28 | Why two speech recognisers? | Grammar mode reliably finds the command; free mode supplies place-name words; combined in `parse_intent`. |
-| Q36 | How are overlapping/stale announcements prevented? | Priority queue with de-duplication, maximum ages, one audio element, interruption + single re-play. |
-| Q41 | Explain A* and the heuristic. | f = g + h with h = haversine straight-line distance (admissible, consistent); verified equal to Dijkstra. |
-| Q47 | Off-route detection and re-routing? | Distance to the route polyline > max(35 m, 1.5 × accuracy) on two consecutive fixes → new A* route from the current position. |
-| Q54 | Fully offline on the iPhone? | No internet needed, but the iPhone depends on the laptop over local Wi-Fi; not standalone. |
-| Q58 | How is it tested? | 204 tests (incl. 32 Node tests), 7 headless-Chrome E2E scripts with fake media and blocked DNS, equivalence and mutation checks. |
-| Q60 | Limitations and next steps? | Laptop dependence, generic RGB detector without distance, WOAD needs absent sensor, weak place-name recognition, no physical validation; next: field tests, Vellore dataset, standalone app. |
-
-## 6. Outstanding technical limitations (summary of `15_LIMITATIONS_AND_FUTURE_WORK.md`)
-
-1. **No physical verification yet:** the iPhone voice, microphone and camera, a real walk, and a physically
-   disconnected network are all pending (acceptance tests A1, V1, C1, M3, O1).
-2. **The phone depends on the laptop** over local Wi-Fi; there is no standalone phone mode.
-3. **The RGB detector is generic:** SSDLite320, COCO mAP 21.3, unvalidated, no ground hazards, **no distance**.
-4. **WOAD needs a CS30 sensor**, which is not connected, so it runs on recordings only. It is weak on new scenes
-   (person AP@0.5 0.17–0.22), and the authors' 0.669 is unverified.
-5. **Spoken place names are unreliable** (10/24 on synthetic speech), so they are confirmed before guidance.
-6. **OSM data is sparse:** few named streets, no pavements or crossings, no buildings; there are no pedestrian
-   routing costs, and the compass heading is not used.
-7. **No authentication** on the LAN API.
-8. **Copyleft licences:** Piper GPL-3.0+, voice AGPL-3.0.
-9. **iOS suspends web pages when the screen locks**, so background guidance needs a native app.
+1. No physical iPhone or outdoor validation yet.
+2. The phone depends on the laptop over local Wi-Fi; there is no standalone phone mode.
+3. The camera detectors are general COCO models: no steps, kerbs or holes, and no distance.
+4. WOAD needs the CS30 near-IR + depth sensor, so it runs on recordings only; person AP@0.5 is 0.17–0.22 on the
+   published data, and the authors' 0.669 mAP could not be verified.
+5. Spoken place names are unreliable (10/24 correct on synthetic speech), so destinations are confirmed first.
+6. OpenStreetMap data for Vellore is sparse (few named streets, no pavements or crossings).
+7. There is no authentication on the local-network API.
+8. iOS suspends web pages when the screen locks, so background guidance would need a native app.

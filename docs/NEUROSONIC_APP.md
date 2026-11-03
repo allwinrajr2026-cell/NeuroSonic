@@ -182,7 +182,7 @@ Safety behaviour:
 `python -m unittest discover -s tests -t .` runs **141 tests** (2026-11-02, all OK). Added in the product
 refinement: `tests/test_pathguide.py` (20), `tests/test_refinement_ui_nav.py` (7) and
 `tests/js/refinement.test.mjs` (12 Node tests); `ui_refine_cdp.mjs` checks the interface at iPhone size
-(see `PROJECT_DOCUMENTATION/17_PRODUCT_REFINEMENT.md`). The earlier 114 tests were:
+(see `PROJECT_DOCUMENTATION/16_PRODUCT_REFINEMENT.md`). The earlier 114 tests were:
 
 * 64 existing tests;
 * `tests/test_final_integration.py` (15):

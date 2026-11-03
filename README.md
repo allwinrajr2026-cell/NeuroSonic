@@ -25,6 +25,7 @@ detector, **WOAD** (Gao et al., *Nature Communications* 16, 2857, 2025).
 - [Quick start](#quick-start)
 - [Repository structure](#repository-structure)
 - [Tests](#tests)
+- [Project submission documents](#project-submission-documents)
 - [Documentation](#documentation)
 - [Limitations](#limitations)
 - [Licences and credits](#licences-and-credits)
@@ -133,9 +134,9 @@ maps/vellore/              offline map package (© OpenStreetMap contributors, O
 models/                    download instructions only (weights are not committed)
 outputs/                   benchmark and evaluation results
 docs/                      technical documentation, evaluation, benchmarks, validation protocol
-PROJECT_DOCUMENTATION/     module reference, API reference, viva handbook (PDF)
+PROJECT_DOCUMENTATION/     module reference, API reference, data, HTTPS, testing, limitations
 publication/               manuscript, slides, user guide, installation guide, testing report
-Assignment_Submission/     university review documents (PDF) and their build sources
+submission/                university review documents (PDF, numbered) and their build sources
 ```
 
 ## Tests
@@ -148,13 +149,32 @@ Last full run (3 Nov 2026): **204 tests OK** in `.venv-gpu` (1 skipped: the opt-
 (3 skipped: GPU only). Browser tests: 7 of 7 passed. Tests that need the model files, the WOAD checkpoint or the
 WOAD demo data will be skipped or will fail until those files are in place (see [Quick start](#quick-start)).
 
+## Project submission documents
+
+All deliverables are in [`submission/`](submission), numbered in the order of the submission list.
+[`00_Submission_Checklist.pdf`](submission/00_Submission_Checklist.pdf) maps each requirement to its file.
+
+| # | Requirement | File | Pages |
+|---|---|---|---|
+| 1 | Review 1 (DA1): survey and comparative analysis of publications, patents, products and technology trends (IEEE 2-column, ≥ 7 pages) | [`01_DA1_Review1_Survey_and_Comparative_Analysis.pdf`](submission/01_DA1_Review1_Survey_and_Comparative_Analysis.pdf) | 9 |
+| 2 | Review 2 (DA2): base paper redone, gaps, proposed work (IEEE 2-column, ≥ 7 pages) | [`02_DA2_Review2_Base_Paper_Reimplementation_Gaps_and_Proposed_Work.pdf`](submission/02_DA2_Review2_Base_Paper_Reimplementation_Gaps_and_Proposed_Work.pdf) | 7 |
+| 3 | Review 3 (DA3): implementation, architecture / methodology, results (IEEE 2-column, ≥ 7 pages) | [`03_DA3_Review3_Implementation_Architecture_and_Results.pdf`](submission/03_DA3_Review3_Implementation_Architecture_and_Results.pdf) | 8 |
+| 4 | Project demo: existing implementation vs. proposed work | [`04_Project_Demo_Existing_vs_Proposed.pdf`](submission/04_Project_Demo_Existing_vs_Proposed.pdf) | 2 |
+| 5 | Final consolidated project report (≥ 20 pages; one upload for DA1–DA3) | [`05_Final_Consolidated_Project_Report.pdf`](submission/05_Final_Consolidated_Project_Report.pdf) | 53 |
+| 6 | IEEE 2-column paper draft (Lab 10, ≥ 14 pages) | [`06_Lab10_IEEE_Two_Column_Paper_Draft.pdf`](submission/06_Lab10_IEEE_Two_Column_Paper_Draft.pdf) | 20 |
+| 7 | GitHub link (dataset, source code, other files) and demo video link | [`07_GitHub_Dataset_and_Video_Links.pdf`](submission/07_GitHub_Dataset_and_Video_Links.pdf) | 2 |
+| 8 | Scopus-indexed venues (Q1–Q4), book chapter, IPR | [`08_Publication_Venue_Identification.pdf`](submission/08_Publication_Venue_Identification.pdf) | 3 |
+| 9 | Lab 9: IPR invention disclosure form (IDF) Part B draft | [`09_Lab9_IPR_IDF_B_Draft.pdf`](submission/09_Lab9_IPR_IDF_B_Draft.pdf) | 7 |
+
+The demonstration video hasn't been recorded yet. The PDFs are generated from the HTML sources in
+`submission/_build/` (`python build.py`, headless Chrome).
+
 ## Documentation
 
 | Start here | |
 |---|---|
 | [`docs/NEUROSONIC_FINAL_TECHNICAL_DOCUMENTATION.md`](docs/NEUROSONIC_FINAL_TECHNICAL_DOCUMENTATION.md) | full technical description |
 | [`PROJECT_DOCUMENTATION/00_INDEX.md`](PROJECT_DOCUMENTATION/00_INDEX.md) | module, API, data and HTTPS references |
-| [`PROJECT_DOCUMENTATION/NeuroSonic_Source_Code_Handbook.pdf`](PROJECT_DOCUMENTATION/NeuroSonic_Source_Code_Handbook.pdf) | source code explanation and viva handbook |
 | [`docs/PHASE1_GPU_DETECTOR_BENCHMARK.md`](docs/PHASE1_GPU_DETECTOR_BENCHMARK.md) | detector selection benchmark |
 | [`docs/EVALUATION.md`](docs/EVALUATION.md) | WOAD reproduction and evaluation |
 | [`docs/IPHONE_VALIDATION_PROTOCOL.md`](docs/IPHONE_VALIDATION_PROTOCOL.md) | planned iPhone field validation |

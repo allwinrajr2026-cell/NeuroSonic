@@ -32,7 +32,7 @@ all without looking at the phone screen, and without needing the internet.
 
 ## 1.3 Objectives and how far each was reached
 
-The **status vocabulary** below is used throughout this documentation and must not be blurred during the viva:
+The **status vocabulary** below is used throughout this documentation and is used consistently:
 
 | Term | Meaning |
 |---|---|

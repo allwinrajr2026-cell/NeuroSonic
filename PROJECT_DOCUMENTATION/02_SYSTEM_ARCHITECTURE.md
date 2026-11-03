@@ -153,7 +153,7 @@ sequenceDiagram
 
 | Decision | Reason | Trade-off |
 |---|---|---|
-| Python standard-library HTTP server (`http.server`), no web framework | no extra dependencies; full control of TLS handshakes and byte ranges; easy to read in a viva | fewer conveniences (manual routing tables `GET`/`POST` in `server.py` L392–402) |
+| Python standard-library HTTP server (`http.server`), no web framework | no extra dependencies; full control of TLS handshakes and byte ranges; easy to read and review | fewer conveniences (manual routing tables `GET`/`POST` in `server.py` L392–402) |
 | Heavy models on the laptop, browser on the phone | WOAD, Piper, Vosk and SSDLite run in Python/PyTorch/ONNX on the laptop; one code base serves iPhone, Android and laptop; no app-store build | the phone depends on the laptop and the Wi-Fi (not standalone) |
 | Plain JavaScript ES modules, no framework or CDN | works offline, nothing to download, small | manual DOM code in `app.js` |
 | Own A* router on an OSM extract instead of GraphHopper/Valhalla | no Java/C++ engine to install; whole algorithm visible in 22 lines (`maps.py` L184–205) | no pedestrian-specific costs (crossings, surfaces) |

@@ -93,7 +93,7 @@ certificate, which iOS rejects. That was diagnosed and fixed, and is covered by
 * **Microphone:** a `ScriptProcessorNode`, which iOS supports.
 * **Camera:** `playsinline`, rear camera `facingMode: "environment"`.
 
-## 12.7 Security considerations (for the viva)
+## 12.7 Security considerations
 
 * **No login:** anyone on the same network can use the API. Use it only on a trusted network; the start-up
   warning says so.
@@ -101,12 +101,3 @@ certificate, which iOS rejects. That was diagnosed and fixed, and is covered by
   Keep `data/` private, and remove the profile from the phone when it is no longer needed.
 * **Untrusted pickles:** the WOAD checkpoint load uses `weights_only=False`, so only the hash-verified file is
   loaded by default (`model_loader.py` L91–99).
-
-## 12.8 Likely questions
-
-* *Is the app offline on the iPhone?* No internet is needed. But the iPhone depends on the laptop over local
-  Wi-Fi; it is not standalone.
-* *Why not a self-signed certificate?* iOS rejects certificates without subjectAltName/serverAuth, and a
-  self-signed leaf cannot be trusted as cleanly. A local CA installed once is the standard approach.
-* *What if the laptop's IP changes?* The server certificate is re-issued with the new IP at start-up. The CA
-  stays the same, so the phone needs no new setup.

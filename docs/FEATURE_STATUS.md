@@ -1,7 +1,7 @@
 # NeuroSonic — feature status and acceptance tests
 
 Status date: **2026-11-02** (product-refinement update: walking guidance, GPS handling, iPhone interface;
-details in `PROJECT_DOCUMENTATION/17_PRODUCT_REFINEMENT.md`, manual tests in `docs/MANUAL_TESTING.md`).
+details in `PROJECT_DOCUMENTATION/16_PRODUCT_REFINEMENT.md`, manual tests in `docs/MANUAL_TESTING.md`).
 
 NeuroSonic is a **voice-first, offline-capable assistive navigation and environmental-awareness prototype**
 built on the WOAD research implementation. This file is the single place that says what works, and how we
