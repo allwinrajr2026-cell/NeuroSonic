@@ -15,6 +15,10 @@ detector, **WOAD** (Gao et al., *Nature Communications* 16, 2857, 2025).
 > poles or walls, and it only sees what is in front of the camera. It has **not** been tested on a physical iPhone
 > while walking or with visually impaired users. Never use it in place of a cane, a guide dog or human assistance.
 
+## Demo video
+
+[`demo/NEUROSONIC_DEMO.mp4`](demo/NEUROSONIC_DEMO.mp4): a recorded demonstration of the system (23 MB).
+
 ---
 
 ## Contents
@@ -130,6 +134,7 @@ woad_detect.py             CLI: WOAD detection on IR + depth pairs
 woad_replay.py             CLI: replay recorded frames through detector + alert engine
 tools/                     benchmarks, evaluation, soak test, equivalence check, figure and map builders
 tests/                     204 Python tests (+ Node.js and headless-Chrome browser tests)
+demo/                      demonstration video
 maps/vellore/              offline map package (© OpenStreetMap contributors, ODbL)
 models/                    download instructions only (weights are not committed)
 outputs/                   benchmark and evaluation results
@@ -162,11 +167,11 @@ All deliverables are in [`submission/`](submission), numbered in the order of th
 | 4 | Project demo: existing implementation vs. proposed work | [`04_Project_Demo_Existing_vs_Proposed.pdf`](submission/04_Project_Demo_Existing_vs_Proposed.pdf) | 2 |
 | 5 | Final consolidated project report (≥ 20 pages; one upload for DA1–DA3) | [`05_Final_Consolidated_Project_Report.pdf`](submission/05_Final_Consolidated_Project_Report.pdf) | 53 |
 | 6 | IEEE 2-column paper draft (Lab 10, ≥ 14 pages) | [`06_Lab10_IEEE_Two_Column_Paper_Draft.pdf`](submission/06_Lab10_IEEE_Two_Column_Paper_Draft.pdf) | 20 |
-| 7 | GitHub link (dataset, source code, other files) and demo video link | [`07_GitHub_Dataset_and_Video_Links.pdf`](submission/07_GitHub_Dataset_and_Video_Links.pdf) | 2 |
+| 7 | GitHub link (dataset, source code, other files) and demo video link ([video](demo/NEUROSONIC_DEMO.mp4)) | [`07_GitHub_Dataset_and_Video_Links.pdf`](submission/07_GitHub_Dataset_and_Video_Links.pdf) | 2 |
 | 8 | Scopus-indexed venues (Q1–Q4), book chapter, IPR | [`08_Publication_Venue_Identification.pdf`](submission/08_Publication_Venue_Identification.pdf) | 3 |
 | 9 | Lab 9: IPR invention disclosure form (IDF) Part B draft | [`09_Lab9_IPR_IDF_B_Draft.pdf`](submission/09_Lab9_IPR_IDF_B_Draft.pdf) | 7 |
 
-The demonstration video hasn't been recorded yet. The PDFs are generated from the HTML sources in
+The demonstration video is [`demo/NEUROSONIC_DEMO.mp4`](demo/NEUROSONIC_DEMO.mp4). The PDFs are generated from the HTML sources in
 `submission/_build/` (`python build.py`, headless Chrome).
 
 ## Documentation
