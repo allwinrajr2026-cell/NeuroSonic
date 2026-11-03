@@ -12,7 +12,7 @@ detector, **WOAD** (Gao et al., *Nature Communications* 16, 2857, 2025).
 
 | | |
 |---|---|
-| **Authors** | Allwin Raj R (26MAI0072) · Madhu Sudharshanan (26MAI0071) |
+| **Authors** | Allwin Raj R · Madhu Sudharshanan |
 | **Programme** | M.Tech. Computer Science and Engineering (Artificial Intelligence and Machine Learning) |
 | **Course** | MACSE517N – Computer Architecture and Organisation |
 | **Guide** | Yogesh Babu S, Associate Professor Grade 1, School of Computer Science and Engineering |
