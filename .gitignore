@@ -30,6 +30,7 @@ outputs/*
 !outputs/eval/
 backups/
 submission/_build/html/
+submission/_build/generated_report_draft.pdf
 
 # --- editors / OS ---
 .vscode/

@@ -25,7 +25,6 @@ from test runs, captured API responses and the result files in `../outputs/`.
 | `15_LIMITATIONS_AND_FUTURE_WORK.md` | limitations and prioritised future work |
 | `16_PRODUCT_REFINEMENT.md` | walking-path states, object description, voice pacing, GPS quality, iPhone interface |
 | `17_ONLINE_VISION.md` | optional online scene description (cloud, opt-in, provider-independent) |
-| `FINAL_PROJECT_REPORT.md` | consolidated project report (Markdown version) |
 | `PROJECT_DEMO_EXISTING_VS_PROPOSED.md` | differentiation: base-paper WOAD work vs. this implementation vs. proposed work |
 | `SYMBOL_INDEX.md` | generated index of all classes and functions with line ranges |
 
@@ -36,7 +35,7 @@ Related documents:
 * `../docs/PHASE1_GPU_DETECTOR_BENCHMARK.md`, `../docs/EVALUATION.md`: detector benchmark and WOAD evaluation.
 * `../docs/IPHONE_VALIDATION_PROTOCOL.md`: planned iPhone and field validation (23 scenarios × 5 trials).
 * `../publication/`: manuscript, slides, testing report, installation guide, user guide.
-* `../submission/`: university review documents (PDF).
+* `../submission/`: university review documents (PDF), including the final consolidated report.
 
 ## 2. Key source files
 
@@ -69,7 +68,8 @@ Related documents:
 
 ## 4. Main limitations (details in `15_LIMITATIONS_AND_FUTURE_WORK.md`)
 
-1. No physical iPhone or outdoor validation yet.
+1. iPhone checks so far are informal (2.5–4.8 fps, 217–372 ms camera → answer over Wi-Fi); no formal outdoor
+   or user validation yet.
 2. The phone depends on the laptop over local Wi-Fi; there is no standalone phone mode.
 3. The camera detectors are general COCO models: no steps, kerbs or holes, and no distance.
 4. WOAD needs the CS30 near-IR + depth sensor, so it runs on recordings only; person AP@0.5 is 0.17–0.22 on the

@@ -10,10 +10,19 @@ speech commands and offline walking routes. The phone speaks only what matters:
 The project also contains a verified Windows re-implementation of the base paper's cross-modal (near-IR + depth)
 detector, **WOAD** (Gao et al., *Nature Communications* 16, 2857, 2025).
 
+| | |
+|---|---|
+| **Authors** | Allwin Raj R (26MAI0072) · Madhu Sudharshanan (26MAI0071) |
+| **Programme** | M.Tech. Computer Science and Engineering (Artificial Intelligence and Machine Learning) |
+| **Course** | MACSE517N – Computer Architecture and Organisation |
+| **Guide** | Yogesh Babu S, Associate Professor Grade 1, School of Computer Science and Engineering |
+| **Institution** | Vellore Institute of Technology, Vellore · November 2026 |
+
 > [!WARNING]
 > **Research prototype, not a safety device.** It doesn't measure distance. It can't see steps, kerbs, potholes,
-> poles or walls, and it only sees what is in front of the camera. It has **not** been tested on a physical iPhone
-> while walking or with visually impaired users. Never use it in place of a cane, a guide dog or human assistance.
+> poles or walls, and it only sees what is in front of the camera. It has been checked on a real iPhone only
+> informally; formal field validation and tests with visually impaired users are still pending. Never use it in place
+> of a cane, a guide dog or human assistance.
 
 ## Demo video
 
@@ -80,12 +89,14 @@ and [`outputs/eval/`](outputs/eval).
 |---|---|
 | RF-DETR FP16 vs FP32, paced at 5 fps | median **53.2 ms** vs 66.5 ms, same accuracy (AP 0.6600 vs 0.6597) |
 | Camera capture → analysed answer (browser, fake camera) | median **67 ms** |
+| Real iPhone over Wi-Fi (informal, 7 screenshots) | **2.5–4.8 fps**, camera → answer **217–372 ms** (mean 277 ms), detector ~65 ms |
 | 10-minute soak test at 5 fps | 2,980 frames, **0 errors**, flat memory |
 | WOAD re-implementation vs original code | max output difference **0.0** |
 | WOAD person AP@0.5 on the published dataset | **0.218** (authors report 0.669 mAP; not reproducible with published data) |
 
 The accuracy figures come from near-infrared images, the only labelled data available. Accuracy on real
-phone-camera video hasn't been measured.
+phone-camera video hasn't been measured. The iPhone figures are informal readings from the app's status line
+(Section 18.8 of the final report), not the formal 23-scenario validation.
 
 ## Quick start
 
@@ -163,16 +174,17 @@ All deliverables are in [`submission/`](submission), numbered in the order of th
 |---|---|---|---|
 | 1 | Review 1 (DA1): survey and comparative analysis of publications, patents, products and technology trends (IEEE 2-column, ≥ 7 pages) | [`01_DA1_Review1_Survey_and_Comparative_Analysis.pdf`](submission/01_DA1_Review1_Survey_and_Comparative_Analysis.pdf) | 9 |
 | 2 | Review 2 (DA2): base paper redone, gaps, proposed work (IEEE 2-column, ≥ 7 pages) | [`02_DA2_Review2_Base_Paper_Reimplementation_Gaps_and_Proposed_Work.pdf`](submission/02_DA2_Review2_Base_Paper_Reimplementation_Gaps_and_Proposed_Work.pdf) | 7 |
-| 3 | Review 3 (DA3): implementation, architecture / methodology, results (IEEE 2-column, ≥ 7 pages) | [`03_DA3_Review3_Implementation_Architecture_and_Results.pdf`](submission/03_DA3_Review3_Implementation_Architecture_and_Results.pdf) | 8 |
+| 3 | Review 3 (DA3): implementation, architecture / methodology, results (IEEE 2-column, ≥ 7 pages) | [`03_DA3_Review3_Implementation_Architecture_and_Results.pdf`](submission/03_DA3_Review3_Implementation_Architecture_and_Results.pdf) | 9 |
 | 4 | Project demo: existing implementation vs. proposed work | [`04_Project_Demo_Existing_vs_Proposed.pdf`](submission/04_Project_Demo_Existing_vs_Proposed.pdf) | 2 |
-| 5 | Final consolidated project report (≥ 20 pages; one upload for DA1–DA3) | [`05_Final_Consolidated_Project_Report.pdf`](submission/05_Final_Consolidated_Project_Report.pdf) | 53 |
+| 5 | Final consolidated project report (≥ 20 pages; one upload for DA1–DA3) | [`05_Final_Consolidated_Project_Report.pdf`](submission/05_Final_Consolidated_Project_Report.pdf) | 65 |
 | 6 | IEEE 2-column paper draft (Lab 10, ≥ 14 pages) | [`06_Lab10_IEEE_Two_Column_Paper_Draft.pdf`](submission/06_Lab10_IEEE_Two_Column_Paper_Draft.pdf) | 20 |
 | 7 | GitHub link (dataset, source code, other files) and demo video link ([video](demo/NEUROSONIC_DEMO.mp4)) | [`07_GitHub_Dataset_and_Video_Links.pdf`](submission/07_GitHub_Dataset_and_Video_Links.pdf) | 2 |
 | 8 | Scopus-indexed venues (Q1–Q4), book chapter, IPR | [`08_Publication_Venue_Identification.pdf`](submission/08_Publication_Venue_Identification.pdf) | 3 |
-| 9 | Lab 9: IPR invention disclosure form (IDF) Part B draft | [`09_Lab9_IPR_IDF_B_Draft.pdf`](submission/09_Lab9_IPR_IDF_B_Draft.pdf) | 7 |
+| 9 | Lab 9: IPR invention disclosure form (IDF) Part B draft | [`09_Lab9_IPR_IDF_B_Draft.pdf`](submission/09_Lab9_IPR_IDF_B_Draft.pdf) | 8 |
 
-The demonstration video is [`demo/NEUROSONIC_DEMO.mp4`](demo/NEUROSONIC_DEMO.mp4). The PDFs are generated from the HTML sources in
-`submission/_build/` (`python build.py`, headless Chrome).
+The demonstration video is [`demo/NEUROSONIC_DEMO.mp4`](demo/NEUROSONIC_DEMO.mp4). The final report is the edited
+version (LibreOffice). The other PDFs are generated from the HTML sources in `submission/_build/` (`python build.py`,
+headless Chrome).
 
 ## Documentation
 
@@ -191,8 +203,11 @@ The demonstration video is [`demo/NEUROSONIC_DEMO.mp4`](demo/NEUROSONIC_DEMO.mp4
 2. No steps, kerbs, potholes, poles or walls: COCO classes only.
 3. Forward camera view only.
 4. Thresholds are engineering defaults that haven't been validated with users.
-5. No physical iPhone or street testing yet. Speech recognition of local place names is weak (10/24 correct).
-6. The laptop must be on the same Wi-Fi network as the phone.
+5. iPhone checks so far are informal; no formal street or user testing yet. Over Wi-Fi the phone reaches 2.5–4.8 fps,
+   below the 5 fps target.
+6. A plain, textureless wall can trigger "Stop" although no object is detected (blocked-view rule).
+7. Speech recognition of local place names is weak (10/24 correct).
+8. The laptop must be on the same Wi-Fi network as the phone.
 
 ## Licences and credits
 
@@ -212,4 +227,5 @@ licence as the original WOAD code it builds on. Third-party models and data keep
 
 The full list is in [`PROJECT_DOCUMENTATION/13_DEPENDENCIES_MODELS_LICENCES.md`](PROJECT_DOCUMENTATION/13_DEPENDENCIES_MODELS_LICENCES.md).
 
-**Author:** Allwin Raj, Vellore Institute of Technology, Vellore.
+**Authors:** Allwin Raj R and Madhu Sudharshanan, School of Computer Science and Engineering, Vellore Institute of
+Technology, Vellore. Guide: Yogesh Babu S.

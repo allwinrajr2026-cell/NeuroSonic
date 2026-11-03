@@ -24,8 +24,12 @@ validated in the field.</p>
 
 <h2>Limitations and Pending Validation</h2>
 <ul>
-<li><strong>No iPhone or field validation yet.</strong> RF-DETR has not processed real iPhone frames; Wi-Fi latency,
-outdoor light, and use by visually impaired people are untested.</li>
+<li><strong>No formal iPhone or field validation yet.</strong> RF-DETR has processed real iPhone frames only in informal
+screenshot checks; Wi-Fi latency, outdoor light, and use by visually impaired people are not yet measured
+systematically.</li>
+<li><strong>Plain surfaces.</strong> In an informal iPhone check a textureless wall produced &ldquo;Stop&rdquo; although no
+object class was detected; the blocked-view rule treats an uninformative view as blocked. Its false-alarm rate on real
+surfaces is unmeasured.</li>
 <li><strong>Proxy data.</strong> Detector quality was measured on near-infrared images with 129 people; live tests use a
 fake camera and a composited clip.</li>
 <li><strong>Scope.</strong> 23 COCO classes only: no steps, kerbs, holes, poles, walls or wet floors; no distance and no

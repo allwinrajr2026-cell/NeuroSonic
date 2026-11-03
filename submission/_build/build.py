@@ -130,7 +130,7 @@ if __name__ == "__main__":
     if "Checklist" in want:  # needs the page counts of the others
         want = [k for k in want if k != "Checklist"] + ["Checklist"]
         for k in DOCS:
-            if k not in want:
+            if k not in want and (OUTDIR / DOCS[k]["file"]).exists():
                 PAGES[k] = len(re.findall(rb"/Type\s*/Page[^s]", (OUTDIR / DOCS[k]["file"]).read_bytes()))
     for k in want:
         build(k, DOCS[k])

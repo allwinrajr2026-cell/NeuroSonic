@@ -1,7 +1,8 @@
 """Document specifications: which fragments go into which PDF."""
 
-AUTHORS = """<div class="authors"><div class="a"><div class="name">Allwin Raj</div>
-<div>Vellore Institute of Technology</div><div>Vellore, Tamil Nadu, India</div><div>theallwinraj@gmail.com</div></div></div>"""
+AUTHORS = """<div class="authors"><div class="a"><div class="name">Allwin Raj R</div>
+<div>School of Computer Science and Engineering</div><div>Vellore Institute of Technology</div><div>Vellore, Tamil Nadu, India</div></div><div class="a"><div class="name">Madhu Sudharshanan</div>
+<div>School of Computer Science and Engineering</div><div>Vellore Institute of Technology</div><div>Vellore, Tamil Nadu, India</div></div></div>"""
 
 KW = ("assistive technology; visual impairment; electronic travel aid; obstacle detection; RF-DETR; multi-object "
       "tracking; camera-motion compensation; offline speech; pedestrian navigation")
@@ -53,7 +54,8 @@ ABS_DA3 = abstract(
     "sustained about 5 frames/s with a median capture-to-answer time of 67&nbsp;ms. Three serving problems were found "
     "and fixed: idle CPU threads (712&nbsp;% to 121&nbsp;% of one core), per-request inference threads, and GPU power "
     "states at low frame rates (mitigated with FP16 at unchanged accuracy). Ten-minute soak tests ran without errors. "
-    "Field validation with an iPhone and users is pending; the system is not a safety device.")
+    "Informal checks on a real iPhone ran at 2.5&ndash;4.8 frames/s with 217&ndash;372&nbsp;ms from camera to answer; "
+    "formal field validation with users is pending; the system is not a safety device.")
 
 COMBINED_SUBS = [
     ("(Review&nbsp;2)", "(see the base-paper re-implementation)"),
@@ -84,7 +86,8 @@ ABS_FULL = abstract(
     "vehicles entering or crossing the walking path without reacting to the user's own movement. Offline neural speech, "
     "voice commands and OpenStreetMap routing complete the system. On the laptop it sustained about 5 frames/s with a "
     "median capture-to-answer time of 67&nbsp;ms; three serving problems were found and fixed, and ten-minute soak tests "
-    "ran without errors. Field validation with an iPhone and users is pending; the system is not a safety device.")
+    "ran without errors. Informal checks on a real iPhone ran at 2.5&ndash;4.8 frames/s with 217&ndash;372&nbsp;ms "
+    "from camera to answer; formal field validation with users is pending; the system is not a safety device.")
 
 TITLE_FULL = ("NeuroSonic: From a Cross-Modal Wearable Obstacle Detector to an Offline, Phone-Based Spoken "
               "Walking-Path Awareness and Navigation Prototype for Visually Impaired Pedestrians")
@@ -133,14 +136,16 @@ def form_front(title, meta):
     return f'<div class="doc-title"><h1>{title}</h1><div class="meta">{meta}</div></div>'
 
 
-META = "NeuroSonic project &middot; Allwin Raj &middot; Vellore Institute of Technology &middot; 3 November 2026"
+META = ("NeuroSonic project &middot; Allwin Raj R (26MAI0072), Madhu Sudharshanan (26MAI0071) &middot; "
+        "Vellore Institute of Technology &middot; November 2026")
 
 REPORT_SECTIONS = ["d1_intro", "d1_stats", "d1_pubs", "d1_patents", "d1_products", "d1_trends", "d1_conclusion",
                    "d2_base", "d2_reimpl", "d2_extra", "d2_gaps", "d2_proposed", "d3_arch", "d3_methods",
                    "d3_results", "d3_discussion", "demo", "r_appx"]
 
 DOCS.update({
-    "Report": dict(file="05_Final_Consolidated_Project_Report.pdf", style="report", min_pages=20,
+    # The submitted report is the edited final version in submission/05_...; this generated draft is not submitted.
+    "Report": dict(file="_build/generated_report_draft.pdf", style="report", min_pages=20,
                    short="NeuroSonic Final Report", front=open(__import__("pathlib").Path(__file__).parent /
                                                                "sections" / "r_front.html", encoding="utf-8").read(),
                    toc=True, sections=REPORT_SECTIONS, subs=COMBINED_SUBS),

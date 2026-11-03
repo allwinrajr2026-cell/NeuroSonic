@@ -8,7 +8,8 @@
 <tr><td>Live-pipeline input</td><td>640&times;480 clip compositing a recorded person riding a bicycle over a recorded empty corridor; played as Chrome's fake camera or streamed by a soak-test tool</td></tr>
 <tr><td>Browser tests</td><td>headless Chrome, iPhone-sized viewport, fake camera and microphone, DNS blocked; server on loopback</td></tr>
 </table>
-<p class="ni">No measurement includes Wi-Fi transmission, iPhone JPEG encoding, real street scenes or users.</p>
+<p class="ni">Apart from the informal iPhone readings at the end of this section, no measurement includes Wi-Fi
+transmission, iPhone JPEG encoding, real street scenes or users.</p>
 
 <h2>Results and Analysis</h2>
 <h3>Detector comparison</h3>
@@ -103,4 +104,26 @@ view, slow drift and chairs, and the absence of distance and safety words. All s
 quality-gate launch with the documented command passed in both environments: frames, speech, place search, a
 1330&nbsp;m route with 10 steps, and a voice command. On 3 November 2026 the release launcher started the server as an
 independent background process, and its local-network HTTPS address (the one the iPhone uses) answered when checked
-from the laptop; the iPhone itself has not yet been connected for these tests.</p>
+from the laptop. An iPhone was connected afterwards for the informal check below.</p>
+
+<h2>Informal iPhone Readings</h2>
+<p>A real iPhone ran the phone interface in Safari, connected to the laptop server over Wi-Fi (RF-DETR on the GPU). The
+status line under the camera image shows the frame rate, the detector time and the camera-to-answer time; {{t-iphone}}
+lists the values read from seven screenshots. These are informal checks, not the formal 23-scenario &times; 5-trial
+validation protocol, which is still pending.</p>
+<table id="t-iphone"><caption>Values read from seven iPhone screenshots (informal)</caption>
+<tr><th>Scene</th><th>Banner</th><th>fps</th><th>Detector (ms)</th><th>Camera&rarr;answer (ms)</th></tr>
+<tr><td>Doorway and glass partition</td><td>Caution</td><td>2.5</td><td>63</td><td>372</td></tr>
+<tr><td>Furnished room</td><td>Caution</td><td>3.2</td><td>71</td><td>330</td></tr>
+<tr><td>Sofa and curtain, close</td><td>Stop</td><td>3.9</td><td>62</td><td>310</td></tr>
+<tr><td>Paved courtyard, parked cars</td><td>Path clear</td><td>3.8</td><td>63</td><td>217</td></tr>
+<tr><td>Parked vehicle in the path</td><td>Caution</td><td>4.5</td><td>64</td><td>217</td></tr>
+<tr><td>Plain wall and floor</td><td>Stop</td><td>4.8</td><td>63</td><td>233</td></tr>
+<tr><td>Garage porch, motorcycle at side</td><td>Path clear</td><td>3.7</td><td>66</td><td>261</td></tr>
+<tr><td><b>Mean</b></td><td></td><td><b>3.77</b></td><td><b>64.6</b></td><td><b>277</b></td></tr>
+</table>
+<p>The camera-to-answer time on the iPhone (217&ndash;372&nbsp;ms, mean 277&nbsp;ms) is about four times the loopback
+median of 67&nbsp;ms, because it includes JPEG encoding on the phone and the Wi-Fi transfer. All values are above the
+200&nbsp;ms frame interval, so the phone sends fewer frames than the 5 frames/s target; this is the main item to
+measure in the formal validation. The on-screen detector time is the server's per-frame figure and is not directly
+comparable with the 21.3&nbsp;ms detector-only benchmark.</p>
