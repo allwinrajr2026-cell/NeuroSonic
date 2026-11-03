@@ -1,0 +1,48 @@
+<div class="box"><p><b>Status.</b> The GitHub repository and the demonstration video have <b>not</b> been created yet:
+publishing them is the student's decision and, if a patent is planned, should wait for the IPR cell's advice (see the
+venue document). Fill in the two links below once they exist.</p></div>
+
+<h2>1. Links to Submit</h2>
+<table><tr><th>Item</th><th>Link</th></tr>
+<tr><td>GitHub repository (source code, tools, tests, results, documents)</td><td><span class="placeholder">https://github.com/&lt;user&gt;/NeuroSonic</span></td></tr>
+<tr><td>Dataset</td><td>Base-paper (WOAD) dataset: link to the authors' published Google Drive archive given in their repository; do not re-upload it. Project results: <code>outputs/</code> folder in the repository.</td></tr>
+<tr><td>Demonstration video (YouTube, unlisted, or Google Drive)</td><td><span class="placeholder">https://youtu.be/&hellip; or https://drive.google.com/&hellip;</span></td></tr>
+</table>
+
+<h2>2. What to Put in the Repository</h2>
+<table><tr><th>Include</th><th>Path in the project</th></tr>
+<tr><td>Application source</td><td><code>implementation/neurosonic/</code>, <code>implementation/web/</code>, <code>neurosonic_app.py</code></td></tr>
+<tr><td>Base-paper re-implementation</td><td><code>implementation/woad/</code>, <code>woad_detect.py</code>, <code>woad_replay.py</code></td></tr>
+<tr><td>Tools (benchmarks, evaluation, soak test, figures)</td><td><code>implementation/tools/</code></td></tr>
+<tr><td>Tests</td><td><code>implementation/tests/</code></td></tr>
+<tr><td>Result files</td><td><code>implementation/outputs/benchmarks/</code>, <code>implementation/outputs/eval/</code></td></tr>
+<tr><td>Documentation and publication package</td><td><code>implementation/docs/</code>, <code>PROJECT_DOCUMENTATION/</code>, <code>publication/</code>, <code>Assignment_Submission/</code></td></tr>
+<tr><td>Launch scripts and requirements</td><td><code>START_NEUROSONIC.ps1</code>, <code>STOP_NEUROSONIC.ps1</code>, <code>requirements.txt</code>, <code>README.md</code></td></tr>
+</table>
+<table><tr><th>Do NOT upload</th><th>Reason</th></tr>
+<tr><td><code>implementation/data/tls/</code> (especially <code>neurosonic-ca.key</code>, <code>server.key</code>)</td><td>private keys of the local certificate authority: anyone with them could impersonate the server to phones that trust it</td></tr>
+<tr><td><code>implementation/data/neurosonic.sqlite3</code>, <code>logs/</code></td><td>personal history and logs</td></tr>
+<tr><td>Any API key (<code>GEMINI_API_KEY</code>)</td><td>secret; it is read from the environment and is not in the code</td></tr>
+<tr><td><code>.venv</code>, <code>.venv-gpu</code>, <code>__pycache__</code>, <code>backups/</code></td><td>generated or private</td></tr>
+<tr><td>WOAD dataset and original repository copy</td><td>third-party data and code: link to the authors' release instead</td></tr>
+<tr><td>Model weights and voices (RF-DETR, SSDLite, Piper, Vosk, WOAD checkpoint)</td><td>large files with their own licences: document where to download them (the README already lists them)</td></tr>
+</table>
+<p>A suitable <code>.gitignore</code> therefore contains at least: <code>data/</code>, <code>logs/</code>,
+<code>.venv*/</code>, <code>__pycache__/</code>, <code>backups/</code>, <code>*.pth</code>, <code>*.pt</code>,
+<code>*.onnx</code>, <code>models/</code>, <code>weights/</code>, <code>*.sqlite3</code>, <code>*.key</code>. Licences of
+third-party components (GPL/AGPL voice components in particular) should be stated in the README.</p>
+
+<h2>3. Demonstration Video: Recording Plan</h2>
+<p>Target length 8&ndash;10 minutes; screen recording of the laptop plus, where possible, a phone recording. Speak over
+the video, or add captions. Do not show the API key, the private key files, or personal history.</p>
+<table><tr><th>Time</th><th>Shot</th><th>What to say / show</th></tr>
+<tr><td>0:00&ndash;0:45</td><td>Title slide (from <code>publication/NeuroSonic_Slides.pdf</code>)</td><td>problem, statistics, goal; "research prototype, not a safety device"</td></tr>
+<tr><td>0:45&ndash;2:15</td><td>Base paper</td><td>WOAD architecture; run the WOAD replay on a recorded sequence; show the equivalence result and the evaluation table (0.218 / 0.173); explain why a phone camera cannot drive it</td></tr>
+<tr><td>2:15&ndash;3:00</td><td>Launch</td><td>run <code>START_NEUROSONIC.ps1</code>; point out "RF-DETR &hellip; cuda (fp16), 200 ms" and the iPhone URL</td></tr>
+<tr><td>3:00&ndash;5:30</td><td>Walking-path awareness</td><td>on the iPhone (or the laptop browser with the demo clip): Start; "appears clear"; a person enters from the side &rarr; "Caution. A person is moving into your path from the left."; pan over a static scene &rarr; no event; cover the lens &rarr; "cannot clearly assess"</td></tr>
+<tr><td>5:30&ndash;7:00</td><td>Voice and navigation</td><td>push-to-talk "navigate to CMC Hospital"; confirm; offline route and spoken turn; disconnect the internet and repeat a function</td></tr>
+<tr><td>7:00&ndash;8:00</td><td>Results</td><td>detector comparison, FP16, CPU-thread fix, soak test figures</td></tr>
+<tr><td>8:00&ndash;9:00</td><td>Existing vs proposed</td><td>the A/B/C table from the demo document; pending iPhone and field tests</td></tr>
+</table>
+<p>Only footage that is actually recorded may be presented as such. If the iPhone is not used, say that the browser
+emulation and the composited demo clip are shown.</p>

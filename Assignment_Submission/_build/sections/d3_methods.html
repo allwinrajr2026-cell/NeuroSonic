@@ -1,0 +1,74 @@
+<h2>Methodology</h2>
+<h3>Detector selection</h3>
+<p>Four candidates were run through the same benchmark harness: the previous production detector
+SSDLite320-MobileNetV3-Large [[ssd,mbv3]] (torchvision), RF-DETR Nano [[rfdetr]] (rfdetr 1.11.2), and YOLO26n and
+YOLO26s [[yolo26]] (ultralytics 8.4.198, used for the benchmark only). All are trained on COCO [[coco]].</p>
+<ul>
+<li><strong>Quality</strong> was measured as person average precision with the same AP code used to evaluate WOAD, on
+365 near-infrared validation images containing 129 annotated people. These are the only locally available images
+with person boxes. They are not phone RGB images, so they <em>rank</em> the detectors but do not predict street
+performance. Precision and recall are also reported at the production confidence threshold of 0.40.</li>
+<li><strong>Latency</strong> was the mean over 200 (GPU) or 60 (CPU) recorded 640&times;480 frames, back to back, FP32,
+batch 1, after 10 warm-up frames.</li>
+<li><strong>Licence</strong> was a criterion because the system is a network service: AGPL-3.0 would oblige release of
+the source code to its users.</li>
+</ul>
+<h3>Detector runtime and fall-back</h3>
+<p>RF-DETR runs on CUDA from local weights; downloads are blocked at run time. Detections are restricted to 23
+obstacle-relevant COCO classes (e.g. person, bicycle, car, motorcycle, bus, truck, dog, cow, chair, bench, potted
+plant) at confidence &ge; 0.40. A wrapper falls back to SSDLite on the CPU if CUDA, the package or the weights are
+missing, if warm-up fails, or if a run-time inference fails, in which case the same frame is re-analysed by SSDLite.
+Three serving changes were made after measurement: PyTorch is limited to two CPU threads while the GPU detector is
+active; all inference runs on one long-lived worker thread rather than on the HTTP server's per-request threads; and
+RF-DETR runs in FP16 without graph compilation, with FP32 as automatic fall-back.</p>
+<h3>Camera motion estimation</h3>
+<p>Up to 150 Shi&ndash;Tomasi corners [[shitomasi]] are taken from a 320-pixel grey image, <em>outside</em> the
+detected boxes so that moving objects do not bias the estimate. They are followed into the next frame with pyramidal
+Lucas&ndash;Kanade optical flow [[lk,bouguet]], and a similarity transform (translation, scale, rotation) is fitted with
+RANSAC [[ransac]] using OpenCV [[opencv]]. With fewer than 12 corners or inliers the camera motion is marked
+"unknown". The transform <em>M</em> maps a point in the previous frame to where a static point would appear now.</p>
+<h3>Motion-compensated tracking</h3>
+<p>Each track's box is predicted by applying <em>M</em> to its last box. Association follows the two-stage idea of
+ByteTrack [[bytetrack]], in place of SORT's Kalman prediction [[sort]]:</p>
+<ul>
+<li>detections with confidence &ge; 0.55 are matched first, greedily by IoU, within each class;</li>
+<li>detections between 0.40 and 0.55 may only extend existing tracks;</li>
+<li>tracks end after three missed frames.</li>
+</ul>
+<p>Every update stores the object's displacement relative to the background, i.e. the observed displacement minus the
+displacement predicted from camera motion alone:</p>
+<p class="eq">&Delta;<sub>rel</sub> = c<sub>t</sub> &minus; M(c<sub>t&minus;1</sub>)</p>
+<p class="ni">where <em>c</em> is the box centre. A parked car seen while the user turns has &Delta;<sub>rel</sub>
+&asymp; 0, whereas a person stepping sideways has a large &Delta;<sub>rel</sub>.</p>
+<h3>Walking-path states and events</h3>
+<p>The walking path is a lower-central trapezoid of the image. Its state is CLEAR_VIEW, POSSIBLE_OBSTACLE,
+BLOCKED_VIEW, UNCERTAIN (dark or blurred frame) or CAMERA_UNAVAILABLE, confirmed over 2-of-3 or 3-of-3 frames before it
+is spoken, with chest-mounted and hand-held wording (e.g. "The visible path appears clear. Continue carefully.").
+Events are considered only for confirmed tracks (at least three updates over at least 0.4&nbsp;s) of people, vehicles
+or animals:</p>
+<ul>
+<li><em>Entering:</em> the object was outside the path at the start of a 1.5&nbsp;s window, overlaps it now, and moves
+towards it at &ge; 0.12 image widths per second relative to the background.</li>
+<li><em>Crossing:</em> the object's centre passes from below 35&nbsp;% to above 65&nbsp;% of the image width (or back)
+within 3&nbsp;s at &ge; 0.15 widths/s, with the bottom of its box in the lower half of the image.</li>
+</ul>
+<p>Nothing is announced while the camera shifts more than 6&nbsp;% of the width per frame, zooms more than 4&nbsp;%, or
+has no motion estimate; nothing is announced in BLOCKED_VIEW, UNCERTAIN or CAMERA_UNAVAILABLE; each track triggers at
+most one event; and events are at least 3&nbsp;s apart. An example message is "Caution. A person is moving into your
+path from the left." An "approaching" event was deliberately not implemented: with a moving camera, box growth is
+dominated by the user's own walking.</p>
+<h3>Speech, voice commands and routing</h3>
+<ul>
+<li><strong>Speech output:</strong> Piper [[piper]] (VITS-based [[vits]]) with the Indian-English voice
+<code>en_IN-spicor</code>; results are cached and delivered as WAV with HTTP range support (needed by iOS); the phone's
+own voice is the fall-back.</li>
+<li><strong>Voice commands:</strong> Vosk [[kaldi]] with the small Indian-English model, in two passes
+(grammar-constrained, then free), combined by an intent parser: navigate to, search, start/stop navigation, repeat,
+start/stop awareness, status, help, test voice. Spoken destinations are only proposed and confirmed by the user.</li>
+<li><strong>Routing:</strong> A* [[astar]] with a haversine heuristic on an OpenStreetMap [[osm]] extract of Vellore
+(31,439 path nodes, 813 named places). Turn instructions are spoken about 70&nbsp;m and 25&nbsp;m ahead; the route is
+recalculated after two consecutive off-route positions.</li>
+<li><strong>Optional cloud description:</strong> one photo to Gemini [[gemini]] after explicit consent, with a
+30&nbsp;s attempt timeout, a 45&nbsp;s budget and one retry for a quick "service unavailable"; while waiting, the phone
+says that local guidance continues.</li>
+</ul>

@@ -1,0 +1,13 @@
+/* Overrides for short form-style documents (IDF, demo, venues, links, checklist): no chapter pages. */
+body.form { font-size: 11.5pt; line-height: 1.4; }
+.doc-title { text-align: center; margin: 0 0 6mm; }
+.doc-title h1 { font-size: 18pt; margin: 0 0 2mm; line-height: 1.25; }
+.doc-title .meta { font-size: 10.5pt; color: #333; }
+body.form main h2 { break-before: auto; font-size: 14pt; margin: 7mm 0 2.5mm; counter-increment: none;
+                    border-bottom: .6pt solid #444; padding-bottom: 1mm; break-after: avoid; }
+body.form main h2::before, body.form main h3::before { content: none; }
+body.form main h3 { counter-increment: none; font-size: 12.5pt; }
+main h3.unnum::before { content: none; } main h3.unnum { counter-increment: none; }
+body.form table { font-size: 10pt; }
+body.form .refsec { break-before: auto; }
+body.form td code { word-break: break-all; font-size: 9pt; }

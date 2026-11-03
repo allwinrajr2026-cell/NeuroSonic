@@ -1,0 +1,128 @@
+{
+  "tool": "tools/evaluate.py",
+  "woad_version": "1.0.0",
+  "created": "2026-11-02 09:27:26",
+  "elapsed_s": 201.8,
+  "model": {
+    "weights": "F:\\Projects\\WOAD-Research\\implementation\\weights\\best.pt",
+    "sha256": "da043ff2e1edd393fcd329dddbac58676f1305c14f2eb084f928439d7950f8aa",
+    "names": [
+      "person",
+      "Ebike",
+      "Car"
+    ]
+  },
+  "dataset": {
+    "images": "F:\\Projects\\WOAD-Research\\datasets\\VOCdetiv_data\\VOCdevkit_nc_10\\images\\train",
+    "clouds": "F:\\Projects\\WOAD-Research\\datasets\\VOCdetiv_data\\VOCdevkit_nc_10\\clouds\\train",
+    "labels": "F:\\Projects\\WOAD-Research\\datasets\\VOCdetiv_data\\VOCdevkit_nc_10\\labels\\train",
+    "labels_sha256": "797df3f08352dcff10e24d566e449274161be44d90e630dedf058f1b0501e0df",
+    "dataset_names": [
+      "person",
+      "box",
+      "bike",
+      "Zebra crossing",
+      "Telegraph Pole",
+      "Door opened",
+      "Door closed",
+      "Building entrance",
+      "Traffic signs",
+      "Down stairs"
+    ],
+    "class_map": {
+      "0 (person)": "person"
+    }
+  },
+  "settings": {
+    "img_size": 640,
+    "conf_thres": 0.001,
+    "iou_thres": 0.6,
+    "max_det": 300,
+    "multi_label": true,
+    "precision": "fp32",
+    "device": "cpu",
+    "ap_method": "101-point interpolated (original utils/metrics.py)"
+  },
+  "environment": {
+    "python": "3.12.10",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.4",
+    "opencv": "5.0.0",
+    "platform": "Windows-11-10.0.26300-SP0"
+  },
+  "note": "",
+  "summary": {
+    "precision": 0.36106208767072256,
+    "recall": 0.19868995633187772,
+    "mAP50": 0.1731902742867334,
+    "mAP50_95": 0.050072587906643505,
+    "instances": 458,
+    "operating_conf": 0.32932932932932935
+  },
+  "per_class": [
+    {
+      "model_class": "person",
+      "dataset_class": 0,
+      "dataset_class_name": "person",
+      "instances": 458,
+      "precision": 0.36106208767072256,
+      "recall": 0.19868995633187772,
+      "AP50": 0.1731902742867334,
+      "AP50_95": 0.050072587906643505
+    }
+  ],
+  "data_report": {
+    "pairs": 1286,
+    "labels_without_image": [],
+    "images_without_label_file": [],
+    "excluded_images": {},
+    "images_evaluated": 1286,
+    "ignored_ground_truth_by_dataset_class": {
+      "1 (box)": 472,
+      "2 (bike)": 275,
+      "3 (Zebra crossing)": 146,
+      "4 (Telegraph Pole)": 471,
+      "5 (Door opened)": 71,
+      "6 (Door closed)": 79,
+      "7 (Building entrance)": 162,
+      "8 (Traffic signs)": 82
+    },
+    "forward_ms_per_image": 131.3
+  },
+  "confusion_matrix": {
+    "rows_predicted_cols_true": [
+      "person",
+      "Ebike",
+      "Car",
+      "background"
+    ],
+    "matrix": [
+      [
+        104,
+        0,
+        0,
+        9
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        345,
+        0,
+        0,
+        0
+      ]
+    ],
+    "conf": 0.25,
+    "iou": 0.45
+  }
+}

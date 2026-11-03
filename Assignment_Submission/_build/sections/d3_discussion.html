@@ -1,0 +1,58 @@
+<h2>Discussion</h2>
+<table id="t-obj"><caption>Objectives and their status</caption>
+<tr><th>Objective</th><th>Status</th><th>Evidence</th></tr>
+<tr><td>O1 real time</td><td>met on the laptop</td><td>4.91&ndash;4.97 frames/s; capture&rarr;answer median 67&nbsp;ms</td></tr>
+<tr><td>O2 detector</td><td>met within data limits</td><td>best AP and recall of four; SSDLite fall-back</td></tr>
+<tr><td>O3 motion</td><td>partly shown</td><td>synthetic-pan tests; composited clip</td></tr>
+<tr><td>O4 offline</td><td>met in automated tests</td><td>network blocked in-process and in Chrome</td></tr>
+<tr><td>O5 honesty</td><td>met</td><td>fixed vocabulary; wording filter; tests</td></tr>
+<tr><td>O6 verification</td><td>met for the laptop; field pending</td><td>204 tests, 7 browser tests, soak tests</td></tr>
+</table>
+<p><strong>Serving details mattered more than the detector's benchmark speed.</strong> A detector that takes 21&nbsp;ms
+back to back took several times longer at 5 frames/s, because of idle CPU threads, per-request threads and, above all,
+GPU clock scaling at low load. Benchmarks for assistive systems should therefore be run at the application's frame rate,
+not only back to back.</p>
+<p><strong>Motion without false alarms has a price.</strong> In tests with a synthetically panning camera, a static car
+gave no event while a person moving into the path did. But events need about one second of confirmation and are
+suppressed while the camera sways strongly, which can include normal walking with a hand-held phone. Missed events are
+therefore expected; this is acceptable only because the system supplements the cane.</p>
+<p><strong>Comparison with the base paper.</strong> WOAD reports field results with users and a custom device
+[[woad]]; NeuroSonic reports laptop and browser results with a phone-based design that any user with a phone and a
+laptop could run. The two are complementary: WOAD shows what dedicated depth hardware can achieve in the field, while
+NeuroSonic removes the hardware barrier and adds motion events, navigation and speech input, but has yet to be
+validated in the field.</p>
+
+<h2>Limitations and Pending Validation</h2>
+<ul>
+<li><strong>No iPhone or field validation yet.</strong> RF-DETR has not processed real iPhone frames; Wi-Fi latency,
+outdoor light, and use by visually impaired people are untested.</li>
+<li><strong>Proxy data.</strong> Detector quality was measured on near-infrared images with 129 people; live tests use a
+fake camera and a composited clip.</li>
+<li><strong>Scope.</strong> 23 COCO classes only: no steps, kerbs, holes, poles, walls or wet floors; no distance and no
+"approaching" alerts.</li>
+<li><strong>Dependence.</strong> The phone needs the laptop and local Wi-Fi; iOS Safari stops the camera when the screen
+locks; the GPU path needs an NVIDIA GPU.</li>
+<li><strong>Single machine.</strong> All timings come from one laptop and driver.</li>
+<li><strong>Cloud description.</strong> The single approved live request timed out; cloud quality and latency are
+unmeasured.</li>
+</ul>
+<table id="t-pending"><caption>Physical tests still required (validation protocol: 23 scenarios &times; 5 trials)</caption>
+<tr><th>#</th><th>Test</th><th>Measure</th></tr>
+<tr><td>1</td><td>RF-DETR on real iPhone frames</td><td>frames processed per client, detector in use</td></tr>
+<tr><td>2</td><td>Wi-Fi capture&rarr;answer latency</td><td>median / p90 ms</td></tr>
+<tr><td>3</td><td>iPhone audio, microphone, voice commands</td><td>playback, recognition success</td></tr>
+<tr><td>4</td><td>Real scenes with cane and sighted companion</td><td>events, misses, false alarms</td></tr>
+<tr><td>5</td><td>GPS route walk in Vellore</td><td>turn timing, re-routing</td></tr>
+<tr><td>6</td><td>Physically disconnected internet</td><td>all local functions</td></tr>
+<tr><td>7</td><td>Live cloud description (with approval)</td><td>latency, wording</td></tr>
+<tr><td>8</td><td>&ge; 1 h run over Wi-Fi</td><td>errors, memory, temperature</td></tr>
+</table>
+
+<h2>Conclusion</h2>
+<p>NeuroSonic shows that a consumer laptop GPU can give a browser-based phone client real-time, offline, spoken
+awareness of objects and of movement into the walking path, together with offline navigation and voice commands. In
+our tests it sustained about 5 frames/s and answered within roughly 50&ndash;100&nbsp;ms on the laptop. The general
+lessons are to measure at the application's frame rate, to constrain CPU threads when the GPU does the work, and to
+keep GPU work on one thread. The next step is not a new model but evidence: the iPhone and field protocol, followed by
+monocular depth for "approaching" alerts, ground-hazard data under open licences, and a native application with
+on-device inference that removes the laptop dependency. NeuroSonic is a research prototype and not a safety device.</p>

@@ -1,0 +1,84 @@
+<h2>Survey: Comparative Analysis of Existing Solutions (Publications)</h2>
+<h3>Method of the survey</h3>
+<p>Publications were selected to cover the main families of approaches: (i) review papers that map the field;
+(ii) wearable RGB-D or ToF systems with on-body or phone processing; (iii) robot guides; (iv) segmentation-based
+"walkable area" methods; and (v) the base paper. Each was checked against the publisher, PubMed Central or arXiv
+record. Where only the abstract was accessible, we report only what the abstract states and do not infer numbers.
+The comparison criteria are: <em>sensors</em>, <em>where the computation runs</em>, <em>perception method</em>,
+<em>user feedback</em>, <em>navigation support</em>, <em>evaluation</em>, and the <em>main limitation</em> relevant to a
+low-cost, phone-based system.</p>
+
+<h3>Review papers</h3>
+<p>Real and Araujo [[real2019]] review navigation systems for the blind from the first sonar-based ETAs and sensory
+substitution devices to smartphone, wearable and cloud-based designs. They identify recurring challenges: a
+heterogeneous user population, the limited bandwidth of hearing and touch, high cognitive load, poor acceptance of
+past devices, and a trade-off between positioning accuracy and infrastructure cost. Kuriakose, Shrestha and Sandnes
+[[kuriakose2020]] survey tools and technologies for navigation support and give design recommendations for future
+systems. Both reviews stress that technical performance alone does not guarantee adoption, which is why user-facing
+behaviour (what is said, when, and how reliably) is treated as a first-class requirement in this project.</p>
+
+<h3>Wearable depth-camera systems</h3>
+<p><strong>WOAD (base paper)</strong> [[woad]] is the most complete recent system. Self-developed glasses (about
+400&nbsp;g including an 80&nbsp;g battery) carry a Synexens CS30 sensor with a near-infrared camera and a ToF depth
+sensor (640&times;480, 0.1&ndash;5&nbsp;m). A depth-aided compression module, whose policy is learned with a discrete
+soft actor-critic reinforcement-learning agent [[dsac]], decides which frames to send and at what quality; it runs on
+a custom FPGA board. A smartphone (Samsung Galaxy S23 Ultra) runs a YOLOv5-based [[yolov5]] detector extended with a
+second input stream and transformer blocks [[transformer]] that fuse infrared and depth features ("cross-modal
+learning"). Alerts are spoken (attention/warning/danger) and given by three vibration motors that encode direction
+and distance. The authors report 100&nbsp;% collision avoidance in their indoor and outdoor scenarios, an end-to-end
+delay below 320&nbsp;ms, about 11&nbsp;h of operation, and a System Usability Scale score of 83.75 with twelve
+participants providing quantitative data [[woad]]. It needs the custom glasses and the CS30 sensor.</p>
+<p><strong>Bai et al.</strong> [[bai2019]] built a glasses-shaped travel aid with a consumer RGB-D camera and an
+inertial measurement unit. Ground segmentation separates the walkable ground from obstacles; a CNN on a smartphone
+classifies objects. The walkable direction is conveyed by beeps and object categories by speech. Twenty visually
+impaired participants navigated an office environment and avoided collisions; the abstract gives no quantitative
+accuracy or latency [[bai2019]]. <strong>Lin et al.</strong> [[lin2019]] combine an RGB-D wearable terminal, an
+earphone and a smartphone touch interface with a separate, powerful processor; a learned model predicts walkable
+instructions from RGB-D data and a semantic map. They report good results on indoor and outdoor datasets with
+low-lying obstacles and a user study, without numbers in the abstract.</p>
+<p><strong>Xu, Song and Wang</strong> [[xu2023]] present a head-mounted obstacle-avoidance wearable (an extended
+version of a 2023 conference paper). <strong>Tang et al.</strong> [[tang2025]] describe a human-centred wearable
+assistance system: an RGB-D camera on a 3D-printed glasses frame, ultrathin "artificial skins" with haptic actuators
+on the wrist and fingers, a bone-conduction earphone and smart insoles, with all computation local. It was tested
+with humanoid robots and with 20 visually impaired participants without prior experience of such systems; the
+authors argue that human adaptation has been under-considered in earlier systems [[tang2025]]. <strong>Yan et
+al.</strong> [[yan2025]] propose gait-based guidance using multimodal sensing and report better performance than a
+guide cane in indoor and outdoor experiments (preprint; no numbers in the abstract). <strong>AviPer</strong>
+[[aviper]] uses a visual-tactile multimodal attention network.</p>
+
+<h3>Robot guides and segmentation approaches</h3>
+<p><strong>CaBot</strong> [[cabot]] is a suitcase-shaped autonomous navigation robot that guides blind users to
+destinations in unfamiliar indoor environments while avoiding obstacles, with a vibro-tactile handle; it was evaluated
+with ten blind users. It moves the sensing burden from the person to a robot, at the cost of carrying a robot.
+<strong>Ghahremanians and Mahvash Mohammadi</strong> [[ghahr2025]] take a segmentation view: instead of detecting
+individual obstacles, a panoptic network finds the safe walking area and treats everything else as an obstacle. Their
+model reaches a panoptic quality of 37.6 on Cityscapes at about 4.3 frames/s (232&nbsp;ms) on an RTX&nbsp;4090,
+trained on a custom dataset that is not public.</p>
+
+<table id="t-pubs" class="wide"><caption>Comparative analysis of published solutions</caption>
+<tr><th>Work</th><th>Sensors</th><th>Compute</th><th>Perception</th><th>Feedback</th><th>Navigation</th><th>Evaluation (as reported)</th><th>Main limitation for a low-cost phone system</th></tr>
+<tr><td>WOAD [[woad]] (base)</td><td>NIR + ToF depth (CS30) on glasses</td><td>FPGA + smartphone</td><td>YOLOv5 + transformer cross-modal fusion</td><td>speech levels + 3 vibration motors</td><td>no route guidance</td><td>12 users; 100&nbsp;% avoidance; &lt;320&nbsp;ms; &asymp;11&nbsp;h</td><td>custom glasses and CS30 sensor required</td></tr>
+<tr><td>Bai et al. [[bai2019]]</td><td>RGB-D + IMU, glasses</td><td>smartphone</td><td>ground segmentation + CNN</td><td>beeps + speech</td><td>walkable direction</td><td>20 users, office</td><td>depth camera required</td></tr>
+<tr><td>Lin et al. [[lin2019]]</td><td>RGB-D wearable</td><td>separate processor + phone</td><td>learned walkable instructions, semantic map</td><td>earphone, touch</td><td>local instructions</td><td>datasets + user study</td><td>extra processor and depth camera</td></tr>
+<tr><td>Xu et al. [[xu2023]]</td><td>head-mounted sensors</td><td>wearable</td><td>obstacle detection</td><td>wearable alerts</td><td>&mdash;</td><td>see paper</td><td>dedicated device</td></tr>
+<tr><td>Tang et al. [[tang2025]]</td><td>RGB-D, artificial skins, insoles</td><td>local, on device</td><td>multimodal perception</td><td>bone conduction + haptics</td><td>guidance</td><td>robots + 20 users</td><td>several custom wearables</td></tr>
+<tr><td>CaBot [[cabot]]</td><td>robot sensors</td><td>robot</td><td>autonomous navigation</td><td>vibro-tactile handle</td><td>indoor destinations</td><td>10 blind users</td><td>robot must be carried; indoor</td></tr>
+<tr><td>Ghahremanians [[ghahr2025]]</td><td>camera (smart glasses)</td><td>desktop GPU</td><td>panoptic segmentation of walkable area</td><td>&mdash;</td><td>&mdash;</td><td>PQ 37.6; 232&nbsp;ms</td><td>no user study; dataset not public</td></tr>
+<tr><td><strong>NeuroSonic (this work)</strong></td><td>phone RGB camera, mic, GPS</td><td>laptop GPU over Wi-Fi</td><td>RF-DETR + motion-compensated tracking + events</td><td>neural speech</td><td>offline map + A* routing</td><td>laptop tests only (no users yet)</td><td>needs laptop; no depth; not field-validated</td></tr>
+</table>
+
+<h3>Observations</h3>
+<ul>
+<li><strong>Depth is the norm in research systems.</strong> Nearly all wearable systems above use RGB-D or ToF
+sensors, which measure distance directly. A phone RGB camera does not, so a phone-based system must either avoid
+distance claims or estimate depth by other means.</li>
+<li><strong>Custom hardware limits reach.</strong> Glasses, FPGAs, artificial skins and robots deliver strong results
+in studies but are not available to most users, especially in India.</li>
+<li><strong>Obstacle detection and navigation are rarely combined.</strong> Most systems focus on the next few metres;
+route guidance is handled separately (e.g. by phone map apps), if at all.</li>
+<li><strong>Motion semantics are under-explored.</strong> The surveyed detectors work frame by frame. Telling the user
+that a person is <em>moving into</em> the path, while not confusing this with the user's own walking, requires
+tracking and camera-motion compensation [[sort,bytetrack]].</li>
+<li><strong>Reproducibility is uneven.</strong> Several works report results on private datasets; we found in
+re-implementing the base paper that its published dataset differs from the one behind its reported accuracy (Review&nbsp;2).</li>
+</ul>

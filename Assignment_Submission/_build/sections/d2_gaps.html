@@ -1,0 +1,38 @@
+<h2>Cons of the Base Work and Gap Identification</h2>
+<p>The strengths of WOAD are real: an integrated hardware&ndash;software system, a principled two-modality detector,
+energy-aware compression, and an unusually thorough user study [[woad]]. The re-implementation also exposed
+weaknesses. We separate <em>cons</em> (properties of the base work) from <em>gaps</em> (what is missing for the
+target use: an ordinary phone, Indian streets, low cost, offline operation) and map each gap to a contribution.</p>
+<h3>Cons observed</h3>
+<ol>
+<li><strong>Hardware lock-in.</strong> The detector requires NIR images from the CS30 sensor and depth colour-mapped by
+the vendor SDK's own look-up table (not a standard colour map, and with undocumented range settings). An ordinary RGB
+camera cannot drive it: feeding RGB as "NIR" with a fake depth image is out of distribution, and our ablation shows
+that NIR carries most of the signal.</li>
+<li><strong>Reproducibility.</strong> The reported detector accuracy cannot be re-measured with the published data,
+the scripts did not run with current libraries, and the run's results files are missing.</li>
+<li><strong>Generalisation.</strong> On the published scenes, person AP@0.5 is 0.17&ndash;0.22; cyclists and distant
+people are mostly missed. For a warning system, low recall on people is a safety-relevant weakness.</li>
+<li><strong>Exposure sensitivity.</strong> Darker sensor recordings remove most detections.</li>
+<li><strong>Narrow class set.</strong> Three classes (person, Ebike, Car) in the released model.</li>
+<li><strong>No distance in the released detector code.</strong> The paper's device encodes distance in vibration, but
+the released detector outputs only class, box and confidence; distance would need the raw 16-bit depth, which the
+colourised image does not preserve.</li>
+<li><strong>Frame-by-frame semantics.</strong> The released detector code has no tracking, so it cannot distinguish an
+object moving into the path from the apparent motion caused by the wearer's own walking.</li>
+<li><strong>Obstacle-only.</strong> There is no route guidance or speech-command interface in the released code.</li>
+</ol>
+<table id="t-gaps" class="wide"><caption>Gap identification and the contribution that addresses each gap</caption>
+<tr><th>#</th><th>Gap</th><th>Evidence</th><th>Consequence</th><th>Proposed contribution</th></tr>
+<tr><td>G1</td><td>Needs a specific NIR + ToF sensor and custom glasses</td><td>model inputs; ablation (blank NIR &rarr; 0 detections)</td><td>unusable with a phone; costly</td><td>phone RGB camera as input; detector chosen for RGB</td></tr>
+<tr><td>G2</td><td>Reported accuracy not reproducible</td><td>dataset audit; missing run files</td><td>performance unknown</td><td>controlled benchmark of 4 detectors on the same annotated images</td></tr>
+<tr><td>G3</td><td>Low person recall on new scenes</td><td>AP@0.5 0.218 / 0.173</td><td>missed warnings</td><td>select by recall; temporal confirmation absorbs false positives</td></tr>
+<tr><td>G4</td><td>No motion semantics</td><td>frame-wise code</td><td>cannot warn "moving into path" reliably</td><td>camera-motion-compensated tracking; entering and crossing events</td></tr>
+<tr><td>G5</td><td>No distance in released code; risk of over-claiming</td><td>outputs: class, box, score</td><td>misleading messages possible</td><td>no distance or "safe" statements; walking-path states only</td></tr>
+<tr><td>G6</td><td>No navigation or voice interface</td><td>released code</td><td>user needs other apps</td><td>offline map, A* routing, spoken turns, offline voice commands</td></tr>
+<tr><td>G7</td><td>Dependence on custom FPGA and compression for latency</td><td>system design</td><td>hard to replicate</td><td>off-the-shelf laptop GPU over local Wi-Fi; latency measured at the real frame rate</td></tr>
+<tr><td>G8</td><td>Connectivity and privacy</td><td>cloud alternatives need internet</td><td>unreliable outdoors</td><td>all local functions offline; images never stored; cloud description opt-in</td></tr>
+</table>
+<p>Gaps G1 and G2 are decisive: they mean that the base model cannot be the live detector of a phone-based system.
+The proposed work therefore keeps WOAD as a verified research baseline and builds a new perception path for the phone
+camera, while addressing G3&ndash;G8 in the system design.</p>

@@ -1,0 +1,261 @@
+{
+ "environment": {
+  "python": "3.12.10",
+  "torch": "2.15.0+cu132",
+  "cuda_available": true,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "cpu": "AMD64 Family 25 Model 116 Stepping 1, AuthenticAMD",
+  "torch_threads": 8,
+  "nvidia_smi_used_mib_idle": 528,
+  "started": "2026-11-03 00:21:28"
+ },
+ "runs": [
+  {
+   "model": "ssdlite",
+   "name": "ssdlite320 (production)",
+   "input": "320 x 320 (torchvision internal resize)",
+   "device": "cpu",
+   "load_s": 0.2,
+   "speed": {
+    "frames": 60,
+    "frame_size": "640x480",
+    "latency_ms_mean": 43.7,
+    "latency_ms_median": 43.7,
+    "latency_ms_p90": 47.3,
+    "fps": 22.9,
+    "cpu_percent_of_one_core": 803.0,
+    "cpu_percent_of_all_cores": 50.2
+   }
+  },
+  {
+   "model": "ssdlite",
+   "name": "ssdlite320 (production)",
+   "input": "320 x 320 (torchvision internal resize)",
+   "device": "cuda",
+   "load_s": 0.2,
+   "speed": {
+    "frames": 200,
+    "frame_size": "640x480",
+    "latency_ms_mean": 42.3,
+    "latency_ms_median": 41.5,
+    "latency_ms_p90": 47.3,
+    "fps": 23.6,
+    "cpu_percent_of_one_core": 773.0,
+    "cpu_percent_of_all_cores": 48.3,
+    "gpu_peak_allocated_mib": 58.0,
+    "gpu_peak_reserved_mib": 140.0,
+    "nvidia_smi_used_mib_max": 763
+   },
+   "quality_vocdetiv_val": {
+    "images": 365,
+    "people": 129,
+    "person_AP50": 0.5418,
+    "person_AP50_95": 0.2078,
+    "precision_at_0.40": 0.6066,
+    "recall_at_0.40": 0.5736
+   },
+   "street_detections_ge_0.40": []
+  },
+  {
+   "model": "rfdetr-nano",
+   "name": "rf-detr-nano",
+   "input": "384 x 384 (package default)",
+   "device": "cpu",
+   "load_s": 6.7,
+   "speed": {
+    "frames": 60,
+    "frame_size": "640x480",
+    "latency_ms_mean": 121.9,
+    "latency_ms_median": 121.0,
+    "latency_ms_p90": 130.1,
+    "fps": 8.2,
+    "cpu_percent_of_one_core": 787.0,
+    "cpu_percent_of_all_cores": 49.2
+   }
+  },
+  {
+   "model": "rfdetr-nano",
+   "name": "rf-detr-nano",
+   "input": "384 x 384 (package default)",
+   "device": "cuda",
+   "load_s": 2.7,
+   "speed": {
+    "frames": 200,
+    "frame_size": "640x480",
+    "latency_ms_mean": 21.3,
+    "latency_ms_median": 20.6,
+    "latency_ms_p90": 25.7,
+    "fps": 47.0,
+    "cpu_percent_of_one_core": 775.0,
+    "cpu_percent_of_all_cores": 48.4,
+    "gpu_peak_allocated_mib": 144.0,
+    "gpu_peak_reserved_mib": 172.0,
+    "nvidia_smi_used_mib_max": 805
+   },
+   "quality_vocdetiv_val": {
+    "images": 365,
+    "people": 129,
+    "person_AP50": 0.6597,
+    "person_AP50_95": 0.3043,
+    "precision_at_0.40": 0.5875,
+    "recall_at_0.40": 0.7287
+   },
+   "street_detections_ge_0.40": [
+    {
+     "class": "motorcycle",
+     "confidence": 0.71,
+     "box": [
+      372,
+      433,
+      396,
+      467
+     ]
+    },
+    {
+     "class": "person",
+     "confidence": 0.66,
+     "box": [
+      373,
+      414,
+      398,
+      451
+     ]
+    },
+    {
+     "class": "motorcycle",
+     "confidence": 0.45,
+     "box": [
+      420,
+      411,
+      431,
+      434
+     ]
+    }
+   ]
+  },
+  {
+   "model": "yolo26n",
+   "name": "yolo26n",
+   "input": "640 (letterbox, package default)",
+   "device": "cpu",
+   "load_s": 22.9,
+   "speed": {
+    "frames": 60,
+    "frame_size": "640x480",
+    "latency_ms_mean": 27.8,
+    "latency_ms_median": 27.7,
+    "latency_ms_p90": 30.3,
+    "fps": 35.9,
+    "cpu_percent_of_one_core": 790.0,
+    "cpu_percent_of_all_cores": 49.4
+   }
+  },
+  {
+   "model": "yolo26n",
+   "name": "yolo26n",
+   "input": "640 (letterbox, package default)",
+   "device": "cuda",
+   "load_s": 0.0,
+   "speed": {
+    "frames": 200,
+    "frame_size": "640x480",
+    "latency_ms_mean": 12.4,
+    "latency_ms_median": 11.8,
+    "latency_ms_p90": 15.8,
+    "fps": 80.6,
+    "cpu_percent_of_one_core": 99.0,
+    "cpu_percent_of_all_cores": 6.2,
+    "gpu_peak_allocated_mib": 52.0,
+    "gpu_peak_reserved_mib": 68.0,
+    "nvidia_smi_used_mib_max": 701
+   },
+   "quality_vocdetiv_val": {
+    "images": 365,
+    "people": 129,
+    "person_AP50": 0.6187,
+    "person_AP50_95": 0.268,
+    "precision_at_0.40": 0.6328,
+    "recall_at_0.40": 0.6279
+   },
+   "street_detections_ge_0.40": [
+    {
+     "class": "person",
+     "confidence": 0.6,
+     "box": [
+      420,
+      408,
+      433,
+      433
+     ]
+    }
+   ]
+  },
+  {
+   "model": "yolo26s",
+   "name": "yolo26s",
+   "input": "640 (letterbox, package default)",
+   "device": "cpu",
+   "load_s": 23.9,
+   "speed": {
+    "frames": 60,
+    "frame_size": "640x480",
+    "latency_ms_mean": 57.5,
+    "latency_ms_median": 57.2,
+    "latency_ms_p90": 59.8,
+    "fps": 17.4,
+    "cpu_percent_of_one_core": 799.0,
+    "cpu_percent_of_all_cores": 50.0
+   }
+  },
+  {
+   "model": "yolo26s",
+   "name": "yolo26s",
+   "input": "640 (letterbox, package default)",
+   "device": "cuda",
+   "load_s": 0.0,
+   "speed": {
+    "frames": 200,
+    "frame_size": "640x480",
+    "latency_ms_mean": 11.8,
+    "latency_ms_median": 11.4,
+    "latency_ms_p90": 14.0,
+    "fps": 85.0,
+    "cpu_percent_of_one_core": 102.0,
+    "cpu_percent_of_all_cores": 6.4,
+    "gpu_peak_allocated_mib": 96.0,
+    "gpu_peak_reserved_mib": 124.0,
+    "nvidia_smi_used_mib_max": 757
+   },
+   "quality_vocdetiv_val": {
+    "images": 365,
+    "people": 129,
+    "person_AP50": 0.6279,
+    "person_AP50_95": 0.2924,
+    "precision_at_0.40": 0.6,
+    "recall_at_0.40": 0.6512
+   },
+   "street_detections_ge_0.40": [
+    {
+     "class": "motorcycle",
+     "confidence": 0.47,
+     "box": [
+      420,
+      409,
+      433,
+      434
+     ]
+    },
+    {
+     "class": "person",
+     "confidence": 0.44,
+     "box": [
+      374,
+      418,
+      398,
+      463
+     ]
+    }
+   ]
+  }
+ ]
+}

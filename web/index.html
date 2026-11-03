@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>NeuroSonic</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" aria-hidden="true">◉</span> NeuroSonic</div>
+  <div class="badges" aria-label="Status">
+    <span id="b-gps" class="badge">GPS off</span>
+    <span id="b-voice" class="badge">Voice</span>
+    <span id="b-det" class="badge">Server</span>
+    <span id="b-net" class="badge">…</span>
+  </div>
+</header>
+
+<div id="alert" class="alert" role="status" aria-live="assertive" aria-atomic="true">Ready. Tap Start to begin walking guidance.</div>
+
+<main>
+  <!-- ============ HOME / AWARENESS ============ -->
+  <section id="tab-detect" class="tab active" aria-label="Home: camera awareness">
+    <div id="a-state" class="pathstate idle">
+      <span id="a-state-title" class="ps-title">Awareness off</span>
+      <span id="a-state-sub" class="ps-sub">Press Start. The phone camera looks at the path ahead.</span>
+    </div>
+    <div class="camwrap">
+      <video id="a-video" playsinline muted aria-hidden="true"></video>
+      <canvas id="a-overlay" aria-hidden="true"></canvas>
+      <div id="a-camhint" class="camhint" aria-hidden="true">Camera off</div>
+    </div>
+    <div class="row2">
+      <button id="a-start" class="primary">▶ Start</button>
+      <button id="a-stop">■ Stop</button>
+    </div>
+    <div class="seg" role="radiogroup" aria-label="What to announce">
+      <button id="od-walk" role="radio" aria-checked="true">Walking guidance</button>
+      <button id="od-desc" role="radio" aria-checked="false">Object description</button>
+    </div>
+    <div class="statusline">
+      <span id="a-gps" class="pill">GPS off</span>
+      <span class="pill">Mode: <strong id="a-mode-label">chest</strong></span>
+      <span id="a-fps" class="pill">— fps</span>
+      <span id="a-det" class="pill" title="Which detector analyses the camera">Detector —</span>
+    </div>
+    <p id="a-status" class="hint" aria-live="polite">Camera awareness off.</p>
+    <div class="card scene" id="sc-card">
+      <div class="cardhead"><h3>Online scene description</h3><span id="sc-badge" class="pill">checking</span></div>
+      <div class="searchrow">
+        <input id="sc-q" type="search" maxlength="300" placeholder="Ask about the surroundings (optional)" aria-label="Question about the surroundings" autocomplete="off">
+        <button id="sc-go" class="primary">Describe</button>
+      </div>
+      <div id="sc-consent" class="consent" hidden>
+        <p><strong>Send a camera photo to an online AI service?</strong> When you tap Describe, one photo goes from the
+          laptop to Google's Gemini service, which returns a description. Nothing is sent automatically. Photos are not
+          saved by NeuroSonic. The description may be wrong and never confirms that a path is safe.</p>
+        <div class="row2"><button id="sc-allow" class="primary">Allow</button><button id="sc-deny">Not now</button></div>
+      </div>
+      <p id="sc-status" class="hint" aria-live="polite">Needs internet on the laptop and your permission. Local walking guidance does not need it.</p>
+    </div>
+    <ul id="a-dets" class="dets" aria-label="Objects in view"></ul>
+    <p class="note">Guidance uses a general object detector on the laptop. It cannot see steps, kerbs, holes, poles or
+      walls and gives <strong>no distances</strong>. Not a replacement for a cane, guide dog or human assistance.</p>
+  </section>
+
+  <!-- ============ NAVIGATE ============ -->
+  <section id="tab-nav" class="tab" aria-label="Navigate">
+    <div class="mapwrap">
+      <canvas id="m-canvas" class="mapcanvas" role="img" aria-label="Offline map. Spoken guidance does not need the map."></canvas>
+      <div class="mapctl">
+        <button id="m-zoom-in" aria-label="Zoom in">＋</button>
+        <button id="m-zoom-out" aria-label="Zoom out">－</button>
+        <button id="m-me" aria-label="Centre on my position">◎</button>
+        <button id="m-fit" aria-label="Show the whole map area">⤢</button>
+      </div>
+      <div id="m-coverage" class="mapnote" aria-live="polite"></div>
+    </div>
+
+    <div class="card">
+      <div class="cardhead"><h3>My location</h3><span id="g-badge" class="pill">off</span></div>
+      <div class="row2">
+        <button id="g-start" class="primary">📍 Start location</button>
+        <button id="g-stop">Stop</button>
+      </div>
+      <dl class="kv">
+        <dt>Position</dt><dd id="g-pos">—</dd>
+        <dt>Accuracy</dt><dd id="g-acc">—</dd>
+        <dt>Fix age</dt><dd id="g-age">—</dd>
+        <dt>Status</dt><dd id="g-status">Location off.</dd>
+      </dl>
+    </div>
+
+    <div class="card">
+      <h3>Destination</h3>
+      <div class="searchrow">
+        <input id="s-q" type="search" placeholder="CMC Hospital, Katpadi, VIT…" autocomplete="off" aria-label="Place or street">
+        <button id="s-go" class="primary">Search</button>
+      </div>
+      <ul id="s-results" class="results" aria-label="Search results"></ul>
+    </div>
+
+    <div class="card">
+      <div class="cardhead"><h3>Route</h3><span id="rt-badge" class="pill">no route</span></div>
+      <div id="r-summary" class="routesum" aria-live="polite">No route.</div>
+      <div id="rt-now" class="instr" aria-label="Current instruction">—</div>
+      <div class="row3">
+        <button id="rt-plan">Preview</button>
+        <button id="rt-start" class="primary">▶ Start</button>
+        <button id="rt-stop">■ Stop</button>
+      </div>
+      <details>
+        <summary>All steps</summary>
+        <ol id="rt-steps" class="steps"></ol>
+      </details>
+      <details>
+        <summary>Testing without walking (simulated position)</summary>
+        <p class="hint">Sets a <strong>simulated</strong> position (purple dot) instead of GPS, to try a route on the laptop.</p>
+        <div class="row3">
+          <button id="sim-here">Simulate at centre</button>
+          <button id="sim-step">Move 20 m</button>
+          <button id="sim-off">Real GPS</button>
+        </div>
+      </details>
+      <p class="note">Routes use OpenStreetMap street data only: no pavements, crossings, traffic or construction.
+        Many Vellore streets are unnamed. Routes have not been validated by walking them.</p>
+    </div>
+
+    <details class="card">
+      <summary>Saved places and coordinates</summary>
+      <label>Saved places <select id="p-list"><option value="">— choose —</option></select></label>
+      <label>…or coordinates <input id="p-coords" placeholder="12.9249, 79.1353" inputmode="decimal"></label>
+      <div class="row2">
+        <button id="p-go" class="primary">Guide me</button>
+        <button id="p-clear">Clear</button>
+      </div>
+      <label>Name to save <input id="p-name" maxlength="80" placeholder="Home"></label>
+      <div class="row3">
+        <button id="p-save-here">Save position</button>
+        <button id="p-save-coords">Save coords</button>
+        <button id="p-delete">Delete</button>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>Straight-line guidance (fallback)</summary>
+      <div id="n-big" class="routesum">No destination.</div>
+      <svg id="n-compass" viewBox="-50 -50 100 100" width="96" height="96" aria-hidden="true">
+        <circle r="46" class="ring"/><text y="-34" class="cardinal">N</text>
+        <g id="n-arrow"><polygon points="0,-38 7,-10 0,-16 -7,-10" class="arrow"/></g>
+      </svg>
+      <label class="check"><input id="n-speak" type="checkbox" checked> Speak guidance updates</label>
+      <p><a id="n-osm" href="#" target="_blank" rel="noopener" hidden>Open in OpenStreetMap (needs internet)</a></p>
+      <p class="note">Compass direction to the destination only (north is not your facing direction). Used when no
+        offline route exists, e.g. outside the map area.</p>
+    </details>
+    <p id="m-info" class="hint">Loading offline map…</p>
+  </section>
+
+  <!-- ============ HISTORY ============ -->
+  <section id="tab-hist" class="tab" aria-label="History">
+    <div class="cardhead"><h2>History</h2><span class="hint">stored on the laptop</span></div>
+    <div id="h-stats" class="stats"></div>
+    <div class="row2"><button id="h-refresh">Refresh</button><button id="h-clear">Clear history</button></div>
+    <ol id="h-list" class="history"></ol>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section id="tab-set" class="tab" aria-label="Settings">
+    <div class="card">
+      <h3>Voice</h3>
+      <button id="v-test" class="primary wide">🔊 Test Voice</button>
+      <div id="v-speaking" class="speaking" aria-live="polite">Not speaking.</div>
+      <p id="v-engine-status" class="hint">Checking voice engine…</p>
+      <p id="v-result" class="hint" aria-live="polite"></p>
+      <label>Voice engine
+        <select id="v-engine">
+          <option value="neural">Neural voice from the laptop (Indian English)</option>
+          <option value="browser">This device's built-in voice</option>
+        </select>
+      </label>
+      <label class="check"><input id="v-speech" type="checkbox" checked> Speak alerts</label>
+      <label class="check"><input id="v-beeps" type="checkbox" checked> Alert tones (left/right panned)</label>
+      <details>
+        <summary>Built-in voice (fallback)</summary>
+        <label>Voice <select id="v-voice"></select></label>
+        <label>Rate <input id="v-rate" type="range" min="0.6" max="1.6" step="0.1" value="1.0"></label>
+        <label>Volume <input id="v-vol" type="range" min="0.2" max="1" step="0.1" value="1"></label>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>Camera announcements</h3>
+      <label class="check"><input id="v-describe" type="checkbox"> Object Description</label>
+      <p class="hint">Off (default): <strong>Walking Guidance</strong>. Only changes in the path are spoken, such as
+        "Caution. An object is detected in the walking path." On: object names with left, centre or right are also
+        spoken, such as "Person on the left."</p>
+      <label>How is the phone carried?
+        <select id="v-mode">
+          <option value="chest">Chest-mounted, camera facing forward</option>
+          <option value="handheld">Handheld (camera direction changes)</option>
+        </select>
+      </label>
+      <p class="hint">Handheld messages speak about "the camera view", because the camera may not point where you walk.</p>
+    </div>
+
+    <div class="card">
+      <h3>Online scene description</h3>
+      <label class="check"><input id="v-cloud" type="checkbox"> Allow sending camera photos to the online AI service</label>
+      <p class="hint">Off until you allow it. Only when you tap <strong>Describe</strong> (or say "describe
+        surroundings") one photo is sent from the laptop to the online service (Google Gemini). NeuroSonic does not save
+        photos; only the spoken text appears in History. Needs internet on the laptop. Answers are AI-generated, can be
+        wrong, give no distances and never confirm that a path is safe. Local walking guidance works without it.</p>
+      <p id="v-cloud-status" class="hint">Checking…</p>
+    </div>
+
+    <div class="card">
+      <h3>Voice commands</h3>
+      <p id="vc-status" class="hint">Checking voice commands…</p>
+      <p class="hint">Tap <strong>🎤 Speak</strong>, then say "navigate to CMC hospital", "start navigation",
+        "stop navigation", "repeat instruction", "start awareness", "stop awareness", "status", "help", or, with
+        online description allowed, "describe surroundings" or a question such as "is there a bus stop".
+        Spoken place names are often misheard, so NeuroSonic says which place it chose and waits for
+        "start navigation".</p>
+    </div>
+
+    <div class="card">
+      <h3>Permissions</h3>
+      <dl class="kv">
+        <dt>Camera</dt><dd id="perm-cam">—</dd>
+        <dt>Microphone</dt><dd id="perm-mic">—</dd>
+        <dt>Location</dt><dd id="perm-loc">—</dd>
+      </dl>
+      <div class="row3">
+        <button id="perm-ask-cam">Allow camera</button>
+        <button id="perm-ask-mic">Allow mic</button>
+        <button id="perm-ask-loc">Allow location</button>
+      </div>
+      <p class="hint">If something was denied on iPhone: Settings › Apps › Safari › Camera / Microphone / Location,
+        or the "aA" menu › Website Settings. The page must be opened with the https:// address.</p>
+    </div>
+
+    <div class="card">
+      <h3>Offline status</h3>
+      <ul id="off-list" class="offlist"></ul>
+      <p class="hint">Walking guidance, voice commands, the neural voice, the map and routing need no internet, but
+        the phone <strong>depends on the laptop</strong> running NeuroSonic on the same Wi-Fi. If the laptop or Wi-Fi is
+        lost, these stop. Only the optional online scene description needs internet on the laptop.</p>
+    </div>
+
+    <div class="card">
+      <h3>Research tools</h3>
+      <p class="hint">WOAD recorded IR + depth replay, single image pair check, event-camera simulation.</p>
+      <button data-tab="tab-sim" class="wide">Open research tools</button>
+    </div>
+
+    <div class="card about">
+      <h3>About</h3>
+      <p>Assistive <strong>research prototype</strong>. It can miss obstacles and give false alarms. It does not detect
+        steps, poles, kerbs or holes, and it gives no distances.</p>
+      <p><strong>Not a replacement for a cane, guide dog or human assistance.</strong> No guarantee of safety.</p>
+      <p id="about-model" class="hint"></p>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section id="tab-how" class="tab" aria-label="How it works">
+    <h2>How NeuroSonic works</h2>
+    <div class="card flow" aria-label="Architecture">
+      <div class="fbox">📱 iPhone camera · microphone · GPS</div><div class="farrow" aria-hidden="true">↓</div>
+      <div class="fbox">NeuroSonic app (Safari page)</div><div class="farrow" aria-hidden="true">↓ local Wi-Fi</div>
+      <div class="fbox">💻 Local laptop server</div><div class="farrow" aria-hidden="true">↓</div>
+      <div class="fbox">Camera detection · speech recognition · routing</div><div class="farrow" aria-hidden="true">↓</div>
+      <div class="fbox accent">🔊 Voice feedback to the user</div>
+      <p class="hint">The phone is the eyes, ears and voice; the laptop is the brain. They must be on the same local
+        network. NeuroSonic is <strong>not</strong> a standalone iPhone app. Local guidance needs no internet; only the
+        optional online scene description does.</p>
+    </div>
+    <details class="card" open><summary>1. What is NeuroSonic?</summary>
+      <ul><li>A research prototype that helps a visually impaired person while walking.</li>
+        <li>It speaks short messages about the path ahead and gives walking directions.</li>
+        <li>It runs in Safari on the phone, connected to a laptop on the same Wi-Fi.</li></ul></details>
+    <details class="card"><summary>2. Why was it developed?</summary>
+      <ul><li>To study how cameras, speech and offline maps could support independent walking.</li>
+        <li>It builds on the WOAD research detector (infrared + depth images) and adds a practical phone app.</li>
+        <li>It is an aid to explore ideas, not a safety device.</li></ul></details>
+    <details class="card"><summary>3. How does camera awareness work?</summary>
+      <ul><li>About 2–3 times a second the phone sends a small camera picture to the laptop.</li>
+        <li>The lower middle of the picture is treated as the walking path.</li>
+        <li>If a recognised object is in that area in at least 2 of 3 pictures, you hear "Caution" or "Stop".</li>
+        <li>"Clear" is said only after 3 good pictures with nothing in the path area, and it always means
+          "nothing <em>recognised</em>", never "safe".</li>
+        <li>If the picture is too dark or blurred you hear "I cannot clearly assess the path".</li></ul></details>
+    <details class="card"><summary>4. How does object detection work?</summary>
+      <ul><li>A small neural network (SSDLite with MobileNetV3) finds common objects: people, vehicles, animals,
+          benches, chairs and others.</li>
+        <li>It draws a box around each one. The box tells left, centre or right, but <strong>not the distance</strong>.</li>
+        <li>It cannot see steps, kerbs, potholes, poles or walls.</li>
+        <li>The WOAD model needs a special infrared + depth sensor, so it is shown with recordings only.</li></ul></details>
+    <details class="card"><summary>5. How does offline voice recognition work?</summary>
+      <ul><li>Tap Speak and say a command. The phone records until you stop speaking.</li>
+        <li>The recording goes to the laptop, where Vosk (an offline speech recogniser) turns it into words.</li>
+        <li>Commands such as "start navigation" work well. Place names are harder, so the app says what it heard
+          and waits for you to confirm.</li></ul></details>
+    <details class="card"><summary>6. How does spoken feedback work?</summary>
+      <ul><li>The laptop creates speech with Piper, an offline neural voice (Indian English).</li>
+        <li>Messages have priorities: "Stop" warnings come first and can interrupt a direction.</li>
+        <li>Repeated messages are suppressed and old warnings are dropped, so you only hear what is current.</li>
+        <li>If the neural voice fails, the phone's own voice is used.</li></ul></details>
+    <details class="card"><summary>7. How does the offline Vellore map work?</summary>
+      <ul><li>Streets and places around Vellore were downloaded once from OpenStreetMap and stored on the laptop.</li>
+        <li>Search and routes work without internet. The map is drawn by the app itself; no map tiles are loaded.</li>
+        <li>Outside the map area there are no offline routes.</li></ul></details>
+    <details class="card"><summary>8. How does GPS navigation work?</summary>
+      <ul><li>The phone's GPS gives your position and its accuracy.</li>
+        <li>The laptop finds a walking route along streets (A* search).</li>
+        <li>As you walk, the app announces turns about 70 m and 25 m before them.</li>
+        <li>If you are clearly off the route twice in a row, it recalculates. If GPS is lost or inaccurate,
+          guidance pauses and tells you.</li>
+        <li>GPS is often 5–20 m off, so directions are approximate.</li></ul></details>
+    <details class="card"><summary>9. Walking Guidance vs Object Description</summary>
+      <ul><li><strong>Walking Guidance</strong> (default): only the path state is spoken — clear, caution, stop,
+          uncertain or camera unavailable — and only when it changes.</li>
+        <li><strong>Object Description</strong>: additionally names objects with their side, e.g. "Car on the
+          right". It is more talkative.</li></ul></details>
+    <details class="card"><summary>10. Current limitations</summary>
+      <ul><li>Not tested yet on a real iPhone while walking, or outdoors with real GPS.</li>
+        <li>Needs the laptop and Wi-Fi; stops if the connection is lost. iPhone pauses web pages when the screen locks.</li>
+        <li>No distances. No detection of steps, kerbs, holes, poles or walls. Objects can be missed or invented.</li>
+        <li>Map data is incomplete; routes do not know pavements or crossings.</li>
+        <li>Not a replacement for a cane, guide dog or human assistance.</li></ul></details>
+    <details class="card"><summary>11. Online scene description (optional)</summary>
+      <ul><li>Tap Describe, or say "describe surroundings", to get a spoken description of one camera photo.</li>
+        <li>You can also type or say a question, such as "Is there a bus stop?".</li>
+        <li>The laptop sends that one photo to an online AI service (Google Gemini) and reads the answer aloud.</li>
+        <li>It is off until you allow it, needs internet on the laptop, and can be slow or unavailable.</li>
+        <li>The answer can be wrong. It never confirms that a path is safe, and walking guidance keeps working
+          without it.</li></ul></details>
+  </section>
+
+  <!-- ============ RESEARCH TOOLS (opened from Settings) ============ -->
+  <section id="tab-sim" class="tab" aria-label="Research tools">
+    <div class="cardhead"><h2>Research tools</h2><button data-tab="tab-set" class="small">‹ Back</button></div>
+    <div class="card">
+      <h3>WOAD replay <small>recorded IR + depth</small></h3>
+      <p class="hint">Plays recorded IR + depth frames through the WOAD detector and alert engine. A live CS30 sensor is not connected.</p>
+      <div class="row2">
+        <label>Data set <select id="r-set"></select></label>
+        <label>Speed <select id="r-fps"><option value="2">2 fps</option><option value="4" selected>4 fps</option><option value="6">6 fps</option></select></label>
+      </div>
+      <p id="r-desc" class="hint"></p>
+      <div class="row2">
+        <button id="r-start" class="primary">▶ Start</button>
+        <button id="r-stop">■ Stop</button>
+      </div>
+      <figure class="frame"><img id="r-img" alt="Latest replay frame with detections (IR left, depth right)"><figcaption id="r-cap">No frame yet.</figcaption></figure>
+      <div id="r-quality" class="quality"></div>
+      <ul id="r-dets" class="dets" aria-label="Current detections"></ul>
+    </div>
+    <details class="card">
+      <summary>Check one image pair (WOAD)</summary>
+      <label>IR image <input id="u-ir" type="file" accept="image/png,image/jpeg"></label>
+      <label>Depth image <input id="u-depth" type="file" accept="image/png,image/jpeg"></label>
+      <button id="u-go" class="primary wide">Detect</button>
+      <figure class="frame"><img id="u-img" alt="Uploaded pair with detections"><figcaption id="u-cap"></figcaption></figure>
+      <ul id="u-dets" class="dets"></ul>
+    </details>
+    <details class="card" id="sim-card">
+      <summary>Event-camera simulation (motion only)</summary>
+      <p class="note">Demonstration only: reports where the image changes, like a simplified event camera. Not WOAD and
+        not obstacle detection. Frames stay in the browser.</p>
+      <div class="row2">
+        <button id="s-start" class="primary">🎥 Start camera</button>
+        <button id="s-stop">Stop</button>
+      </div>
+      <label>Sensitivity <input id="s-th" type="range" min="8" max="60" value="25"> <span id="s-th-v">25</span></label>
+      <div class="sim">
+        <video id="s-video" playsinline muted aria-label="Camera preview"></video>
+        <canvas id="s-canvas" width="160" height="120" aria-label="Event image: green brighter, red darker"></canvas>
+      </div>
+      <div class="meters" aria-label="Motion per region">
+        <div><span>Left</span><meter id="m-0" min="0" max="0.3"></meter></div>
+        <div><span>Ahead</span><meter id="m-1" min="0" max="0.3"></meter></div>
+        <div><span>Right</span><meter id="m-2" min="0" max="0.3"></meter></div>
+      </div>
+      <p id="s-status" class="hint">Camera off.</p>
+    </details>
+  </section>
+</main>
+
+<div id="mic-status" class="micstatus" aria-live="polite">Voice commands</div>
+<nav class="tabs" aria-label="Screens">
+  <button id="t-detect" data-tab="tab-detect" aria-current="page"><span class="ic" aria-hidden="true">👁</span><span>Home</span></button>
+  <button id="t-nav" data-tab="tab-nav"><span class="ic" aria-hidden="true">🧭</span><span>Navigate</span></button>
+  <button id="mic" class="mic" aria-label="Speak a voice command"><span class="ic" aria-hidden="true">🎤</span><span class="miclabel">Speak</span></button>
+  <button id="t-hist" data-tab="tab-hist"><span class="ic" aria-hidden="true">🕘</span><span>History</span></button>
+  <button id="t-set" data-tab="tab-set"><span class="ic" aria-hidden="true">⚙</span><span>Settings</span></button>
+  <button id="t-how" data-tab="tab-how"><span class="ic" aria-hidden="true">ⓘ</span><span>How it works</span></button>
+</nav>
+<script type="module" src="/js/app.js"></script>
+<script>
+  // Start-up check (classic script, runs even where ES modules fail): if the app did not initialise,
+  // say so instead of leaving a page that looks idle.
+  setTimeout(function () {
+    if (!window.neurosonic) {
+      var el = document.getElementById("alert");
+      el.className = "alert system";
+      el.textContent = "NeuroSonic could not start in this browser (scripts did not load). " +
+        "Update iOS/Chrome, reload, or open the page in Safari.";
+    }
+  }, 6000);
+</script>
+<noscript><p class="alert system">NeuroSonic needs JavaScript.</p></noscript>
+</body>
+</html>

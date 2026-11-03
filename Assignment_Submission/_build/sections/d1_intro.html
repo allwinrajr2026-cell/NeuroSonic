@@ -1,0 +1,48 @@
+<h2>Introduction: Domain and Field of Work</h2>
+<p>This work belongs to <em>assistive technology for people with visual impairment</em>, and within it to the
+sub-field of <em>electronic travel aids</em> (ETAs) and <em>navigation aids</em>. An ETA is a device that senses the
+environment ahead of a pedestrian and turns that information into a signal the person can hear or feel. A navigation
+aid tells the person where they are and which way to turn to reach a destination. The two needs are related but
+different: the first is about the next few metres and the next few seconds, the second about the whole journey
+[[real2019,kuriakose2020]].</p>
+<p>For decades the white cane and the guide dog have been the primary mobility aids. The cane is cheap, reliable,
+and gives immediate physical feedback about the ground, but its range is roughly the length of the cane, it does not
+detect obstacles at head or chest height, and it does not tell the user what an object is or whether it is moving.
+Guide dogs address some of these limits but are scarce and costly to train. The base paper of this project reports
+that, in its own trials, users with a white cane avoided only about a quarter of suddenly appearing indoor obstacles,
+and about 40&nbsp;% of fast-moving cars at night [[woad]]. These figures come from a specific experimental set-up, but
+they illustrate why supplementary sensing is studied at all.</p>
+<p>The field draws on several engineering disciplines at once:</p>
+<ul>
+<li><strong>Sensing:</strong> ultrasonic range finders, infrared and time-of-flight (ToF) depth cameras, ordinary
+RGB cameras, inertial sensors and satellite positioning (GNSS/GPS) [[real2019]].</li>
+<li><strong>Perception:</strong> object detection, semantic and panoptic segmentation, tracking and scene description,
+today dominated by deep neural networks [[yolo,detr,ghahr2025]].</li>
+<li><strong>Human&ndash;computer interaction:</strong> how to present information through hearing (speech, spatial audio,
+tones) or touch (vibration, braille) without overloading a sense that the user already relies on to move safely
+[[real2019,tang2025]].</li>
+<li><strong>Embedded and edge computing:</strong> running perception within the power, weight, latency and cost limits
+of a wearable or a phone, sometimes with dedicated hardware such as FPGAs [[woad]].</li>
+<li><strong>Navigation:</strong> maps, routing and localisation, both outdoors (GNSS) and indoors (beacons, visual
+odometry) [[pat_aph,pat_brown]].</li>
+</ul>
+<p>Over the last decade, three changes have reshaped the field. First, deep-learning detectors made it possible to
+recognise many object classes in real time on modest hardware [[yolo,ssd,mbv3]]. Second, smartphones became
+capable sensing and computing platforms that most users already carry, which lowers the cost and the social stigma of a
+dedicated device [[kuriakose2020]]. Third, large vision-language models have made free-form scene description
+available as a cloud service, which is now offered in consumer apps for blind users [[p_perkins]].</p>
+<p>The present project is called <strong>NeuroSonic</strong>. It started from the base paper <em>WOAD: a wearable
+obstacle avoidance device for visually impaired individuals with cross-modal learning</em>, published in
+<em>Nature Communications</em> in 2025 [[woad]]. WOAD combines self-developed glasses with a near-infrared camera and a
+ToF depth sensor, a reinforcement-learning video compression module, an FPGA, and a smartphone that runs a
+cross-modal (infrared + depth) obstacle detector. NeuroSonic re-implements and evaluates the WOAD detector, identifies
+the gaps that prevent it from being used with ordinary phones, and proposes and implements a phone-camera system with
+spoken guidance that runs offline on a laptop. This first review covers the domain, the size of the problem, and a
+comparative survey of publications, patents and products, followed by the technology trends that shape the proposed
+work.</p>
+<p>The scope of this survey is deliberately bounded. It covers systems that sense the environment in front of a
+walking person and communicate with the person in real time, plus the navigation aids they are combined with. It
+does not cover reading aids (text recognition for documents) except where they are part of the same product, and it
+does not cover medical treatment of vision loss. The patents and products listed are those that could be verified
+from primary pages (patent office records, publisher pages, manufacturer or established-retailer pages); they are a
+sample of the field, not an exhaustive census.</p>

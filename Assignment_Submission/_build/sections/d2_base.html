@@ -1,0 +1,48 @@
+<h2>The Base Paper: WOAD</h2>
+<h3>System overview</h3>
+<p>WOAD addresses a stated tension: wearable obstacle-avoidance devices find it hard to be reliable, responsive,
+long-lasting and usable at the same time [[woad]]. Its answer has four parts.</p>
+<ul>
+<li><strong>Sensing glasses.</strong> Self-developed glasses of about 400&nbsp;g, including an 80&nbsp;g battery, carry
+a Synexens CS30 RGB-ToF module. Its near-infrared (NIR) camera and ToF depth sensor share a 100&deg;&times;75&deg; field
+of view at 640&times;480 pixels; depth is measured from 0.1 to 5&nbsp;m.</li>
+<li><strong>Depth-aided compression.</strong> To reduce transmission delay to the phone, a reinforcement-learning
+agent (discrete soft actor-critic [[dsac]]) uses obstacle status from consecutive depth frames to decide whether to
+send a frame and at what quality. The authors report a compression ratio above 95&nbsp;%.</li>
+<li><strong>FPGA.</strong> The compression policy runs on a custom 28&nbsp;nm board with a multi-float-point vector
+streaming architecture; the authors report a latency of 0.095&nbsp;ms and over 50&nbsp;% lower power than their
+reference.</li>
+<li><strong>Cross-modal detector on the phone.</strong> A Samsung Galaxy S23 Ultra runs a TensorFlow Lite version
+of a YOLOv5-based detector [[yolov5]] with two input streams (NIR and colour-mapped depth) fused by transformer
+blocks [[transformer]]. Alerts are spoken at three hazard levels (attention, warning, danger), and three vibration
+motors on the forehead and temples indicate direction; the vibration frequency encodes distance (200&nbsp;Hz below
+3&nbsp;m, 150&nbsp;Hz above).</li>
+</ul>
+<h3>Detector architecture</h3>
+<p>{{f-arch}} shows the detector as we verified it on the released checkpoint (run <code>exp72</code>). The NIR image
+passes through the first three YOLOv5s layers and the depth image through a separate stem of the same structure, each
+producing a 64&times;160&times;160 feature map. Both are scaled by a fixed 0.5 gate, average-pooled to 8&times;8, and
+flattened into 128 tokens of 64 dimensions with a learned positional embedding. Eight transformer blocks with eight
+attention heads let every NIR token attend to every depth token. The output tokens are reshaped, upsampled, and used to
+re-weight each stream's features; the streams are concatenated, fused by a convolution, and passed through the
+standard YOLOv5s backbone, PAN neck and detection head, which outputs 25,200 candidate boxes for three classes
+(person, Ebike, Car). The checkpoint has 7,521,992 parameters (the paper reports 7,497,914 for its model [[woad]]; the
+small difference may come from a different training run or from counting, and does not affect the analysis).</p>
+<figure id="f-arch" class="wide"><img src="fig:figF_woad_arch.png" alt="WOAD two-stream architecture block diagram">
+<figcaption>WOAD cross-modal detector as verified on the released exp72 checkpoint: two input streams (near-infrared
+and colour-mapped depth), transformer fusion of 128 tokens, and a YOLOv5s detection network.</figcaption></figure>
+<h3>Results reported by the authors</h3>
+<table id="t-claims"><caption>Results reported in the base paper [[woad]] (not measured by us)</caption>
+<tr><th>Measure</th><th>Reported value</th></tr>
+<tr><td>Collision avoidance, all scenarios</td><td>100&nbsp;%</td></tr>
+<tr><td>White cane, sudden indoor obstacles / fast cars at night</td><td>&asymp; 26&nbsp;% / &asymp; 40&nbsp;%</td></tr>
+<tr><td>End-to-end delay</td><td>&lt; 320&nbsp;ms</td></tr>
+<tr><td>Operating duration; power</td><td>&asymp; 11&nbsp;h; &le; 4&nbsp;W</td></tr>
+<tr><td>System Usability Scale (WOAD vs cane)</td><td>83.75 &plusmn; 7.79 vs 80 &plusmn; 22.36</td></tr>
+<tr><td>Participants</td><td>20 (12 quantitative over seven months, 8 survey)</td></tr>
+<tr><td>Detector mAP@0.5 (training plot of the released run)</td><td>0.669 (person 0.771, Ebike 0.839, Car 0.395)</td></tr>
+</table>
+<p>The authors also note limitations: occasional false alerts from shadows or snowflakes, concern that the glasses
+attract attention, and the need for a training period [[woad]]. The detector accuracy in the last row of
+{{t-claims}} is not stated in the main text of the paper; it is read from the precision&ndash;recall plot saved with the
+released training run, and it is the figure we attempted to reproduce.</p>

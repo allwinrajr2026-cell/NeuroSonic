@@ -1,0 +1,82 @@
+<h2>Reproduction Procedure and Repository Audit</h2>
+<h3>Components of the released work</h3>
+<table id="t-repo" class="wide"><caption>Components of the base paper's public release and their state when received</caption>
+<tr><th>Component</th><th>Content</th><th>State when received</th><th>Used here</th></tr>
+<tr><td>Cross-modal detector</td><td>YOLOv5s-based two-stream network with transformer fusion; run exp72; classes person, Ebike, Car</td><td>checkpoint present; train/val/detect scripts broken with current libraries</td><td>yes: re-implemented for inference</td></tr>
+<tr><td>Reported accuracy</td><td>mAP@0.5 0.669 in a training plot</td><td>no results file; empty TensorBoard log</td><td>attempted reproduction</td></tr>
+<tr><td>Published dataset</td><td><code>VOCdetiv_data.rar</code>, NIR + depth, nc_4 to nc_10</td><td>intact, but a different dataset from exp72</td><td>yes: cross-dataset evaluation</td></tr>
+<tr><td>Data collection</td><td>CS30 SDK binaries, capture program</td><td>no capture source code</td><td>only the colour-map finding</td></tr>
+<tr><td>RL compression</td><td>D-SAC training scripts</td><td>data link returns HTTP 404</td><td>no</td></tr>
+<tr><td>FPGA</td><td>Vivado project for the policy network</td><td>not inspected in depth</td><td>no</td></tr>
+<tr><td>Smartphone</td><td>Android application</td><td>inspected by archive index; per the project's audit it ships a stock COCO TFLite model</td><td>no</td></tr>
+</table>
+<h3>Procedure</h3>
+<ol>
+<li><strong>Isolate the original.</strong> The original repository was copied read-only; no file in it was changed,
+so every comparison is against the authors' code as published.</li>
+<li><strong>Identify the checkpoint.</strong> The exp72 checkpoint was hashed (SHA-256 prefix <code>da043ff2</code>),
+its module tree listed and its dimensions read: eight transformer blocks, eight heads, model width 64, positional
+embedding 1&times;128&times;64, 7,521,992 parameters.</li>
+<li><strong>Re-implement inference.</strong> Loader, preprocessing, non-maximum suppression and coordinate scaling were
+written as a standalone package with the original numerical behaviour.</li>
+<li><strong>Prove equivalence.</strong> The original model code and the re-implementation were run in separate
+processes on identical seeded inputs; the outputs were identical.</li>
+<li><strong>Test that the inputs matter.</strong> Input swapping and blanking (ablation) and deliberate preprocessing
+faults were added as automated tests.</li>
+<li><strong>Audit the data.</strong> The published archive was downloaded and verified; classes, counts, duplicates and
+frame identity against the run's validation set were checked; the other download links were inspected through their
+archive indexes.</li>
+<li><strong>Evaluate.</strong> Person AP was computed with the original matching and AP code, verified to be numerically
+identical to the original on random data.</li>
+<li><strong>Probe the live-input path.</strong> A raw sensor recording was compared with the training-like data, and
+the effect of brightness on detections was measured.</li>
+</ol>
+<h3>Download links</h3>
+<p>Nine Google Drive links are listed in the repository. File names, sizes and dates were read with HTTP HEAD
+requests, and archive contents from each RAR5 archive's index with a few small HTTP range requests (validated by
+listing the downloaded dataset and comparing all 9,370 file sizes). The code bundle (1.70&nbsp;GB) contains the YOLOv5
+code, a third checkpoint of a different size, and the same images with labels only inside training caches. Two archives
+hold unlabelled NIR + depth sequences (600 and 501 frames), which are useful for qualitative replay. One archive holds
+the SDK binaries, others hold Android build files, the RL project and the FPGA files. One link is dead (HTTP 404). No
+link contains the labelled person/Ebike/Car data of the reported run.</p>
+
+<h2>Threats to Validity of the Re-implementation</h2>
+<ul>
+<li><strong>Numerical precision.</strong> We evaluated in FP32 on the CPU; the original validation used FP16 on CUDA.
+The effect is expected to be negligible but was not measured.</li>
+<li><strong>Different data.</strong> The measured AP is cross-dataset. It shows weak generalisation to the published
+scenes, not an error in the authors' own validation. Whether some published images were in the run's
+<em>training</em> data cannot be checked; the low scores make large overlap unlikely.</li>
+<li><strong>Metric quirks of the original code.</strong> A perfect detector scores 0.995, not 1.0, with the original AP
+interpolation; and in the original confusion analysis unmatched detections are counted only in images that also
+contain a match, so false positives are under-stated. We kept these behaviours deliberately, to stay comparable.</li>
+<li><strong>Class mapping.</strong> Only person is semantically shared. Bicycles scored as "Ebike" (AP &asymp; 0) are
+reported only as an exploratory observation.</li>
+<li><strong>Label anomalies.</strong> One orphan label and 53 file names reused across splits with different pixels;
+no image was excluded, following the original label rules.</li>
+</ul>
+
+<h2>Building on the Base Model: Alert Engine and Input-Quality Gate</h2>
+<p>To turn per-frame detections of the base model into spoken alerts for recorded sensor data, an alert engine and an
+input-quality gate were implemented around it. They are retained in the final system as its research "replay"
+path.</p>
+<table id="t-alertcfg"><caption>Alert-engine and quality-gate parameters (defaults)</caption>
+<tr><th>Parameter</th><th class="n">Value</th></tr>
+<tr><td>Alert confidence threshold</td><td class="n">0.40</td></tr>
+<tr><td>Confirmation: hits within window</td><td class="n">2 of 3 frames</td></tr>
+<tr><td>Track association IoU</td><td class="n">0.30</td></tr>
+<tr><td>Cool-down / repeat interval</td><td class="n">5 s / 15 s</td></tr>
+<tr><td>Max. object alerts per frame</td><td class="n">2</td></tr>
+<tr><td>Position bands (left / ahead / right)</td><td class="n">&lt;1/3, 1/3&ndash;2/3, &gt;2/3</td></tr>
+<tr><td>Class priority</td><td class="n">Car &gt; E-bike &gt; person</td></tr>
+<tr><td>Quality "warn": NIR mean / std below</td><td class="n">100 / 40</td></tr>
+<tr><td>Quality "unusable": NIR mean / std below</td><td class="n">40 / 10</td></tr>
+<tr><td>Quality "unusable": invalid depth above</td><td class="n">95&nbsp;%</td></tr>
+</table>
+<p>The engine confirms an object when it is seen in two of three consecutive frames, groups objects of the same class
+and position into one message (e.g. "Person detected ahead."), orders messages by class priority and box size, applies
+cool-downs, and announces when detection becomes unavailable or resumes. The quality gate compares each frame's NIR
+brightness and contrast and the fraction of invalid depth pixels with thresholds derived from the brightness
+experiment, and it withholds object alerts from "unusable" frames instead of speaking possibly meaningless
+detections. Both components are covered by automated tests. Their design principles (temporal confirmation,
+position words instead of distances, explicit "unavailable" messages) carried over into the phone-camera system.</p>

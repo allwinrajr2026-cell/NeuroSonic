@@ -1,0 +1,106 @@
+<h2>Re-implementation of the Base Paper</h2>
+<h3>What was released, and its state</h3>
+<p>The public repository contains five parts: data collection with the CS30 SDK, the reinforcement-learning
+compression, the FPGA design, the smartphone deployment, and the cross-modal detector with its training run
+<code>exp72</code>. Code and data are distributed through nine Google Drive links. We inspected the detector code, the
+checkpoint and the published dataset in detail and, for the other links, read the archive indexes without
+downloading the whole archives.</p>
+<p>The detector scripts did not run with current libraries. We found:</p>
+<ul>
+<li>the training, validation and detection scripts call the model with one concatenated input, whereas its forward
+function expects two separate tensors (NIR and depth);</li>
+<li>use of NumPy aliases that have been removed (<code>np.int</code>) and of PyTorch loading defaults that have
+changed;</li>
+<li>a missing <code>clouddir</code> argument in one code path, and a detection script that exits before non-maximum
+suppression;</li>
+<li>no saved results file and an empty TensorBoard log for the reported run; only the training plots remain.</li>
+</ul>
+<p>Modifying the original repository would have made comparison impossible, so it was left untouched and a separate,
+standalone inference package was written.</p>
+
+<h3>Faithful re-implementation</h3>
+<p>The package (<code>woad/</code>) has three parts. A <em>loader</em> reads the pickled checkpoint by temporarily
+mapping the original module names to vendored copies of the nine classes the checkpoint needs. It checks the
+file's SHA-256 hash and the module tree, and it refuses a second, incompatible five-class checkpoint found at the
+repository root. A <em>preprocessing</em> module reproduces the original validation pipeline: the NIR image is resized
+so that its long side is 640 pixels (area interpolation) and letter-boxed to 640&times;640; the depth image is
+median-filtered (3&times;3) and letter-boxed; both are converted to RGB channel-first tensors in [0,&nbsp;1]. The
+<em>detector</em> applies the original non-maximum suppression and coordinate scaling, so its detections are in the
+original image coordinates.</p>
+<p><strong>Equivalence test.</strong> A tool runs the original model code in a separate process and our
+re-implementation on the same seeded inputs and compares the raw outputs. The maximum absolute difference is
+<strong>0.0</strong>: the re-implementation is bit-identical to the original.</p>
+<p><strong>Modality ablation.</strong> To confirm that both inputs matter, we measured the total detection confidence
+when inputs are altered. Swapping NIR and depth leaves 8&nbsp;% of the confidence; blanking the NIR input removes all
+detections; blanking the depth input leaves 65&nbsp;%. Both modalities are used, and NIR dominates. Automated tests
+encode these properties, and deliberately breaking the preprocessing makes them fail.</p>
+
+<h3>Dataset audit</h3>
+<p>The detector's published data (<code>VOCdetiv_data.rar</code>, 1.31&nbsp;GB) was downloaded, its size checked
+against the server and its RAR checksums verified. It holds four nested variants with 4 to 10 classes; the largest
+(nc_10) has 1,286 training and 365 validation image pairs with classes such as person, box, bike, zebra crossing,
+telegraph pole, doors, building entrance and traffic signs. The audit found that <strong>this is not the dataset
+behind the reported run</strong>:</p>
+<ul>
+<li>the checkpoint's classes are person, Ebike and Car; the dataset has no Ebike or Car class;</li>
+<li>none of the run's 187 validation frames (recovered from the run's plots) appears among the dataset's 1,651 unique
+images: the best normalised-correlation similarity was 0.72, while the same matcher recovers deliberately degraded
+dataset frames at above 0.9;</li>
+<li>dates and file paths in the archive differ from those of the run.</li>
+</ul>
+<p>We also checked the other Drive links. The code bundle, two unlabelled recordings and the SDK do not contain the
+labelled person/Ebike/Car data either; one link returns HTTP&nbsp;404. Other data issues: one orphan label, 53 file names
+reused between training and validation with different pixels, and one class ("Down stairs") without instances.</p>
+
+<h3>Evaluation method</h3>
+<p>The only class shared by model and data is <em>person</em>, so the evaluation is a cross-dataset person
+measurement. The evaluation tool reproduces the original validation settings exactly ({{t-evalmethod}}). Its AP code
+was verified to give identical values to the original code on random data.</p>
+<table id="t-evalmethod"><caption>Evaluation settings (identical to the original validation code)</caption>
+<tr><th>Item</th><th>Setting</th></tr>
+<tr><td>Inputs</td><td>NIR (<code>images/</code>) + depth (<code>clouds/</code>), same file name</td></tr>
+<tr><td>Input size</td><td>640, letter-boxed</td></tr>
+<tr><td>NMS</td><td>confidence 0.001, IoU 0.6, max. 300 detections</td></tr>
+<tr><td>Matching</td><td>IoU 0.50:0.05:0.95</td></tr>
+<tr><td>AP</td><td>101-point interpolation (a perfect detector scores 0.995)</td></tr>
+<tr><td>Classes</td><td>dataset 0 (person) &rarr; model person; other classes ignored</td></tr>
+<tr><td>Precision</td><td>FP32 on CPU (original: FP16 on CUDA)</td></tr>
+</table>
+
+<h3>Results</h3>
+<table id="t-woadres"><caption>Measured person accuracy of the WOAD exp72 checkpoint on the published data (nc_10)</caption>
+<tr><th>Split</th><th class="n">Images</th><th class="n">People</th><th class="n">P</th><th class="n">R</th><th class="n">AP@0.5</th><th class="n">AP@.5:.95</th></tr>
+<tr><td>val</td><td class="n">365</td><td class="n">129</td><td class="n">0.345</td><td class="n">0.310</td><td class="n"><b>0.218</b></td><td class="n">0.073</td></tr>
+<tr><td>train</td><td class="n">1,286</td><td class="n">458</td><td class="n">0.361</td><td class="n">0.199</td><td class="n"><b>0.173</b></td><td class="n">0.050</td></tr>
+</table>
+<p>{{t-woadres}} gives the results; precision (P) and recall (R) are at the maximum-F1 operating point (confidence 0.18
+on val, 0.33 on train). {{f-pr}} shows the precision&ndash;recall curves. At the original plotting settings
+(confidence 0.25, IoU 0.45) the model detected 37 of 129 people in the validation split and missed 89, with 5
+unmatched detections; in the training split it detected 104 and missed 345. The forward pass took about
+126&ndash;131&nbsp;ms per image on the CPU in batches of 8.</p>
+<figure id="f-pr"><img src="fig:figE_woad_pr_curve.png" alt="Precision-recall curves for person, val and train">
+<figcaption>Person precision&ndash;recall curves (IoU 0.5) of the WOAD checkpoint on the published dataset, measured
+with the original metric code.</figcaption></figure>
+<figure id="f-repvsmeas"><img src="fig:figH_reported_vs_measured.png" alt="Bar chart reported 0.771 vs measured 0.218 and 0.173">
+<figcaption>Person AP@0.5: value read from the authors' training plot (their own validation split) versus our
+cross-dataset measurements. The datasets differ, so this is <em>not</em> a like-for-like comparison; it shows that the
+reported value could not be reproduced with the published data.</figcaption></figure>
+<p><strong>Interpretation.</strong> {{f-repvsmeas}} contrasts the reported person AP (0.771) with our measurement
+(0.218 val, 0.173 train). Because the datasets differ, the gap measures <em>generalisation</em> to new scenes, not an
+error in the paper. The model is fairly precise but misses most people in these scenes. Visual inspection of sampled
+frames showed that close, upright people are detected with high confidence (0.74&ndash;0.87), whereas cyclists and
+distant people indoors are usually missed. The bicycle class of the dataset scored essentially zero as "Ebike", which
+is expected given the different class definitions and is not reported as an accuracy figure.</p>
+
+<h3>Brightness and live-input experiment</h3>
+<p>A raw CS30 recording released with the repository is much darker than the training-like data (mean NIR brightness
+59 versus about 140). Darkening training-like frames to that level removed about 73&nbsp;% of detections, and
+histogram correction of the dark recording produced one correct detection and 56 false alarms. The model is therefore
+sensitive to sensor exposure, which motivated an input-quality gate in our implementation that flags frames that
+are too dark, too low in contrast, or almost without valid depth, and withholds alerts from unusable frames.</p>
+
+<h3>Re-use of the base model in this project</h3>
+<p>The re-implemented detector is kept in the project as a research path: a command-line tool and a "replay" mode run
+it on recorded NIR + depth sequences, with an alert engine that requires confirmation over several frames, applies
+cooldowns and states the object position (left, ahead, right). Thirty-eight original-equivalence and model tests
+remain part of the automated suite.</p>

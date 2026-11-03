@@ -1,0 +1,64 @@
+<section class="cover">
+<div class="sub">Final Project Report (Consolidated: DA1, DA2, DA3)</div>
+<h1>NeuroSonic: From a Cross-Modal Wearable Obstacle Detector to an Offline, Phone-Based Spoken Walking-Path Awareness
+and Navigation Prototype for Visually Impaired Pedestrians</h1>
+<div class="big">Submitted in partial fulfilment of the requirements of<br>
+<span class="placeholder">[Course code and course title]</span></div>
+<div class="big">by<br><b>Allwin Raj</b><br><span class="placeholder">[Register number]</span><br>
+<span class="placeholder">[Programme, e.g. B.Tech / M.Tech &hellip;]</span></div>
+<div class="big">Under the guidance of<br><span class="placeholder">[Guide name, designation]</span><br>
+<span class="placeholder">[School / Department]</span></div>
+<div class="inst">Vellore Institute of Technology, Vellore, Tamil Nadu, India</div>
+<div class="big">November 2026</div>
+</section>
+
+<section class="frontpage">
+<h2>Bonafide Certificate</h2>
+<p>This is to certify that the project report entitled <em>"NeuroSonic: From a Cross-Modal Wearable Obstacle
+Detector to an Offline, Phone-Based Spoken Walking-Path Awareness and Navigation Prototype for Visually Impaired
+Pedestrians"</em> submitted by <b>Allwin Raj</b> (<span class="placeholder">[Register number]</span>) is a record of
+work carried out under my supervision in <span class="placeholder">[course]</span> during
+<span class="placeholder">[semester / academic year]</span>.</p>
+<div class="sig"><div>Signature of the Guide<br><span class="placeholder">[Name]</span></div>
+<div>Signature of the Head / Programme Chair<br><span class="placeholder">[Name]</span></div></div>
+<div class="sig"><div>Internal Examiner</div><div>External Examiner</div></div>
+</section>
+
+<section class="frontpage">
+<h2>Declaration</h2>
+<p>I declare that this report describes work done by me. Results reported as measured were measured by me on the
+equipment described; results reported by other authors are cited and labelled as such. Physical validation with an
+iPhone in real environments and with users with visual impairment has <b>not</b> yet been carried out, and no
+statement in this report should be read as a claim that the system is safe to rely on.</p>
+<div class="sig"><div>Place: Vellore<br>Date: <span class="placeholder">[date]</span></div><div>Signature of the
+candidate<br>Allwin Raj</div></div>
+<h2 style="margin-top:14mm">Acknowledgement</h2>
+<p>I thank my guide, <span class="placeholder">[Guide name]</span>, for guidance throughout this project, and the
+<span class="placeholder">[School / Department]</span> of Vellore Institute of Technology for the opportunity and
+facilities. I thank the authors of the WOAD paper for releasing their code and data, which made the re-implementation
+in this report possible, and the developers of the open-source software on which NeuroSonic is built: PyTorch,
+torchvision, RF-DETR, OpenCV, Piper, Vosk and the OpenStreetMap community.</p>
+</section>
+
+<section class="frontpage">
+<h2>Abstract</h2>
+<p>Pedestrians with visual impairment need to know both what is in front of them now and where to turn. This report
+consolidates three reviews of one project. <b>Review 1</b> substantiates the problem with WHO, Global Burden of
+Disease and Indian survey statistics (at least 2.2 billion people with vision impairment; 43.3 million blind in 2020
+and 61 million projected by 2050; 1.99&nbsp;% blindness among Indians aged 50 and over) and compares published
+systems, nine verified patents and eight commercial products, followed by five technology trends.
+<b>Review 2</b> re-implements the base paper, WOAD (Gao et al., <i>Nature Communications</i>, 2025), a near-infrared +
+depth cross-modal detector. The standalone re-implementation is bit-identical to the original, but the reported
+accuracy cannot be reproduced with the published data, the cross-dataset person AP@0.5 is 0.218, detections collapse
+on darker sensor recordings, and the model cannot be driven by a phone camera. Eight gaps are derived.
+<b>Review 3</b> presents NeuroSonic, in which an iPhone browser is the camera, microphone, GPS receiver and speaker of a
+system that runs offline on a laptop GPU. RF-DETR Nano, selected among four detectors for its person AP@0.5 (0.660)
+and recall (0.729), feeds a camera-motion-compensated tracker that announces people or vehicles entering or crossing
+the walking path without reacting to the user's own movement. Offline neural speech, voice commands and
+OpenStreetMap routing complete the system. On the laptop it sustained about 5 frames/s with a median capture-to-answer
+time of 67&nbsp;ms; three serving problems were found and fixed; ten-minute soak tests ran without errors; 204
+automated tests and 7 browser tests pass. Field validation with an iPhone and users is pending; the protocol for it is
+included. The system is a research prototype and not a safety device.</p>
+<p><b>Keywords:</b> assistive technology; visual impairment; obstacle detection; RF-DETR; multi-object tracking;
+camera-motion compensation; offline speech; pedestrian navigation; reproducibility.</p>
+</section>

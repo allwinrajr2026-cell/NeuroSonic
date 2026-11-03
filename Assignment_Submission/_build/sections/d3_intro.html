@@ -1,0 +1,22 @@
+<h2>Introduction</h2>
+<p>Review&nbsp;1 established the need for affordable, continuous, motion-aware guidance for pedestrians with visual
+impairment, and Review&nbsp;2 showed that the base paper's cross-modal detector [[woad]] cannot be driven by an ordinary
+phone camera and that its reported accuracy cannot be reproduced with the published data. This review reports the
+implementation of the proposed system, <strong>NeuroSonic</strong>, and analyses its results.</p>
+<p>NeuroSonic uses an iPhone as the camera, microphone, GPS receiver and speaker of a perception and navigation system
+that runs on a laptop over the local Wi-Fi network. Its contributions are:</p>
+<ol>
+<li>a working end-to-end prototype: a browser client and a laptop server with 28 HTTP endpoints, providing offline
+walking-path guidance, event alerts, voice commands, neural speech and offline routing;</li>
+<li>a controlled comparison of four real-time detectors on the same images, leading to RF-DETR Nano [[rfdetr]] with an
+SSDLite fall-back [[ssd,mbv3]];</li>
+<li>a camera-motion-compensated tracker and two conservative, rule-based events ("entering the walking path" and
+"crossing in front") designed to avoid false alarms from the user's own movement;</li>
+<li>a measured account of three performance problems that arise when a GPU serves a low, fixed frame rate, with
+before/after data; and</li>
+<li>a strict separation of what was measured on the laptop, what was simulated in a browser, and what still needs an
+iPhone and field tests, with a protocol for the latter.</li>
+</ol>
+<p>All measurements were made on one laptop (HP Omen; AMD Ryzen&nbsp;7 7840HS; 15.3&nbsp;GB RAM; NVIDIA GeForce
+RTX&nbsp;4050 Laptop GPU, 6&nbsp;GB) on 2&ndash;3 November 2026. <strong>No result in this review comes from an iPhone
+in a real street or from users with visual impairment.</strong></p>

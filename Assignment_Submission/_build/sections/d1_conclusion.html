@@ -1,0 +1,24 @@
+<h2>Synthesis and Conclusion of the Survey</h2>
+<p>The survey answers three questions that shape the rest of the project.</p>
+<p><strong>Is the problem significant?</strong> Yes. At least 2.2 billion people have a vision impairment, 43.3 million
+were blind in 2020 and 61 million are projected by 2050, and in India about 2&nbsp;% of people aged 50 and over are
+blind, rising to 11.6&nbsp;% above 80 [[who,gbd,nbvis2]]. The population is large, ageing and largely in settings where
+cost matters.</p>
+<p><strong>What do existing solutions leave open?</strong> Research systems achieve strong results with dedicated
+hardware: depth glasses, FPGAs, haptic skins and robots [[woad,tang2025,cabot]]. Products split into affordable but
+limited smart canes, expensive wearables, and free phone apps that work on demand rather than continuously
+[[p_aarp,p_perkins]]. Patents cover range sensing, camera recognition with speech, and navigation narration, but the
+sampled patents do not describe continuous, camera-motion-compensated warnings of objects moving into the walking
+path from an unmodified phone [[pat_ford,pat_caltech,pat_aph]].</p>
+<p><strong>Which technologies are ready to use?</strong> Real-time detection transformers with permissive licences,
+standard multi-object tracking, offline neural speech recognition and synthesis, and open map data are all mature
+[[rfdetr,bytetrack,kaldi,piper,osm]]. Depth on ordinary phones and dependable cloud description are not yet ready for
+a mobility aid.</p>
+<div class="box"><p><strong>Direction for the project.</strong> Re-implement and verify the base paper (Review&nbsp;2);
+then build a system that uses an ordinary phone as camera, microphone, GPS and speaker; runs perception, speech and
+routing offline on a nearby laptop GPU; warns about objects moving into or across the walking path while ignoring the
+user's own movement; and states honestly what it can and cannot see (Review&nbsp;3). The system is a supplement to the
+white cane, not a safety device.</p></div>
+<p>The main limitation of this survey is its breadth: it is a structured sample rather than a systematic review, the
+patent search was limited to US documents on Google Patents, and product details come from manufacturer-adjacent or
+retailer sources that change over time. These limits are stated so that the comparisons are read as indicative.</p>

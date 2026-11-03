@@ -1,0 +1,75 @@
+<h2>Survey: Comparative Analysis of IPRs (Patents)</h2>
+<h3>Search method</h3>
+<p>Patents were searched on Google Patents with combinations of the terms <em>visually impaired</em>,
+<em>blind</em>, <em>obstacle detection</em>, <em>navigation</em>, <em>camera</em>, <em>audio</em> and <em>wearable</em>,
+and in the CPC group A61H&nbsp;3/06 (walking aids for blind persons). For each candidate the bibliographic record was
+opened and the assignee, inventors, dates, legal status and summary were read. Nine documents were retained, chosen to
+span four decades and the main technical families. A search of the Indian Patent Office database was not completed in
+this review; for example, for IIT&nbsp;Delhi's SmartCane we could confirm the device and its funding but not a patent
+number, so it appears under products instead. A professional freedom-to-operate search would be needed before any
+filing (see the IDF in Lab&nbsp;9).</p>
+
+<h3>The patents</h3>
+<p><strong>US&nbsp;4&nbsp;280&nbsp;204 (Polaroid, 1981)</strong> [[pat_polaroid]] describes a mobility cane with a
+capacitive electrostatic ultrasonic transducer that both emits and receives; one mode warns of low-hanging objects at
+upper-body height and another detects more distant objects. It is an early example of the ultrasonic ETA family,
+expired long ago.</p>
+<p><strong>US&nbsp;2005/0208457 A1 (Fink and Humayun; later assigned to Caltech)</strong> [[pat_caltech]] proposes
+a head- or eyeglass-mounted camera that captures an image on request, classifies the object with neural networks,
+look-up tables or thresholds, and speaks a description including colour and brightness. The application was
+abandoned. It anticipates, in a simple form, the camera-plus-speech idea of today's apps.</p>
+<p><strong>US&nbsp;9&nbsp;429&nbsp;446 B1 (Searle et al., 2016)</strong> [[pat_searle]] claims a hand-held device that
+locates objects with a camera, radio, sonar or infrared module, plans a path and gives spoken directions. It lapsed in
+2024 for non-payment of maintenance fees.</p>
+<p><strong>US&nbsp;9&nbsp;846&nbsp;231 B2 (STMicroelectronics, 2017)</strong> [[pat_st]] claims a wearable
+obstacle detector with an ultrasonic source and receiver plus a three-axis accelerometer; the control module enables
+the ultrasound and the time-of-flight measurement only when the foot rests on the ground during walking, then computes
+the obstacle distance and raises an alarm within a given range. The idea of gating sensing by gait phase is relevant to
+camera systems too, because image quality and apparent motion also depend on the walking cycle.</p>
+<p><strong>US&nbsp;9&nbsp;993&nbsp;384 B1 (Toyota, 2018)</strong> [[pat_toyota]] guides a user towards two
+destinations simultaneously with two distinct audio cues whose pitch or volume varies with the alignment between the
+user's heading and each path.</p>
+<p><strong>US&nbsp;10&nbsp;299&nbsp;982 B2 (Frankel, 2019)</strong> [[pat_frankel]] uses a smartphone or tablet
+camera and orientation sensors to build a 3-D model of a room; touching a spot on a top-down view announces the object
+there and its attributes, such as potential hazards. Expired in 2023.</p>
+<p><strong>US&nbsp;10&nbsp;809&nbsp;079 B2 (Ford, 2020)</strong> [[pat_ford]] describes a wearable garment such as a
+vest with GPS receivers, cameras, an ultrasonic sensor and a microphone that detect static and dynamic obstacles to
+generate and revise routes, with audio instructions and haptic cues, and optional upload of dynamic-obstacle data to
+update a map.</p>
+<p><strong>US&nbsp;11&nbsp;112&nbsp;261 B2 (Brown University, 2021)</strong> [[pat_brown]] covers wearable
+navigation devices with multiple fixed cameras that localise the user by matching features against prior images and by
+visual-inertial odometry, and haptic belts or vests that render directional cues.</p>
+<p><strong>US&nbsp;11&nbsp;318&nbsp;050 B2 (American Printing House for the Blind, 2022)</strong> [[pat_aph]] uses a
+smartphone's location services (GPS, compass, accelerometer, gyroscope) to narrate only the streets and points of
+interest in the direction the device is pointed, and Bluetooth beacons for indoor position and floor, with audio and
+haptic or braille output.</p>
+
+<table id="t-pat" class="wide"><caption>Comparative analysis of patents</caption>
+<tr><th>Patent</th><th>Assignee</th><th>Year (grant/publ.)</th><th>Status*</th><th>Sensing</th><th>Processing / key idea</th><th>Output</th><th>Relation to NeuroSonic</th></tr>
+<tr><td>US 4,280,204 [[pat_polaroid]]</td><td>Polaroid</td><td>1981</td><td>expired</td><td>ultrasonic transducer on cane</td><td>two range modes (upper body / distant)</td><td>warning signal</td><td>range sensing only; no recognition</td></tr>
+<tr><td>US 2005/0208457 [[pat_caltech]]</td><td>Caltech (assignee of record)</td><td>2005</td><td>abandoned</td><td>head-mounted camera</td><td>object classification on request</td><td>speech description</td><td>single images on demand; no tracking or path logic</td></tr>
+<tr><td>US 9,429,446 [[pat_searle]]</td><td>individual</td><td>2016</td><td>lapsed 2024</td><td>camera/radio/sonar/IR</td><td>path planning</td><td>spoken directions</td><td>generic; no motion compensation</td></tr>
+<tr><td>US 9,846,231 [[pat_st]]</td><td>STMicroelectronics</td><td>2017</td><td>see record</td><td>ultrasound + accelerometer</td><td>sensing gated by gait phase; ToF distance</td><td>alarm by distance range</td><td>gating idea relevant; different sensor</td></tr>
+<tr><td>US 9,993,384 [[pat_toyota]]</td><td>Toyota</td><td>2018</td><td>active (per record)</td><td>heading sensors</td><td>two simultaneous audio cues</td><td>stereo audio</td><td>navigation audio design; no vision</td></tr>
+<tr><td>US 10,299,982 [[pat_frankel]]</td><td>individual</td><td>2019</td><td>expired 2023</td><td>phone camera + orientation</td><td>3-D room model, touch exploration</td><td>speech on touch</td><td>static room model, not live walking</td></tr>
+<tr><td>US 10,809,079 [[pat_ford]]</td><td>Ford</td><td>2020</td><td>active (per record)</td><td>GPS, cameras, ultrasonic, mic on vest</td><td>static/dynamic obstacles for routing</td><td>audio + haptic</td><td>closest in scope; custom garment</td></tr>
+<tr><td>US 11,112,261 [[pat_brown]]</td><td>Brown University</td><td>2021</td><td>active (per record)</td><td>multiple cameras + inertial</td><td>visual localisation</td><td>haptic belt/vest</td><td>localisation, not obstacle events</td></tr>
+<tr><td>US 11,318,050 [[pat_aph]]</td><td>American Printing House for the Blind</td><td>2022</td><td>active (per record)</td><td>phone location sensors, beacons</td><td>direction-filtered narration of POIs</td><td>audio, haptic, braille</td><td>navigation narration; no camera</td></tr>
+</table>
+<p class="ni" style="font-size:8pt">* Legal status as shown on Google Patents on 2026-11-03; Google notes this is an
+assumption, not a legal conclusion.</p>
+
+<h3>Observations from the patent survey</h3>
+<ul>
+<li><strong>Two clusters.</strong> Patents either sense obstacles (ultrasound, cameras) or support navigation
+(location narration, haptic direction), with the Ford vest [[pat_ford]] as the main example combining both, on a
+dedicated garment.</li>
+<li><strong>Several early patents have lapsed</strong> [[pat_polaroid,pat_searle,pat_frankel]], and the camera +
+speech concept itself appears in an abandoned 2005 application [[pat_caltech]]; the general idea of "camera, recognise,
+speak" is therefore not novel and cannot be claimed.</li>
+<li><strong>What the sampled patents do not describe</strong> is the specific combination pursued in NeuroSonic:
+an unmodified phone browser as a thin client; camera-motion-compensated tracking that announces only objects moving
+<em>relative to the background</em> into or across a walking-path region; suppression of announcements during strong
+camera motion; and offline speech, commands and routing on a nearby computer. Whether this combination is patentable
+can only be judged after a full search; this is the subject of the invention disclosure (Lab&nbsp;9).</li>
+</ul>

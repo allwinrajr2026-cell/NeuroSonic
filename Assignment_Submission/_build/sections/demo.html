@@ -1,0 +1,47 @@
+<h2>Project Demonstration: Existing Implementation and Proposed Work</h2>
+<p>The demonstration separates three things: (A) what the base paper provided, (B) what this project implemented and
+can demonstrate now, and (C) what is proposed but not yet implemented or not yet physically verified.</p>
+<table id="t-demoA"><caption>(A) Base work received (not this project's contribution)</caption>
+<tr><th>Item</th><th>State when received</th></tr>
+<tr><td>Cross-modal detector (NIR + depth), exp72 checkpoint</td><td>scripts broken with current libraries</td></tr>
+<tr><td>Reported accuracy mAP@0.5 0.669</td><td>training plot only; not reproducible with published data</td></tr>
+<tr><td>Published dataset</td><td>a different dataset (other classes; none of the run's validation frames)</td></tr>
+<tr><td>FPGA, RL compression, Android app, SDK</td><td>not used (SDK only for the colour-map finding)</td></tr>
+</table>
+<table id="t-demoB"><caption>(B) Implemented in this project and demonstrable now</caption>
+<tr><th>#</th><th>Contribution</th><th>Verification level</th></tr>
+<tr><td>B1</td><td>Faithful standalone WOAD inference (bit-identical)</td><td>automated tests</td></tr>
+<tr><td>B2</td><td>Dataset audit and evaluation (person AP@0.5 0.218 / 0.173)</td><td>measured</td></tr>
+<tr><td>B3</td><td>Alert engine and input-quality gate (replay of recorded NIR + depth)</td><td>automated tests</td></tr>
+<tr><td>B4</td><td>NeuroSonic server, API (28 endpoints), SQLite text history, accessible phone UI</td><td>automated + browser tests</td></tr>
+<tr><td>B5</td><td>Detector benchmark; RF-DETR Nano FP16 on GPU, SSDLite CPU fall-back</td><td>measured; tests</td></tr>
+<tr><td>B6</td><td>Camera-motion-compensated tracking; entering / crossing events</td><td>tests; composited clip</td></tr>
+<tr><td>B7</td><td>Piper neural voice; priority speech queue</td><td>browser tests (laptop)</td></tr>
+<tr><td>B8</td><td>Vosk offline voice commands</td><td>synthetic speech; browser test with fake mic</td></tr>
+<tr><td>B9</td><td>Offline Vellore map, search, A* routing, spoken turns, re-routing</td><td>tests; simulated walk</td></tr>
+<tr><td>B10</td><td>HTTPS with local certificate authority; phone setup page; release start/stop scripts</td><td>tests; launch verified</td></tr>
+<tr><td>B11</td><td>Optional opt-in cloud description with wording filter</td><td>mock-provider tests</td></tr>
+</table>
+<table id="t-demoC"><caption>(C) Proposed work, not yet implemented or not yet physically verified</caption>
+<tr><th>#</th><th>Proposal</th><th>Reason</th></tr>
+<tr><td>C1</td><td>iPhone and field validation (23 scenarios &times; 5 trials)</td><td>nothing verified physically yet</td></tr>
+<tr><td>C2</td><td>Monocular depth for "approaching" alerts</td><td>no distance from an RGB camera today</td></tr>
+<tr><td>C3</td><td>Ground-hazard data: steps, kerbs, potholes, poles</td><td>outside the 23 COCO classes</td></tr>
+<tr><td>C4</td><td>Native app with on-device inference</td><td>removes the laptop dependency</td></tr>
+<tr><td>C5</td><td>Better recognition of spoken place names</td><td>10 of 24 synthetic utterances correct first</td></tr>
+<tr><td>C6</td><td>User study with visually impaired participants (with ethics approval)</td><td>thresholds and wording are engineering defaults</td></tr>
+</table>
+<h3>Demonstration script (about 10 minutes)</h3>
+<ol>
+<li><b>Base paper (2 min).</b> Run the re-implemented WOAD detector on a recorded NIR + depth sequence (Settings &rarr;
+Research tools &rarr; WOAD replay); show the equivalence test result and the evaluation table.</li>
+<li><b>Launch (1 min).</b> <code>START_NEUROSONIC.ps1</code>; show the printed detector (RF-DETR, cuda, fp16) and the
+iPhone address.</li>
+<li><b>Walking-path awareness (3 min).</b> On the phone (or the laptop browser with the demo clip), press Start; show
+"appears clear", "Caution", "Stop", and the event "A person is moving into your path from the left"; pan the camera
+over a static scene to show that no event is raised.</li>
+<li><b>Voice and navigation (2 min).</b> Say "navigate to CMC Hospital"; confirm; show the offline route and spoken
+turn instruction; show that it works with the internet disconnected.</li>
+<li><b>Honesty and limits (2 min).</b> Show the "How it works" screen; state what is not yet verified.</li>
+</ol>
+

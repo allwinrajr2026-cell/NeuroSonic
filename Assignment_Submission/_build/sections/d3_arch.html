@@ -1,0 +1,44 @@
+<h2>System Architecture</h2>
+<h3>Deployment</h3>
+<p>The server is a standard-library Python HTTP(S) server on the laptop. The phone loads a web application (HTML,
+CSS and JavaScript) from it; nothing is installed on the phone. Safari grants camera and microphone access only to
+secure pages, so the server uses HTTPS with a certificate issued by a locally generated certificate authority. The
+user installs the authority once from a plain-HTTP setup page on the next port; browser security is never disabled.
+The deployment architecture is shown in {{f-proparch}} and the per-frame pipeline in {{f-pipe}}.</p>
+<figure id="f-pipe" class="wide"><img src="pub:fig6_perception_pipeline.png" alt="Per-frame pipeline">
+<figcaption>Per-frame perception pipeline on the laptop: frame quality check, detector (RF-DETR on the GPU or
+SSDLite on the CPU), camera-motion estimation, tracking, walking-path state and events, and the phone's priority speech
+queue.</figcaption></figure>
+<h3>Phone client</h3>
+<ul>
+<li>Posts a 320-pixel-wide JPEG every 200&nbsp;ms (400&nbsp;ms if the laptop reports the CPU detector), with at most
+one request in flight, so a slow answer reduces the frame rate instead of building a queue.</li>
+<li>Records speech as WAV for command recognition when the user presses the talk button.</li>
+<li>Uses GPS locally and sends a position only to request a route.</li>
+<li>Plays speech through a priority queue (urgent &gt; system &gt; obstacle &gt; navigation/scene &gt; information)
+with per-category cool-downs; urgent warnings interrupt routine speech, and an interrupted navigation step is replayed
+once.</li>
+<li>Shows a detector chip on the home screen (RF-DETR GPU or SSDLite CPU) so that a sighted helper can see which
+detector is active.</li>
+</ul>
+<h3>Laptop server</h3>
+<table id="t-modules"><caption>Main server modules</caption>
+<tr><th>Module</th><th>Responsibility</th></tr>
+<tr><td><code>server.py</code></td><td>HTTP(S) API (16 GET, 12 POST endpoints); per-connection TLS handshakes in worker threads</td></tr>
+<tr><td><code>detectors.py</code></td><td>RF-DETR (CUDA, FP16) and SSDLite (CPU) behind one interface with fall-back</td></tr>
+<tr><td><code>awareness.py</code></td><td>frame pipeline, single inference worker thread, client statistics</td></tr>
+<tr><td><code>tracking.py</code></td><td>camera-motion estimation, motion-compensated two-stage tracker</td></tr>
+<tr><td><code>events.py</code></td><td>entering / crossing rules and their wording</td></tr>
+<tr><td><code>pathguide.py</code></td><td>walking-path states and their wording</td></tr>
+<tr><td><code>tts.py</code></td><td>Piper neural voice (Indian English), cached WAV with HTTP range support</td></tr>
+<tr><td><code>voicecmd.py</code></td><td>Vosk two-pass recognition and intent parser</td></tr>
+<tr><td><code>maps.py</code></td><td>offline OpenStreetMap graph, place search, A* routes</td></tr>
+<tr><td><code>store.py</code></td><td>SQLite history and saved places, text only</td></tr>
+<tr><td><code>vision/</code></td><td>optional cloud scene description (Gemini) with consent, rate limit and wording filter</td></tr>
+</table>
+<h3>Privacy and safety by design</h3>
+<p>Camera images are processed in memory and are never written to disk, logs or the database; the history stores text
+messages only. The cloud description sends one image to a third party only after an explicit opt-in. Every spoken
+message is drawn from a fixed vocabulary that never states a distance and never says that a way is safe; the cloud
+description is filtered for the same words. The application states on its "How it works" screen that it is not a
+replacement for a cane, guide dog or human assistance.</p>

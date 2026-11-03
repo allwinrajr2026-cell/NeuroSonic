@@ -1,0 +1,13 @@
+<h2>Conclusion</h2>
+<p>The base paper presents a well-engineered wearable with strong user results [[woad]]. Re-implementing its detector
+showed that the released model runs bit-identically to the original code once a standalone loader and preprocessing
+are written, and that it genuinely uses both modalities. It also showed that the reported detector accuracy cannot be
+reproduced with the published data, that on the published scenes the model misses most people (person AP@0.5 0.218
+and 0.173), that it is sensitive to sensor exposure, and that it cannot be driven by an ordinary phone camera.</p>
+<p>These findings define the proposed work: keep WOAD as a verified baseline for recorded sensor data; build a new,
+phone-camera perception path with a detector selected by measured recall; add camera-motion-compensated tracking so
+that movement into the walking path can be announced without false alarms from the user's own walking; add offline
+speech, commands and routing; and measure everything at the application's real frame rate. Review&nbsp;3 reports the
+implementation and its results.</p>
+<p>The lesson for future use of published assistive systems is that reported numbers should be re-measured on
+available data before a design is built on them. In this case, measurement changed the direction of the project.</p>

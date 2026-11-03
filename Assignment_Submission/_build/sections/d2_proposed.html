@@ -1,0 +1,71 @@
+<h2>Proposed Work</h2>
+<h3>Problem statement</h3>
+<p>Provide a pedestrian who carries an ordinary smartphone with short, timely spoken information about recognised
+objects in the walking path, including objects moving into or across it, together with spoken route guidance;
+without depending on the internet, without storing camera images, without special sensors, and without overstating
+what the system can see.</p>
+<h3>Objectives</h3>
+<ol>
+<li><strong>O1 (real time):</strong> process phone frames at about 5 frames/s, with an answer well within one frame
+interval (200&nbsp;ms).</li>
+<li><strong>O2 (detector):</strong> choose the detector by measured accuracy, recall, latency and licence, with a
+CPU fall-back.</li>
+<li><strong>O3 (motion):</strong> announce people or vehicles <em>entering</em> or <em>crossing</em> the walking path,
+but not the apparent motion caused by the user's own walking.</li>
+<li><strong>O4 (offline):</strong> keep detection, speech output, voice commands and routing working without
+internet; make cloud description opt-in.</li>
+<li><strong>O5 (honesty):</strong> never state distances or safety; say "appears clear", never "safe".</li>
+<li><strong>O6 (verification):</strong> verify each function with automated tests, and state what is not verified.</li>
+</ol>
+<h3>Proposed architecture</h3>
+<p>The phone becomes a thin client running in Safari. It captures camera frames, microphone audio and GPS, and plays
+speech. A laptop with a consumer GPU on the same Wi-Fi network runs all engines ({{f-proparch}}). This replaces the
+custom glasses, FPGA and compression of the base system (G1, G7) with hardware the user is likely to have or can
+borrow, at the cost of depending on the laptop.</p>
+<figure id="f-proparch" class="wide"><img src="pub:fig1_architecture.png" alt="Proposed architecture: iPhone client and laptop engines">
+<figcaption>Proposed architecture. The phone (browser) sends frames, audio and position over HTTPS on the local
+network; the laptop runs perception, events, neural speech, offline voice commands, offline map routing and text-only
+history. Only the optional scene description uses the internet, after the user opts in.</figcaption></figure>
+<h3>Methodology</h3>
+<ul>
+<li><strong>Detector selection (G1&ndash;G3).</strong> Benchmark candidate RGB detectors trained on COCO [[coco]],
+from the established SSDLite/MobileNetV3 [[ssd,mbv3]] to the YOLO family [[yolo26]] and the real-time detection
+transformer RF-DETR [[rfdetr,detr]], on the same annotated person images with the same AP code used for WOAD; select
+by recall first, because a missed person is worse than an extra caution.</li>
+<li><strong>Camera motion and tracking (G4).</strong> Estimate the camera's own motion between frames from background
+corner points [[shitomasi]] tracked with pyramidal Lucas&ndash;Kanade flow [[lk,bouguet]] and a RANSAC similarity fit
+[[ransac]]; predict each track's box with that motion and associate detections in two stages as in ByteTrack
+[[bytetrack,sort]]; store each object's motion <em>relative to the background</em>.</li>
+<li><strong>Walking-path states and events (G4, G5).</strong> Define a lower-central walking-path region; confirm path
+states over 2&ndash;3 frames; raise "entering" and "crossing" events only for confirmed tracks with sufficient
+background-relative speed, and suppress all events during strong camera motion.</li>
+<li><strong>Speech, commands and routing (G6, G8).</strong> Offline neural speech with Piper [[piper,vits]], offline
+command recognition with Vosk [[kaldi]], and A* routing [[astar]] on an OpenStreetMap extract [[osm]] of Vellore,
+with spoken turn instructions.</li>
+<li><strong>Serving at the real frame rate (G7).</strong> Measure latency at 5 frames/s, not only back to back, and
+correct any serving bottleneck found.</li>
+</ul>
+<h3>Evaluation plan</h3>
+<table id="t-evalplan"><caption>Evaluation plan for the proposed work</caption>
+<tr><th>Question</th><th>Measure</th><th>Where</th></tr>
+<tr><td>Which detector?</td><td>person AP@0.5, recall @0.40, GPU/CPU latency, licence</td><td>laptop benchmark</td></tr>
+<tr><td>Does FP16 change accuracy?</td><td>AP and latency FP32 vs FP16</td><td>laptop benchmark</td></tr>
+<tr><td>Real-time?</td><td>frames/s, capture&rarr;answer time</td><td>browser test, fake camera</td></tr>
+<tr><td>Stable over time?</td><td>errors, latency, memory over 10 min</td><td>soak test</td></tr>
+<tr><td>Correct events, no false alarms from panning?</td><td>unit tests with synthetic camera motion</td><td>automated</td></tr>
+<tr><td>Offline?</td><td>functions with network blocked</td><td>automated, browser</td></tr>
+<tr><td>Works on iPhone, Wi-Fi, streets, users?</td><td>23-scenario protocol, 5 trials each</td><td>field (pending)</td></tr>
+</table>
+<h3>Differentiation from the base paper</h3>
+<table id="t-diff"><caption>Base paper versus proposed work</caption>
+<tr><th>Aspect</th><th>WOAD (base)</th><th>Proposed (NeuroSonic)</th></tr>
+<tr><td>Sensor</td><td>NIR + ToF glasses (CS30)</td><td>phone RGB camera</td></tr>
+<tr><td>Compute</td><td>FPGA + phone</td><td>laptop GPU over local Wi-Fi</td></tr>
+<tr><td>Detector</td><td>YOLOv5 + transformer fusion, 3 classes</td><td>RF-DETR Nano, 23 classes, CPU fall-back</td></tr>
+<tr><td>Temporal logic</td><td>per frame</td><td>motion-compensated tracking, events</td></tr>
+<tr><td>Distance</td><td>from depth (device)</td><td>none stated (honest by design)</td></tr>
+<tr><td>Navigation</td><td>none</td><td>offline map, A*, spoken turns</td></tr>
+<tr><td>Voice input</td><td>none</td><td>offline commands</td></tr>
+<tr><td>Cost to user</td><td>custom device</td><td>existing phone + laptop</td></tr>
+<tr><td>User study</td><td>20 participants</td><td>not yet (protocol prepared)</td></tr>
+</table>

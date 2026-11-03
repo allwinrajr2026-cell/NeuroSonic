@@ -1,0 +1,106 @@
+<h2>Experimental Setup</h2>
+<table id="t-env"><caption>Test environment</caption>
+<tr><th>Item</th><th>Value</th></tr>
+<tr><td>Laptop</td><td>HP Omen; Ryzen&nbsp;7 7840HS (8 cores / 16 threads); 15.3&nbsp;GB RAM; RTX&nbsp;4050 Laptop GPU 6&nbsp;GB; driver 592.82</td></tr>
+<tr><td>Software</td><td>Windows 11; Python 3.12.10; PyTorch 2.15.0+cu132; torchvision 0.29.1; rfdetr 1.11.2; OpenCV; Piper 1.8.0; Vosk</td></tr>
+<tr><td>Environments</td><td><code>.venv</code> (CPU only, original); <code>.venv-gpu</code> (CUDA)</td></tr>
+<tr><td>Detector quality data</td><td>365 near-IR validation images, 129 people (WOAD dataset)</td></tr>
+<tr><td>Live-pipeline input</td><td>640&times;480 clip compositing a recorded person riding a bicycle over a recorded empty corridor; played as Chrome's fake camera or streamed by a soak-test tool</td></tr>
+<tr><td>Browser tests</td><td>headless Chrome, iPhone-sized viewport, fake camera and microphone, DNS blocked; server on loopback</td></tr>
+</table>
+<p class="ni">No measurement includes Wi-Fi transmission, iPhone JPEG encoding, real street scenes or users.</p>
+
+<h2>Results and Analysis</h2>
+<h3>Detector comparison</h3>
+<table id="t-det" class="wide"><caption>Detector comparison. Latency: mean per 640&times;480 frame, FP32, batch 1. Quality: person, 365 near-IR images, 129 people</caption>
+<tr><th>Detector</th><th class="n">GPU ms</th><th class="n">CPU ms</th><th class="n">AP@0.5</th><th class="n">AP@0.5:0.95</th><th class="n">Precision @0.40</th><th class="n">Recall @0.40</th><th>Licence</th></tr>
+<tr><td>SSDLite320 (previous)</td><td class="n">42.3</td><td class="n">43.7</td><td class="n">0.542</td><td class="n">0.208</td><td class="n">0.607</td><td class="n">0.574</td><td>BSD-3</td></tr>
+<tr><td><b>RF-DETR Nano (selected)</b></td><td class="n">21.3</td><td class="n">121.9</td><td class="n"><b>0.660</b></td><td class="n"><b>0.304</b></td><td class="n">0.588</td><td class="n"><b>0.729</b></td><td>Apache-2.0</td></tr>
+<tr><td>YOLO26n</td><td class="n">12.4</td><td class="n">27.8</td><td class="n">0.619</td><td class="n">0.268</td><td class="n">0.633</td><td class="n">0.628</td><td>AGPL-3.0</td></tr>
+<tr><td>YOLO26s</td><td class="n">11.8</td><td class="n">57.5</td><td class="n">0.628</td><td class="n">0.292</td><td class="n">0.600</td><td class="n">0.651</td><td>AGPL-3.0</td></tr>
+<tr><td><i>WOAD exp72 (reference, NIR + depth)</i></td><td class="n">&mdash;</td><td class="n">&asymp;126&ndash;131*</td><td class="n">0.218</td><td class="n">0.073</td><td class="n">&mdash;</td><td class="n">&mdash;</td><td>see repo</td></tr>
+</table>
+<p class="ni" style="font-size:8pt">* WOAD: CPU forward pass per image in batches of 8, FP32, with its own two-input preprocessing; its AP uses both
+modalities on the same 365 validation images (Review&nbsp;2).</p>
+<p>{{t-det}}, {{f-lat}} and {{f-qual}} summarise the comparison. RF-DETR Nano had the best AP and recall. Recall matters
+most for a warning system because a missed person is worse than an extra caution. Its 21&nbsp;ms GPU latency fits a
+200&nbsp;ms frame interval and its licence is permissive. The YOLO26 models are faster but have lower recall and are
+AGPL-3.0. RF-DETR is too slow on the CPU (122&nbsp;ms), so SSDLite remains the fall-back. RF-DETR's precision at 0.40
+(0.588) is slightly lower than the others', so more false detections are expected; the temporal confirmation is
+designed to absorb them. On the same images, all four RGB detectors scored far above the WOAD checkpoint, which was
+trained on different scenes.</p>
+<figure id="f-lat"><img src="pub:fig2_detector_latency.png" alt="Detector latency bars"><figcaption>Detector latency on GPU and CPU (mean ms per frame).</figcaption></figure>
+<figure id="f-qual"><img src="pub:fig3_person_detection_quality.png" alt="Detector quality bars"><figcaption>Person detection quality on the near-IR validation set.</figcaption></figure>
+
+<h3>FP16 inference</h3>
+<table id="t-fp16"><caption>RF-DETR Nano, FP32 vs FP16 (RTX 4050 Laptop GPU, 320&times;240 frames, 100 timed frames each)</caption>
+<tr><th>Precision</th><th class="n">AP@0.5</th><th class="n">Recall @0.40</th><th class="n">Back-to-back med./p90 ms</th><th class="n">At 5 fps med./p90 ms</th></tr>
+<tr><td>FP32</td><td class="n">0.660</td><td class="n">0.729</td><td class="n">17.3 / 21.7</td><td class="n">66.5 / 78.6</td></tr>
+<tr><td><b>FP16 (used)</b></td><td class="n">0.660</td><td class="n">0.729</td><td class="n">16.9 / 20.4</td><td class="n">53.2 / 60.8</td></tr>
+</table>
+<p>Person quality is unchanged in FP16 (AP@0.5:0.95 0.304 vs 0.305; precision at 0.40 0.588 vs 0.595). Back to back
+both take about 17&nbsp;ms. At the application's 5 frames/s, however, the GPU drops to its lowest power state between
+frames (sampled clocks 210&ndash;405&nbsp;MHz), and FP16 lowers the median from 66.5 to 53.2&nbsp;ms and the p90 from
+78.6 to 60.8&nbsp;ms ({{t-fp16}}).</p>
+
+<h3>Serving efficiency at a fixed 5 frames/s</h3>
+<p><strong>CPU threads.</strong> With RF-DETR on the GPU, PyTorch's default pool of 8 CPU threads kept the server at
+712&nbsp;% of one CPU core while streaming 5 frames/s, although the GPU did the detection. Two threads cut this to
+121&nbsp;% with no loss of frame rate ({{f-cpu}}); median frame times were 30, 38 and 25&nbsp;ms for 8, 4 and 2
+threads.</p>
+<figure id="f-cpu"><img src="pub:fig4_cpu_thread_fix.png" alt="CPU use by thread count"><figcaption>Server CPU use with RF-DETR on the GPU, by PyTorch CPU thread count (712, 326, 121&nbsp;% of one core).</figcaption></figure>
+<p><strong>GPU power state.</strong> At 5 frames/s the GPU is idle about 90&nbsp;% of the time. In repeated timings it
+dropped to its lowest performance state (P8, about 390&nbsp;MHz); the same inference took about 16&nbsp;ms at P5
+(&asymp;600&nbsp;MHz) and about 74&nbsp;ms at P8. This explains why live latency is several times the back-to-back
+benchmark. <strong>Inference thread.</strong> Running GPU inference from a fresh thread per request cost about
+3&nbsp;ms per call in isolation (19.4 vs 16.2&nbsp;ms median), so all inference was moved to one long-lived thread.</p>
+
+<h3>Ten-minute soak tests</h3>
+<p>A soak-test tool streamed the clip to the server at 5 frames/s, one request at a time as the phone does, and every
+60&nbsp;s sent a parallel cloud request to a mock provider that takes 20&nbsp;s. "Before" ran the earlier code (FP32,
+inference on request threads); "after" ran the final code.</p>
+<table id="t-soak"><caption>Ten-minute soak tests, 59 windows of 10&nbsp;s</caption>
+<tr><th>Measure</th><th class="n">Before</th><th class="n">After</th></tr>
+<tr><td>Frames sent / errors</td><td class="n">2980 / 0</td><td class="n">2980 / 0</td></tr>
+<tr><td>Mean frames/s</td><td class="n">4.97</td><td class="n">4.97</td></tr>
+<tr><td>Window medians, range</td><td class="n">62&ndash;104 ms</td><td class="n">70&ndash;78 ms</td></tr>
+<tr><td>Median of window medians</td><td class="n">92.7 ms</td><td class="n">74.8 ms</td></tr>
+<tr><td>Highest window p90</td><td class="n">111.3 ms</td><td class="n">92.4 ms</td></tr>
+<tr><td>Server RAM, min&ndash;max</td><td class="n">851&ndash;2426 MiB</td><td class="n">2255&ndash;2431 MiB</td></tr>
+<tr><td>Server CPU, median (% of one core)</td><td class="n">142</td><td class="n">130</td></tr>
+<tr><td>Parallel 20 s cloud requests answered</td><td class="n">7 / 7</td><td class="n">7 / 7</td></tr>
+<tr><td>Events spoken</td><td class="n">0*</td><td class="n">148</td></tr>
+</table>
+<p class="ni" style="font-size:8pt">* The first run played the clip frame by frame, so the cyclist moved at half speed (0.10 widths/s), below the
+0.12 threshold; the event counts are therefore not comparable.</p>
+<p>Both runs were stable ({{t-soak}}, {{f-soak}}): no errors, a constant 4.97 frames/s, every slow cloud request
+answered while frames continued, and no growth in GPU memory. After the changes, latency was steadier (window medians
+70&ndash;78&nbsp;ms instead of 62&ndash;104&nbsp;ms) and the worst p90 fell from 111 to 92&nbsp;ms. Of the 148 events,
+100 named the person and 48 the bicycle, which is correct for a person riding a bicycle. Ten minutes on one machine
+cannot exclude a slow leak over hours.</p>
+<figure id="f-soak" class="wide"><img src="pub:fig5_soak_test.png" alt="Soak test time series"><figcaption>Soak tests before and after the serving changes: frames per second, request latency and server memory over ten minutes.</figcaption></figure>
+
+<h3>End-to-end behaviour in the browser</h3>
+<p>Seven headless-Chrome tests drive the real phone interface at iPhone size against the server, with the network
+blocked. In the event test the page achieved 4.91 frames/s at the recommended 200&nbsp;ms interval; the
+capture-to-answer time measured in the page (JPEG encoding, HTTP on loopback, full server pipeline) had a median of
+67&nbsp;ms, p90 73&nbsp;ms and maximum 81&nbsp;ms over 44 frames. "Caution. A person is moving into your path from the
+left." was delivered, and the neural-voice audio started 257&nbsp;ms later. In the slow-cloud test the phone said
+"Still waiting for the online description. Local walking guidance continues." at 15.2&nbsp;s and spoke the description
+at 20.1&nbsp;s, while 99 frames were analysed in the meantime. {{f-shots}} shows the interface.</p>
+<figure id="f-shots" class="wide shots"><img src="shot:01_live_rfdetr_event_alert.png" alt="event alert screen"><img src="shot:02_live_rfdetr_blocked_path.png" alt="blocked path screen"><img src="shot:03_navigation_route.png" alt="navigation screen">
+<figcaption>Phone interface in Chrome's iPhone-sized emulation with the fake camera. Left: entering event. Centre:
+blocked path. Right: offline navigation with a simulated position. The camera images are a composite of recorded
+footage, not field footage.</figcaption></figure>
+
+<h3>Automated tests and quality gate</h3>
+<p>The suite runs 204 test cases (unit, integration and HTTP API tests, plus 32 Node tests of the browser logic):
+<b>OK</b> in the GPU environment (1 skipped: an opt-in live cloud test) and OK in the CPU-only environment (3 skipped:
+two GPU-only tests and the live test, with automatic fall-back to SSDLite). The 22 perception tests cover detector
+fall-back, recovery of a known camera shift and zoom, stable track identities while the camera pans, entering and
+crossing in both directions, the <em>absence</em> of events for a static car during a pan, a shaky camera, a blocked
+view, slow drift and chairs, and the absence of distance and safety words. All seven browser tests pass. A
+quality-gate launch with the documented command passed in both environments: frames, speech, place search, a
+1330&nbsp;m route with 10 steps, and a voice command. On 3 November 2026 the release launcher started the server as an
+independent background process, and its local-network HTTPS address (the one the iPhone uses) answered when checked
+from the laptop; the iPhone itself has not yet been connected for these tests.</p>

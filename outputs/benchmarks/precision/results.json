@@ -1,0 +1,66 @@
+{
+ "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+ "torch": "2.15.0+cu132",
+ "frame_size": "320x240",
+ "started": "2026-11-03 01:56:50",
+ "runs": [
+  {
+   "precision": "fp32",
+   "quality_vocdetiv_val": {
+    "images": 365,
+    "people": 129,
+    "person_AP50": 0.6597,
+    "person_AP50_95": 0.3043,
+    "precision_at_0.40": 0.5875,
+    "recall_at_0.40": 0.7287
+   },
+   "latency_back_to_back": {
+    "frames": 100,
+    "median_ms": 17.3,
+    "p90_ms": 21.7,
+    "gpu_pstate_clock_samples": []
+   },
+   "latency_paced_5fps": {
+    "frames": 100,
+    "median_ms": 66.5,
+    "p90_ms": 78.6,
+    "gpu_pstate_clock_samples": [
+     "P4, 885 MHz",
+     "P8, 405 MHz",
+     "P8, 390 MHz",
+     "P8, 375 MHz",
+     "P8, 390 MHz"
+    ]
+   }
+  },
+  {
+   "precision": "fp16",
+   "quality_vocdetiv_val": {
+    "images": 365,
+    "people": 129,
+    "person_AP50": 0.66,
+    "person_AP50_95": 0.3045,
+    "precision_at_0.40": 0.5949,
+    "recall_at_0.40": 0.7287
+   },
+   "latency_back_to_back": {
+    "frames": 100,
+    "median_ms": 16.9,
+    "p90_ms": 20.4,
+    "gpu_pstate_clock_samples": []
+   },
+   "latency_paced_5fps": {
+    "frames": 100,
+    "median_ms": 53.2,
+    "p90_ms": 60.8,
+    "gpu_pstate_clock_samples": [
+     "P5, 825 MHz",
+     "P8, 300 MHz",
+     "P8, 210 MHz",
+     "P8, 210 MHz",
+     "P8, 210 MHz"
+    ]
+   }
+  }
+ ]
+}

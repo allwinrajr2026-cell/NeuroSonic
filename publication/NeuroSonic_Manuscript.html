@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NeuroSonic Manuscript</title>
+<style>
+  :root { --ink:#1b1b1b; --muted:#555; --rule:#c9c9c9; --accent:#2d5a9e; --bg:#ffffff; --box:#f3f5fa; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ink:#e6e6e6; --muted:#a9a9a9; --rule:#444; --accent:#8fb3ec; --bg:#16181c; --box:#20242b; } }
+  :root[data-theme="dark"] { --ink:#e6e6e6; --muted:#a9a9a9; --rule:#444; --accent:#8fb3ec; --bg:#16181c; --box:#20242b; }
+  html { background: var(--bg); }
+  body { font-family: "Georgia", "Times New Roman", serif; color: var(--ink); background: var(--bg); max-width: 46rem;
+         margin: 0 auto; padding: 2rem 16px 4rem; line-height: 1.55; font-size: 11pt; }
+  h1 { font-size: 1.55rem; line-height: 1.25; margin: 0 0 .6rem; text-align: center; }
+  .authors, .affil, .date { text-align: center; color: var(--muted); margin: .15rem 0; }
+  h2 { font-size: 1.12rem; margin: 1.8rem 0 .5rem; border-bottom: 1px solid var(--rule); padding-bottom: .2rem; }
+  h3 { font-size: 1rem; margin: 1.2rem 0 .3rem; }
+  .abstract { background: var(--box); padding: .9rem 1.1rem; margin: 1.4rem 0; border-left: 3px solid var(--accent); }
+  .abstract p { margin: .4rem 0; }
+  table { border-collapse: collapse; width: 100%; margin: .8rem 0 1rem; font-size: 9.5pt; font-family: "Segoe UI", Arial, sans-serif; }
+  th, td { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: .3rem .4rem; text-align: left; vertical-align: top; }
+  th { background: var(--box); }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  caption { caption-side: top; text-align: left; font-size: 9.5pt; color: var(--muted); padding-bottom: .3rem; }
+  figure { margin: 1.1rem 0; text-align: center; break-inside: avoid; }
+  figure img { max-width: 100%; height: auto; border: 1px solid var(--rule); background: #fff; }
+  figure.shots img { max-width: 32%; vertical-align: top; }
+  figcaption { font-size: 9.5pt; color: var(--muted); text-align: left; margin-top: .3rem; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: .9em; }
+  pre { background: var(--box); padding: .6rem .8rem; overflow-x: auto; font-size: 8.5pt; }
+  .note { font-size: 9.5pt; color: var(--muted); }
+  ol.refs { font-size: 9.5pt; padding-left: 1.6rem; }
+  ol.refs li { margin: .25rem 0; word-break: break-word; }
+  .wide { overflow-x: auto; }
+  @media print { body { max-width: none; padding: 0; font-size: 10.5pt; } h2 { break-after: avoid; } a { color: inherit; text-decoration: none; }
+                 :root { --ink:#000; --bg:#fff; --box:#f3f5fa; --muted:#444; --rule:#bbb; } }
+  @page { size: A4; margin: 18mm 17mm; }
+</style>
+</head>
+<body>
+
+<h1>NeuroSonic: a laptop-assisted, offline-first smartphone prototype for spoken walking-path awareness and navigation
+for visually impaired pedestrians</h1>
+<p class="authors">Allwin Raj</p>
+<p class="affil">Research prototype report. All results measured on one laptop on 2026-11-02/03 unless stated otherwise.</p>
+<p class="date">Manuscript version: 2026-11-03</p>
+
+<div class="abstract">
+<p><strong>Abstract.</strong> We describe NeuroSonic, a research prototype in which an iPhone acts as the camera,
+microphone, GPS receiver and speaker of a perception and navigation system that runs on a laptop over local Wi-Fi.
+The system grew out of WOAD, a near-infrared and depth obstacle detector that needs a sensor the phone does not have. For
+the phone's RGB camera we benchmarked four detectors under identical conditions on 365 near-infrared validation images
+containing 129 people. RF-DETR Nano gave the highest person AP@0.5 (0.660; SSDLite 0.542, YOLO26n 0.619, YOLO26s 0.628)
+and the highest recall at the operating threshold (0.729), with 21.3&nbsp;ms mean GPU latency on an RTX&nbsp;4050 Laptop
+GPU. It runs as the primary detector with an automatic fall-back to SSDLite on the CPU. Detections are tracked with a
+ByteTrack-style association that compensates for camera motion estimated with pyramidal Lucas–Kanade optical flow and
+RANSAC. On top of the tracks, two conservative events, "entering the walking path" and "crossing in front", are spoken
+with an offline neural voice. Offline speech commands, an offline OpenStreetMap router and an optional, opt-in cloud
+scene description complete the system. In loopback browser tests with a simulated camera, the pipeline sustained
+about 5 frames/s with a median capture-to-answer time of 67&nbsp;ms. Three engineering problems were found
+and corrected: idle PyTorch CPU threads (712&nbsp;% → 121&nbsp;% of one core), per-request inference threads, and the GPU
+power state at low frame rates (partly mitigated with FP16, with unchanged person AP@0.5). A 10-minute soak test ran
+without errors. NeuroSonic has <em>not</em> been validated with an iPhone in real streets or with visually impaired
+users. It is not a safety device. We publish a validation protocol for these tests.</p>
+<p><strong>Keywords:</strong> assistive technology; visual impairment; real-time object detection; RF-DETR; multi-object
+tracking; camera-motion compensation; offline speech; pedestrian navigation; edge computing.</p>
+</div>
+
+<h2>1. Introduction</h2>
+<p>A pedestrian with a visual impairment needs two kinds of information that a white cane and a map application do not
+give together: <em>what is in front of me now</em> (people stepping into the way, a bicycle crossing, a chair in a
+corridor) and <em>where do I turn</em>. Smartphones carry a camera, a microphone, GPS and a speaker. Running modern
+detectors at several frames per second on the phone itself is difficult in a browser application, and cloud services
+need a reliable internet connection and send images off the device.</p>
+<p>NeuroSonic explores a middle way. The phone is a thin client in Safari. A laptop with a consumer GPU on the same
+Wi-Fi does the perception, speech recognition, speech synthesis and routing <em>without internet access</em>. The
+project started from WOAD (Wearable Obstacle Avoidance Device) <a href="#r1">[1]</a>, a two-stream near-infrared and
+depth model. WOAD requires a CS30 time-of-flight sensor, which no phone has, so the phone camera path had to be built
+separately. This paper reports how that path was designed and measured, and what remains untested.</p>
+<p>The contributions are:</p>
+<ol>
+<li>a working end-to-end prototype (phone client, laptop server, 28 HTTP endpoints) with offline walking guidance,
+event alerts, voice commands, neural speech and offline routing;</li>
+<li>a controlled comparison of four real-time detectors on the same images, leading to RF-DETR Nano with an SSDLite
+fall-back;</li>
+<li>a camera-motion-compensated tracker and two conservative, rule-based temporal events designed to avoid false alarms
+from the user's own movement;</li>
+<li>a measured account of three performance problems in GPU serving at a low, fixed frame rate, with before/after data;</li>
+<li>an honest separation of what was measured on the laptop, what was simulated in a browser, and what still needs an
+iPhone and field tests, with a protocol for the latter.</li>
+</ol>
+
+<h2>2. Problem statement and objectives</h2>
+<p><strong>Problem.</strong> Provide short, timely spoken information about recognised objects in the walking path and
+route guidance to a pedestrian holding or wearing a phone, without depending on internet access, without storing camera
+images, and without overstating what the system can see.</p>
+<p><strong>Objectives.</strong></p>
+<ol>
+<li>O1: process phone camera frames at ≈5 frames/s with an answer well within one frame interval (200&nbsp;ms) on the
+laptop;</li>
+<li>O2: choose the detector by measured accuracy, latency and licence, and keep a CPU fall-back;</li>
+<li>O3: announce movement (entering, crossing) without announcing the user's own walking as motion;</li>
+<li>O4: keep all local functions working offline; make cloud description opt-in;</li>
+<li>O5: never state distances or safety; say "appears clear", not "safe";</li>
+<li>O6: verify each function with automated tests, and state plainly what is not verified.</li>
+</ol>
+
+<h2>3. Related work</h2>
+<p><strong>Predecessor.</strong> WOAD <a href="#r1">[1]</a> fuses near-infrared and colour-mapped depth streams with
+transformer-based cross-modal attention in a YOLO-style detector. In earlier work in this project, we measured its
+cross-dataset person AP@0.5 at 0.17–0.22. We could not reproduce the authors' reported 0.669&nbsp;mAP, and the model
+needs its sensor, so in NeuroSonic it is limited to recorded data.</p>
+<p><strong>Real-time detection.</strong> Single-stage detectors such as YOLO <a href="#r2">[2]</a> and SSD
+<a href="#r3">[3]</a> made real-time detection practical. SSDLite with a MobileNetV3 backbone <a href="#r4">[4]</a>
+targets mobile CPUs. DETR <a href="#r5">[5]</a> introduced set prediction with transformers and removed non-maximum
+suppression. RF-DETR <a href="#r6">[6]</a> is a real-time DETR variant from Roboflow built on a DINOv2 backbone
+<a href="#r7">[7]</a> and released under Apache-2.0. YOLO26 <a href="#r8">[8]</a> is the current Ultralytics family
+(AGPL-3.0). All detectors used here were trained on COCO <a href="#r9">[9]</a>.</p>
+<p><strong>Tracking.</strong> SORT <a href="#r10">[10]</a> associates detections to Kalman-predicted tracks by IoU.
+ByteTrack <a href="#r11">[11]</a> also uses low-confidence detections in a second association stage, which keeps tracks
+alive through occlusion. Our tracker follows ByteTrack's two-stage idea. Instead of a Kalman filter, it uses a
+camera-motion-compensated prediction.</p>
+<p><strong>Camera motion.</strong> Sparse optical flow with Shi–Tomasi corners <a href="#r12">[12]</a> and the
+Lucas–Kanade method <a href="#r13">[13]</a> in its pyramidal form <a href="#r14">[14]</a>, followed by a RANSAC
+<a href="#r15">[15]</a> fit of a similarity transform, is a standard way to estimate global image motion. We use the
+OpenCV implementations <a href="#r16">[16]</a>.</p>
+<p><strong>Speech and maps.</strong> Offline recognition uses Vosk, built on Kaldi <a href="#r17">[17]</a>. Speech
+synthesis uses Piper <a href="#r18">[18]</a>, which is based on VITS <a href="#r19">[19]</a>. Routing uses A*
+<a href="#r20">[20]</a> on an OpenStreetMap <a href="#r21">[21]</a> extract.</p>
+<p class="note">We did not carry out a systematic review of assistive-navigation literature for this manuscript. The
+comparison in this paper is between components we ran ourselves.</p>
+
+<h2>4. System design</h2>
+<figure><img src="figures/fig1_architecture.png" alt="Architecture: iPhone Safari client sends JPEG frames, audio and GPS to an HTTPS API on the laptop; perception, events, speech, voice commands, offline map, history and optional Gemini description run on the laptop.">
+<figcaption>Figure 1. Deployment. The phone is a browser client. All local engines run on the laptop. Only the optional
+scene description uses the internet, and only after the user opts in.</figcaption></figure>
+<p>The server is a standard-library Python HTTP(S) server. The phone loads a web application (HTML/JavaScript) from it
+and then:</p>
+<ul>
+<li>posts a 320-pixel-wide JPEG every 200&nbsp;ms (400&nbsp;ms if the laptop reports the CPU detector), with one request
+in flight;</li>
+<li>sends recorded speech as WAV for command recognition;</li>
+<li>uses GPS locally, sending positions only to request a route;</li>
+<li>plays spoken messages through a priority queue (urgent &gt; system &gt; obstacle &gt; navigation/scene &gt; info)
+with cooldowns and interruption.</li>
+</ul>
+<p>HTTPS uses a locally generated certificate authority, so that Safari grants camera and microphone access. History is
+stored in SQLite as text only. No camera image is written to disk or to logs.</p>
+<figure><img src="figures/fig6_perception_pipeline.png" alt="Per-frame pipeline: frame, quality check, detector, camera motion, tracking, path state and events, priority speech.">
+<figcaption>Figure 2. Per-frame perception pipeline on the laptop.</figcaption></figure>
+
+<h2>5. Methods</h2>
+<h3>5.1 Detector selection</h3>
+<p>Four candidates were run through the same harness (<code>tools/benchmark_detectors.py</code>):</p>
+<ul>
+<li>the previous production detector, SSDLite320-MobileNetV3-Large (torchvision);</li>
+<li>RF-DETR Nano (rfdetr 1.11.2);</li>
+<li>YOLO26n and YOLO26s (ultralytics 8.4.198, benchmark only).</li>
+</ul>
+<p><strong>Quality</strong> was measured as person average precision with the project's own AP code, on 365
+near-infrared validation images containing 129 annotated people, from the WOAD dataset. These are the only locally
+available images with person boxes. They are not phone RGB images, so they rank the detectors but do not predict
+street performance. We also report precision and recall at the production confidence threshold of 0.40.</p>
+<p><strong>Latency</strong> was the mean over 200 (GPU) or 60 (CPU) recorded 640×480 frames, back to back, FP32, batch 1,
+after 10 warm-up frames.</p>
+<p><strong>Licence</strong> was a selection criterion, because the system is a network service: AGPL-3.0 would oblige
+release of the source to users.</p>
+
+<h3>5.2 Detector runtime</h3>
+<p>RF-DETR runs on CUDA from local weights. Downloads are blocked at run time. Its detections are restricted to 23
+obstacle-relevant COCO classes at confidence ≥ 0.40. A wrapper falls back to SSDLite on the CPU in these cases:</p>
+<ul>
+<li>CUDA, the package or the weights are missing;</li>
+<li>warm-up fails;</li>
+<li>a run-time inference fails, in which case the same frame is re-analysed by SSDLite.</li>
+</ul>
+<p>Three serving changes were made after measurement (section 7.3):</p>
+<ol>
+<li>PyTorch is limited to two CPU threads while the GPU detector is active;</li>
+<li>all inference runs on a single long-lived worker thread rather than on the HTTP server's per-request threads;</li>
+<li>RF-DETR runs in FP16 (half precision) without graph compilation, with FP32 as fall-back.</li>
+</ol>
+
+<h3>5.3 Camera motion and tracking</h3>
+<p><strong>Camera motion.</strong> Up to 150 Shi–Tomasi corners are taken outside the detected boxes and followed into
+the next frame with pyramidal Lucas–Kanade flow. A similarity transform (shift, scale, rotation) is fitted with RANSAC. If there
+are fewer than 12 corners or inliers, the camera motion is "unknown".</p>
+<p><strong>Tracking.</strong> Each track's box is predicted by applying the camera transform to its last box.</p>
+<ul>
+<li>Detections with confidence ≥ 0.55 are matched first, greedily by IoU, within each class.</li>
+<li>Detections between 0.40 and 0.55 can only extend existing tracks, as in ByteTrack.</li>
+<li>Tracks end after three missed frames.</li>
+<li>Every update stores the object's displacement <em>relative to the background</em>: the observed motion minus the
+camera-predicted motion.</li>
+</ul>
+
+<h3>5.4 Walking-path state and events</h3>
+<p><strong>Walking path.</strong> The walking path is a lower-central trapezoid of the image. Its state is one of
+CLEAR_VIEW, POSSIBLE_OBSTACLE, BLOCKED_VIEW, UNCERTAIN (dark or blurred frame) or CAMERA_UNAVAILABLE. A state is
+confirmed by 2-of-3 or 3-of-3 consecutive frames before it is spoken.</p>
+<p><strong>Event preconditions.</strong> Events are only considered for confirmed tracks: at least three updates over at
+least 0.4&nbsp;s, of people, vehicles or animals.</p>
+<p><strong>Event rules.</strong></p>
+<ul>
+<li><em>Entering:</em> the object was outside the path at the start of a 1.5&nbsp;s window, overlaps it now, and moves
+towards it at ≥ 0.12 image widths per second relative to the background.</li>
+<li><em>Crossing:</em> the object's centre passes from below 35&nbsp;% to above 65&nbsp;% of the width (or back) within
+3&nbsp;s, at ≥ 0.15 widths/s, with the bottom of its box in the lower half of the image.</li>
+</ul>
+<p><strong>Suppression.</strong></p>
+<ul>
+<li>Nothing is announced while the camera shifts more than 6&nbsp;% of the width per frame, zooms more than 4&nbsp;%, or
+has no motion estimate.</li>
+<li>Nothing is announced in BLOCKED_VIEW, UNCERTAIN or CAMERA_UNAVAILABLE.</li>
+<li>Each track triggers an event at most once.</li>
+<li>Events are at least 3&nbsp;s apart.</li>
+</ul>
+<p>"Approaching" was deliberately not implemented. With a moving camera, box growth is dominated by the user's own
+walking. No message states a distance or that the way is safe.</p>
+
+<h3>5.5 Speech, commands, routing and optional cloud description</h3>
+<ul>
+<li><strong>Speech output:</strong> Piper with an Indian-English voice synthesises speech on the laptop. Results are
+cached, and the phone's own voice is the fall-back.</li>
+<li><strong>Voice commands:</strong> Vosk recognises commands in two passes (grammar-constrained, then free), combined
+by an intent parser.</li>
+<li><strong>Routing:</strong> A* with a haversine heuristic on an OpenStreetMap extract of Vellore (31,439 path nodes,
+813 places). Turn instructions are spoken about 70&nbsp;m and 25&nbsp;m ahead, and the route is recalculated after two
+off-route fixes.</li>
+<li><strong>Cloud description:</strong> an optional scene description sends one photo to Gemini, only after explicit
+consent. It is rate-limited and has timeouts. Its output is filtered so that it never states distances or safety.</li>
+</ul>
+
+<h2>6. Experimental setup</h2>
+<table><caption>Table 1. Test environment.</caption>
+<tr><th>Item</th><th>Value</th></tr>
+<tr><td>Laptop</td><td>HP Omen; AMD Ryzen 7 7840HS (8 cores / 16 threads); 15.3&nbsp;GB RAM; NVIDIA GeForce RTX 4050 Laptop GPU, 6&nbsp;GB; driver 592.82</td></tr>
+<tr><td>Software</td><td>Windows 11; Python 3.12.10; PyTorch 2.15.0+cu132; torchvision 0.29.1; rfdetr 1.11.2; OpenCV; Piper 1.8.0; Vosk</td></tr>
+<tr><td>Environments</td><td><code>.venv</code> (CPU-only, original); <code>.venv-gpu</code> (CUDA, used for the GPU results)</td></tr>
+<tr><td>Detector quality data</td><td>365 near-infrared validation images, 129 people (WOAD dataset)</td></tr>
+<tr><td>Live-pipeline input</td><td>a 640×480 clip that composites a real recorded person riding a bicycle over a real recorded empty
+corridor (<code>tools/make_event_clip.py</code>), played as Chrome's fake camera, or streamed by <code>tools/soak_test.py</code></td></tr>
+<tr><td>Browser tests</td><td>headless Chrome, iPhone-sized viewport, fake camera and microphone, DNS blocked; server on loopback</td></tr>
+</table>
+<p class="note">No measurement in this paper includes Wi-Fi transmission, iPhone JPEG encoding, real street scenes or
+users.</p>
+
+<h2>7. Results</h2>
+<h3>7.1 Detector comparison</h3>
+<table><caption>Table 2. Detector comparison (Phase 1 benchmark, <code>outputs/benchmarks/phase1/results.json</code>).
+Latency: mean per 640×480 frame, FP32, batch 1. Quality: person, 365 near-IR images.</caption>
+<tr><th>Detector</th><th class="n">GPU ms</th><th class="n">CPU ms</th><th class="n">AP@0.5</th><th class="n">AP@0.5:0.95</th><th class="n">Precision @0.40</th><th class="n">Recall @0.40</th><th>Licence</th></tr>
+<tr><td>SSDLite320 (previous)</td><td class="n">42.3</td><td class="n">43.7</td><td class="n">0.542</td><td class="n">0.208</td><td class="n">0.607</td><td class="n">0.574</td><td>BSD-3</td></tr>
+<tr><td><strong>RF-DETR Nano (selected)</strong></td><td class="n">21.3</td><td class="n">121.9</td><td class="n"><strong>0.660</strong></td><td class="n"><strong>0.304</strong></td><td class="n">0.588</td><td class="n"><strong>0.729</strong></td><td>Apache-2.0</td></tr>
+<tr><td>YOLO26n</td><td class="n">12.4</td><td class="n">27.8</td><td class="n">0.619</td><td class="n">0.268</td><td class="n">0.633</td><td class="n">0.628</td><td>AGPL-3.0</td></tr>
+<tr><td>YOLO26s</td><td class="n">11.8</td><td class="n">57.5</td><td class="n">0.628</td><td class="n">0.292</td><td class="n">0.600</td><td class="n">0.651</td><td>AGPL-3.0</td></tr>
+</table>
+<figure><img src="figures/fig2_detector_latency.png" alt="Bar chart of CPU and GPU latency per detector."><figcaption>Figure 3. Detector latency.</figcaption></figure>
+<figure><img src="figures/fig3_person_detection_quality.png" alt="Bar chart of person AP@0.5, AP@0.5:0.95 and recall per detector."><figcaption>Figure 4. Person detection quality on the near-IR validation set.</figcaption></figure>
+<p><strong>Choice of RF-DETR Nano.</strong> It had the best AP and recall. Recall matters most for a warning system,
+because a missed person is worse than an extra caution. Its 21&nbsp;ms GPU latency fits a 200&nbsp;ms frame interval, and
+its licence is permissive.</p>
+<p><strong>Trade-offs.</strong> The YOLO26 models are faster, but they rank lower on recall and are AGPL-3.0. RF-DETR is
+too slow on the CPU (122&nbsp;ms), so SSDLite remains the fall-back. RF-DETR's precision at 0.40 (0.588) is slightly lower
+than the others', so more false detections are expected. The temporal confirmation in sections 5.3–5.4 is meant to
+absorb them.</p>
+
+<h3>7.2 FP16 inference</h3>
+<p>RF-DETR was run in FP32 and in FP16 (half precision, no graph compilation) with the same weights and code path (<code>tools/benchmark_precision.py</code>, <code>outputs/benchmarks/precision/results.json</code>). Person quality is unchanged. Back to back, both take about 17&nbsp;ms per 320×240 frame. At the application's rate of 5 frames/s, where the GPU drops to its P8 power state between frames (sampled clocks 210–405&nbsp;MHz), FP16 lowers the median from 66.5 to 53.2&nbsp;ms and the p90 from 78.6 to 60.8&nbsp;ms. On the event clip, FP32 and FP16 gave the same class counts. FP16 is therefore the default, with FP32 as automatic fall-back.</p>
+<table><caption>Table 3. RF-DETR Nano, FP32 vs FP16 (RTX 4050 Laptop GPU, 320×240 frames, 100 timed frames each).</caption>
+<tr><th>Precision</th><th class="n">AP@0.5</th><th class="n">AP@0.5:0.95</th><th class="n">Precision @0.40</th><th class="n">Recall @0.40</th><th class="n">Back-to-back median / p90 ms</th><th class="n">At 5 frames/s median / p90 ms</th></tr>
+<tr><td>FP32</td><td class="n">0.660</td><td class="n">0.304</td><td class="n">0.588</td><td class="n">0.729</td><td class="n">17.3 / 21.7</td><td class="n">66.5 / 78.6</td></tr>
+<tr><td><strong>FP16 (used)</strong></td><td class="n">0.660</td><td class="n">0.305</td><td class="n">0.595</td><td class="n">0.729</td><td class="n">16.9 / 20.4</td><td class="n">53.2 / 60.8</td></tr>
+</table>
+
+<h3>7.3 Serving efficiency at a fixed 5 frames/s</h3>
+<p><strong>CPU threads.</strong> With RF-DETR on the GPU, PyTorch's default CPU thread pool (8 threads) kept the server at
+712&nbsp;% of one CPU core while streaming 5 frames/s, although the GPU did the detection. Two threads cut this to
+121&nbsp;% with no loss of frame rate (Figure 5). Median frame time was 30, 38 and 25&nbsp;ms for 8, 4 and 2 threads.</p>
+<figure><img src="figures/fig4_cpu_thread_fix.png" alt="Bar chart: server CPU at 8, 4 and 2 PyTorch threads: 712, 326, 121 percent of one core." style="max-width:70%"><figcaption>Figure 5. Server CPU use with RF-DETR on the GPU, by PyTorch CPU thread count.</figcaption></figure>
+<p><strong>GPU power state.</strong> At 5 frames/s the GPU is idle about 90&nbsp;% of the time. In repeated in-process
+timings, the RTX&nbsp;4050 then dropped to its lowest performance state (P8, about 390&nbsp;MHz). The same RF-DETR
+inference took about 16&nbsp;ms at P5 (≈600&nbsp;MHz) and about 74&nbsp;ms at P8. This explains why per-frame latency in
+the live pipeline is several times the back-to-back benchmark. FP16 reduces the effect (section 7.2). Locking clocks
+needs administrator rights and was not done. The Windows/NVIDIA "prefer maximum performance" setting is recommended
+for demonstrations.</p>
+<p><strong>Inference thread.</strong> The HTTP server handles each request on a new thread. Running GPU inference from a
+fresh thread each time cost about 3&nbsp;ms per call in isolation (19.4 vs 16.2&nbsp;ms median). We moved all inference to
+one long-lived worker thread.</p>
+
+<h3>7.4 Ten-minute soak tests</h3>
+<p>The server was run with a mock cloud provider that takes 20&nbsp;s per description. <code>tools/soak_test.py</code>
+streamed the clip to the frame endpoint at 5 frames/s, one request at a time, as the phone does. Every 60&nbsp;s it sent a
+cloud request in parallel, and it recorded 10&nbsp;s windows.</p>
+<table><caption>Table 4. Ten-minute soak tests (<code>outputs/benchmarks/soak/</code>), 59 windows of 10&nbsp;s each. "Before" ran
+the earlier code (FP32, inference on the HTTP request threads); "after" ran the final code (FP16, one inference thread).</caption>
+<tr><th>Measure</th><th class="n">Before</th><th class="n">After</th></tr>
+<tr><td>Frames sent / errors</td><td class="n">2980 / 0</td><td class="n">2980 / 0</td></tr>
+<tr><td>Mean frames/s</td><td class="n">4.97</td><td class="n">4.97</td></tr>
+<tr><td>Request latency: range of window medians</td><td class="n">62–104 ms</td><td class="n">70–78 ms</td></tr>
+<tr><td>Request latency: median of window medians</td><td class="n">92.7 ms</td><td class="n">74.8 ms</td></tr>
+<tr><td>Request latency: highest window p90</td><td class="n">111.3 ms</td><td class="n">92.4 ms</td></tr>
+<tr><td>Server RAM (resident), min–max</td><td class="n">851–2426 MiB</td><td class="n">2255–2431 MiB</td></tr>
+<tr><td>Server CPU, median, % of one core</td><td class="n">142</td><td class="n">130</td></tr>
+<tr><td>GPU memory, all processes (first = last)</td><td class="n">735 MiB</td><td class="n">845 MiB</td></tr>
+<tr><td>Parallel 20 s cloud requests answered</td><td class="n">7 / 7</td><td class="n">7 / 7</td></tr>
+<tr><td>Events spoken</td><td class="n">0*</td><td class="n">148</td></tr>
+</table>
+<p class="note">* The first run played the clip frame by frame, so the cyclist moved at half speed (0.10 widths/s), below the
+0.12 threshold. The second run sampled the clip by elapsed time, as a camera does. The event counts therefore are not
+comparable, and the per-frame work differed slightly between runs.</p>
+<figure><img src="figures/fig5_soak_test.png" alt="Three stacked line charts over 10 minutes comparing before and after: frames per second, request latency, server RAM."><figcaption>Figure 6. Soak tests before and after the serving changes.</figcaption></figure>
+<p>Both runs were stable: no errors, a constant 4.97 frames/s, every parallel slow cloud request answered, and no growth in GPU memory. Server memory showed no upward trend in either run. The first run swung between 851 and 2426&nbsp;MiB as memory was allocated and released; the second stayed between 2255 and 2431&nbsp;MiB. After the changes, request latency was steadier (window medians 70–78&nbsp;ms instead of 62–104&nbsp;ms) and its worst p90 fell from 111 to 92&nbsp;ms. Ten minutes on one machine cannot exclude a slow leak over hours.</p>
+
+<h3>7.5 End-to-end behaviour in the browser</h3>
+<p>The seven headless-Chrome tests drive the real phone interface at iPhone size against a server started from <code>.venv-gpu</code>, with the network blocked. In the event test, the server's recommended interval was 200&nbsp;ms and the page achieved 4.91 frames/s. The capture-to-answer time measured in the page (JPEG encoding, HTTP on loopback, full server pipeline) had a median of 67&nbsp;ms, p90 73&nbsp;ms and maximum 81&nbsp;ms over 44 frames. "Caution. A person is moving into your path from the left." was delivered and the neural-voice audio started 257&nbsp;ms later. In the slow-cloud test, the phone said "Still waiting for the online description. Local walking guidance continues." at 15.2&nbsp;s and spoke the description at 20.1&nbsp;s, while 99 frames were analysed and walking-path messages continued in the meantime. The clip's subject is a person riding a bicycle, so RF-DETR reports both a person and a bicycle. In the soak test, 100 of the 148 events named the person and 48 the bicycle.</p>
+<figure class="shots">
+<img src="../docs/images/01_live_rfdetr_event_alert.png" alt="Phone screen: RF-DETR boxes, path region and the spoken message about a person moving into the path from the left.">
+<img src="../docs/images/02_live_rfdetr_blocked_path.png" alt="Phone screen: Stop, the walking path may be blocked.">
+<img src="../docs/images/03_navigation_route.png" alt="Phone screen: offline map with route and turn instruction.">
+<figcaption>Figure 7. Phone interface in Chrome's iPhone-sized emulation with the fake camera. Left: entering event.
+Centre: blocked path. Right: offline navigation with a simulated position. The camera images are a composite of
+recorded footage, not field footage.</figcaption></figure>
+
+<h3>7.6 Automated tests</h3>
+<div><code>python -m unittest discover</code> runs 204 test cases: unit, integration and HTTP API tests, plus 32 Node tests of the browser logic. Result: <strong>OK</strong> in <code>.venv-gpu</code> (1 skipped: an opt-in live cloud test) and OK in the CPU-only <code>.venv</code> (3 skipped: two GPU-only RF-DETR tests and the live test, with the app falling back to SSDLite automatically). The perception tests (22) cover:<ul><li>start-up and run-time detector fall-back;</li><li>recovery of a known camera shift and zoom;</li><li>stable track identities while the camera pans;</li><li>entering and crossing in both directions;</li><li><em>no</em> event for a static car during a pan, for a shaky camera, in BLOCKED_VIEW, for slow drift and for chairs;</li><li>the absence of distance and safety words.</li></ul>All 7 browser tests pass against the final code: smoke, voice and map, refined interface, final integration, cloud description with a simulated outage, slow cloud description, and events. A quality-gate launch with the documented command also passed: frames, speech, place search, a 1330&nbsp;m route with 10 steps, and a voice command, from both the GPU environment (RF-DETR, FP16, 200&nbsp;ms) and the CPU environment (SSDLite fall-back, 400&nbsp;ms).</div>
+
+<h2>8. Discussion</h2>
+<p><strong>Objective O1 (frame rate and latency).</strong> Met on the laptop. The pipeline sustained ≈5 frames/s with a
+capture-to-answer median well below the 200&nbsp;ms interval. The decisive factors were serving details, not the
+detector's benchmark speed:</p>
+<ul>
+<li>idle CPU threads;</li>
+<li>per-request threads;</li>
+<li>above all, GPU clock scaling at low load.</li>
+</ul>
+<p>A detector that takes 21&nbsp;ms back to back took several times longer at 5 frames/s. Benchmarks for assistive
+systems should therefore be run at the frame rate of the application, not only back to back.</p>
+<p><strong>Objective O2 (detector choice).</strong> Met, within the limits of the data. RF-DETR Nano was the most accurate
+of the four on the only annotated person data available. Its lower CPU speed is covered by the SSDLite fall-back.
+Whether the ranking holds for phone RGB images of Indian streets is untested.</p>
+<p><strong>Objective O3 (motion without false alarms from walking).</strong> Partly shown. In tests with a synthetically
+panning camera, a static car gave no event, while a person moving into the path did. The price is conservatism:</p>
+<ul>
+<li>events need about 1&nbsp;s of confirmation;</li>
+<li>events are suppressed while the camera sways strongly, which can include normal walking with a hand-held
+phone.</li>
+</ul>
+<p>Missed events are therefore expected. This is acceptable only because the system is supplementary to the cane.</p>
+<p><strong>Objectives O4–O6 (offline, wording, verification).</strong> Met in automated tests:</p>
+<ul>
+<li>offline operation was tested by blocking the network in-process and in Chrome;</li>
+<li>a safety filter removes distances and "safe"-type words from cloud descriptions;</li>
+<li>the test suites pass in both environments.</li>
+</ul>
+<p>Physical verification is the main gap (section 9).</p>
+
+<h2>9. Limitations and threats to validity</h2>
+<ul>
+<li><strong>No iPhone or field validation.</strong> RF-DETR has not yet processed real iPhone frames. Wi-Fi latency,
+outdoor lighting, and use by visually impaired people are untested. The protocol in
+<code>docs/IPHONE_VALIDATION_PROTOCOL.md</code> lists 23 scenarios for these tests.</li>
+<li><strong>Proxy data.</strong> Detector quality was measured on near-infrared images with 129 people. The live tests
+use a fake camera and a composited clip.</li>
+<li><strong>Scope of perception.</strong> 23 COCO classes only. No steps, kerbs, holes, poles, walls or wet floors. No
+distance, and no "approaching" alerts.</li>
+<li><strong>Dependence.</strong> The phone needs the laptop and local Wi-Fi. iOS Safari stops the camera when the screen
+locks. The GPU path needs an NVIDIA GPU.</li>
+<li><strong>Single machine.</strong> All timings come from one laptop and one GPU driver, and power-state behaviour
+differs between machines.</li>
+<li><strong>Cloud description.</strong> The single approved live Gemini request timed out. Cloud quality and latency are
+unmeasured.</li>
+<li><strong>Licences.</strong> Piper is GPL-3.0+ and the voice model AGPL-3.0, which constrains redistribution.</li>
+</ul>
+
+<h2>10. Ethics and safety</h2>
+<p>NeuroSonic is a research prototype. It is <strong>not</strong> a mobility aid and must not replace a white cane, a
+guide dog or human assistance. Its messages say "appears clear", never "safe". It never estimates distance and never
+claims 360-degree awareness.</p>
+<p>Camera images are processed in memory and are not stored. The cloud description sends one image to a third party
+only after the user opts in.</p>
+<p>Any field test must follow the safety rules in the validation protocol: a sighted companion, a cane in use,
+controlled routes, and stopping on any doubt.</p>
+
+<h2>11. Conclusion and future work</h2>
+<p>A consumer laptop GPU can give a browser-based phone client real-time, offline, spoken object and movement awareness
+with a modern detector. In our tests it sustained about 5 frames/s and answered within roughly 50–100&nbsp;ms on the
+laptop.</p>
+<p>The engineering lessons are general:</p>
+<ul>
+<li>measure at the application's frame rate;</li>
+<li>constrain CPU threads when the GPU does the work;</li>
+<li>keep GPU work on one thread.</li>
+</ul>
+<p>The next step is not a new model but evidence: the iPhone and field protocol. After that, the planned work is:</p>
+<ul>
+<li>monocular depth to support "approaching" alerts;</li>
+<li>ground-hazard data (kerbs, steps, potholes) under open licences;</li>
+<li>a native application with on-device inference that removes the laptop dependency.</li>
+</ul>
+
+<h2>Data and code availability</h2>
+<p>All code, test scripts, benchmark outputs (<code>outputs/benchmarks/</code>) and the figure generator
+(<code>tools/make_publication_figures.py</code>) are in the project directory. The commands to reproduce every number
+are in <code>publication/TESTING_AND_VALIDATION_REPORT.md</code>.</p>
+
+<h2>References</h2>
+<ol class="refs">
+<li id="r1">"WOAD: A Wearable Obstacle Avoidance Device for Visually Impaired Individuals with Cross-Modal Learning." Original code, README and dataset, as used in this project (local copy in <code>F:\Projects\WOAD-Research\original\</code>).</li>
+<li id="r2">J. Redmon, S. Divvala, R. Girshick, A. Farhadi. "You Only Look Once: Unified, Real-Time Object Detection." CVPR, 2016.</li>
+<li id="r3">W. Liu et al. "SSD: Single Shot MultiBox Detector." ECCV, 2016.</li>
+<li id="r4">A. Howard et al. "Searching for MobileNetV3." ICCV, 2019.</li>
+<li id="r5">N. Carion et al. "End-to-End Object Detection with Transformers." ECCV, 2020.</li>
+<li id="r6">Roboflow. RF-DETR: real-time detection transformer (software, Apache-2.0). https://github.com/roboflow/rf-detr</li>
+<li id="r7">M. Oquab et al. "DINOv2: Learning Robust Visual Features without Supervision." Transactions on Machine Learning Research, 2024 (arXiv:2304.07193).</li>
+<li id="r8">Ultralytics. YOLO26 documentation (software, AGPL-3.0). https://docs.ultralytics.com/</li>
+<li id="r9">T.-Y. Lin et al. "Microsoft COCO: Common Objects in Context." ECCV, 2014.</li>
+<li id="r10">A. Bewley, Z. Ge, L. Ott, F. Ramos, B. Upcroft. "Simple Online and Realtime Tracking." ICIP, 2016.</li>
+<li id="r11">Y. Zhang et al. "ByteTrack: Multi-Object Tracking by Associating Every Detection Box." ECCV, 2022.</li>
+<li id="r12">J. Shi, C. Tomasi. "Good Features to Track." CVPR, 1994.</li>
+<li id="r13">B. D. Lucas, T. Kanade. "An Iterative Image Registration Technique with an Application to Stereo Vision." IJCAI, 1981.</li>
+<li id="r14">J.-Y. Bouguet. "Pyramidal Implementation of the Lucas Kanade Feature Tracker." Intel Corporation, Microprocessor Research Labs, technical report, 2000.</li>
+<li id="r15">M. A. Fischler, R. C. Bolles. "Random Sample Consensus: A Paradigm for Model Fitting with Applications to Image Analysis and Automated Cartography." Communications of the ACM 24(6), 1981.</li>
+<li id="r16">OpenCV library. https://opencv.org/</li>
+<li id="r17">D. Povey et al. "The Kaldi Speech Recognition Toolkit." IEEE ASRU Workshop, 2011. Vosk: https://alphacephei.com/vosk/</li>
+<li id="r18">Piper text-to-speech (software). https://github.com/rhasspy/piper</li>
+<li id="r19">J. Kim, J. Kong, J. Son. "Conditional Variational Autoencoder with Adversarial Learning for End-to-End Text-to-Speech." ICML, 2021.</li>
+<li id="r20">P. E. Hart, N. J. Nilsson, B. Raphael. "A Formal Basis for the Heuristic Determination of Minimum Cost Paths." IEEE Transactions on Systems Science and Cybernetics 4(2), 1968.</li>
+<li id="r21">OpenStreetMap contributors. https://www.openstreetmap.org (ODbL 1.0).</li>
+</ol>
+</body>
+</html>

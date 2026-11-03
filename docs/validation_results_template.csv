@@ -1,0 +1,2 @@
+session_id,date,time,tester,companion,scenario_code,trial_no,location_indoor_outdoor,lighting,carrying_mode,detector_chip(RF-DETR GPU / SSDLite CPU),event_description,expected_message,spoken_message(s),alert_given(y/n),side_or_direction_correct(y/n/na),latency_event_to_speech_s,false_alarm(y/n),fps_chip,gps_accuracy_m,notes
+S01,YYYY-MM-DD,HH:MM,,,P1,1,indoor,normal,chest,,,"Caution. A person is moving into your path from the left.",,,,,,,,

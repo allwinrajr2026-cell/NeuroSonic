@@ -1,0 +1,55 @@
+{
+ "region": "vellore",
+ "bbox": {
+  "south": 12.86,
+  "west": 79.07,
+  "north": 13.0,
+  "east": 79.21
+ },
+ "attribution": "© OpenStreetMap contributors (ODbL 1.0)",
+ "osm_timestamp": "2026-11-02T06:32:02Z",
+ "built": "2026-11-02 12:07:11",
+ "licence": "Open Database License (ODbL) 1.0 - https://www.openstreetmap.org/copyright. Attribution required: '© OpenStreetMap contributors'.",
+ "source": {
+  "provider": "Overpass API (overpass-api.de)",
+  "files": {
+   "vellore_highways.osm.json": {
+    "bytes": 4164985,
+    "sha256": "d5de871699b34334853c134420a01fdb431f44000672e11f18c5408c4a7aec40"
+   },
+   "vellore_features.osm.json": {
+    "bytes": 548032,
+    "sha256": "b06f5d72a313966a51dc92725b2dfa0746e3bc5b6cac5f7b84782e52a4e654d9"
+   },
+   "vellore_places.osm.json": {
+    "bytes": 171359,
+    "sha256": "fd40325688609e545ecdc55fe66f34fe0ed40c7668df3c6563bac6fca12cf53d"
+   }
+  }
+ },
+ "not_included": [
+  "buildings (Overpass download failed: HTTP 502 'server at capacity'; mirror unreachable)"
+ ],
+ "counts": {
+  "graph_nodes": 31439,
+  "graph_edges": 34939,
+  "walkable_ways": 6683,
+  "excluded_ways": 27,
+  "places": 813,
+  "named_streets": 194,
+  "road_lines_major": 219,
+  "road_lines_medium": 125,
+  "road_lines_minor": 6095,
+  "road_lines_foot": 271,
+  "water": 47,
+  "waterline": 80,
+  "green": 110,
+  "landuse": 135,
+  "rail": 93
+ },
+ "outputs": {
+  "map.json": 1052137,
+  "graph.json": 1646391,
+  "places.json": 96374
+ }
+}

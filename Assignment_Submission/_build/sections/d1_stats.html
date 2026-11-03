@@ -1,0 +1,58 @@
+<h2>Problem Substantiation with Statistics</h2>
+<h3>Global burden</h3>
+<p>The World Health Organization (WHO) estimates that, globally, at least <strong>2.2 billion people</strong> have a
+near or distance vision impairment, and that for at least <strong>1 billion</strong> of them the impairment could have
+been prevented or has yet to be addressed [[who]]. The 2.2-billion figure was first published in WHO's <em>World
+Report on Vision</em> in October 2019 [[whoreport]]. Among people with distance vision impairment or blindness, the
+leading causes are cataract (94 million), refractive error (88.4 million), age-related macular degeneration
+(8 million), glaucoma (7.7 million) and diabetic retinopathy (3.9 million); near vision impairment is mainly due to
+presbyopia (826 million) [[who]]. {{f-who}} shows the distance-vision causes.</p>
+<figure id="f-who"><img src="fig:figA_who_causes.png" alt="Bar chart of causes of distance vision impairment">
+<figcaption>Leading causes of distance vision impairment or blindness worldwide, in millions of people (WHO fact sheet,
+February 2026 [[who]]).</figcaption></figure>
+<p>The Global Burden of Disease (GBD) Vision Loss Expert Group estimated that in 2020, <strong>43.3 million</strong>
+people were blind (95&nbsp;% uncertainty interval 37.6&ndash;48.4 million), of whom 23.9 million (55&nbsp;%) were female,
+and that 295 million people had moderate or severe vision impairment [[gbd]]. Between 1990 and 2020 the
+age-standardised prevalence of blindness among adults aged 50 years and older fell by 28.5&nbsp;%, yet the
+<em>number</em> of blind people rose by 50.6&nbsp;%, because populations grew and aged. The same study projects
+<strong>61.0 million</strong> blind people and 474 million with moderate or severe vision impairment by 2050
+[[gbd]] ({{f-gbd}}). In other words, medical progress is reducing the risk for each person, but the absolute number
+of people who need mobility support is still increasing.</p>
+<figure id="f-gbd"><img src="fig:figB_gbd_projection.png" alt="Grouped bars: blind and MSVI in 2020 and 2050">
+<figcaption>People who are blind or have moderate/severe vision impairment (VI): 2020 estimate and 2050 projection,
+millions (GBD study [[gbd]]).</figcaption></figure>
+
+<h3>The situation in India</h3>
+<p>India's National Blindness and Visual Impairment Survey 2015&ndash;2019, run under the National Programme for
+Control of Blindness and Visual Impairment with AIIMS, surveyed people aged 50 years and older in 31 districts
+[[nbvis]]. It reports a national prevalence of blindness of <strong>1.99&nbsp;%</strong> in this age group, with
+cataract the major cause (66.2&nbsp;% of blindness), and a 47.1&nbsp;% reduction in blindness compared with the 2010
+baseline [[nbvis,nbvis2]]. Prevalence rises steeply with age: 0.5&nbsp;% at 50&ndash;59 years, 1.6&nbsp;% at
+60&ndash;69, 4.1&nbsp;% at 70&ndash;79 and 11.6&nbsp;% at 80 years and above [[nbvis2]] ({{f-india}}). District values
+vary considerably, which matters for any local deployment [[nbvis]].</p>
+<figure id="f-india"><img src="fig:figC_india_age.png" alt="Bar chart of blindness prevalence by age group in India">
+<figcaption>Prevalence of blindness by age group among people aged 50+ in India (NBVIS 2015&ndash;2019 [[nbvis2]]).
+Dashed line: overall 50+ prevalence, 1.99&nbsp;% [[nbvis]].</figcaption></figure>
+
+<h3>What the statistics imply for this project</h3>
+<table id="t-stats"><caption>Key statistics and their relevance to the problem</caption>
+<tr><th>Statistic</th><th>Value</th><th>Source</th><th>Implication</th></tr>
+<tr><td>People with near or distance VI</td><td class="n">&ge; 2.2 billion</td><td>[[who]]</td><td>very large population; low-cost devices matter</td></tr>
+<tr><td>Blind people (2020)</td><td class="n">43.3 million</td><td>[[gbd]]</td><td>core users of mobility aids</td></tr>
+<tr><td>Blind people projected (2050)</td><td class="n">61.0 million</td><td>[[gbd]]</td><td>demand will grow</td></tr>
+<tr><td>Blindness prevalence, India, age 50+</td><td class="n">1.99&nbsp;%</td><td>[[nbvis]]</td><td>older users; simple interaction needed</td></tr>
+<tr><td>Blindness prevalence, India, age 80+</td><td class="n">11.6&nbsp;%</td><td>[[nbvis2]]</td><td>age-friendly design (speech, few controls)</td></tr>
+<tr><td>White-cane avoidance of sudden indoor obstacles (base-paper trial)</td><td class="n">&asymp; 26&nbsp;%</td><td>[[woad]]</td><td>supplementary sensing can help</td></tr>
+</table>
+<p>Three implications follow. <em>First</em>, the user population is large, growing and old. A device for this
+population must be affordable and must be operable by people who may not be familiar with technology; speech is the
+most natural channel. <em>Second</em>, most of these users live in low- and middle-income countries, where the cost of
+dedicated hardware (several thousand US dollars for some commercial wearables, see the product survey) is a serious barrier,
+whereas a smartphone is often already owned. <em>Third</em>, because vision impairment is often partial and acquired
+late in life, people continue to rely on the cane. An electronic aid should supplement, not replace, the cane, and
+must never claim more than it can deliver. This last point is central to the design principles of NeuroSonic: it
+never states distances, never says that a way is "safe", and never claims 360-degree awareness.</p>
+<p>The statistics do not, by themselves, measure the frequency of collisions or falls caused by obstacles while
+walking; we did not find a recent, population-level Indian statistic on that question that we could verify, so we do
+not quote one. The base paper's comparison with the white cane [[woad]] is an experimental result from twelve
+participants, not a population statistic, and is quoted only as an illustration.</p>

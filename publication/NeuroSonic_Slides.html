@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NeuroSonic Slides</title>
+<style>
+  :root { --ink:#1d2330; --muted:#5b6475; --accent:#2d5a9e; --warn:#a15c00; --bg:#ffffff; --panel:#f2f5fb; --rule:#d5dbe6; }
+  html, body { margin: 0; background: #e9ecf2; color: var(--ink); font-family: "Segoe UI", Arial, sans-serif; }
+  .slide { width: 1280px; height: 720px; box-sizing: border-box; padding: 48px 64px; margin: 24px auto; background: var(--bg);
+           position: relative; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.12); page-break-after: always; break-after: page; }
+  .slide h1 { font-size: 46px; margin: 0 0 12px; line-height: 1.15; }
+  .slide h2 { font-size: 34px; margin: 0 0 22px; color: var(--accent); }
+  .slide p, .slide li { font-size: 23px; line-height: 1.4; }
+  .slide ul { margin: 0; padding-left: 28px; }
+  .slide li { margin: 6px 0; }
+  .muted { color: var(--muted); }
+  .foot { position: absolute; left: 64px; right: 64px; bottom: 22px; font-size: 15px; color: var(--muted); display: flex; justify-content: space-between; }
+  .cols { display: flex; gap: 36px; align-items: flex-start; }
+  .cols > * { flex: 1; min-width: 0; }
+  img.fig { max-width: 100%; max-height: 500px; display: block; margin: 0 auto; }
+  .shots { display: flex; gap: 20px; justify-content: center; }
+  .shots figure { margin: 0; text-align: center; }
+  .shots img { height: 470px; border: 1px solid var(--rule); border-radius: 10px; }
+  .shots figcaption { font-size: 16px; color: var(--muted); margin-top: 6px; }
+  table { border-collapse: collapse; font-size: 19px; width: 100%; }
+  th, td { padding: 7px 10px; border-bottom: 1px solid var(--rule); text-align: left; }
+  th { background: var(--panel); }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .big { font-size: 64px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .kpis { display: flex; gap: 28px; margin-top: 18px; }
+  .kpi { flex: 1; background: var(--panel); border-radius: 12px; padding: 18px 20px; }
+  .kpi .lab { font-size: 18px; color: var(--muted); margin-top: 8px; }
+  .callout { background: #fff4e0; border-left: 6px solid var(--warn); padding: 14px 18px; font-size: 21px; margin-top: 18px; }
+  .title { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+  @media print { html, body { background: #fff; } .slide { margin: 0; box-shadow: none; } }
+  @page { size: 1280px 720px; margin: 0; }
+  @media (max-width: 1300px) { .slide { transform-origin: top left; } }
+</style>
+</head>
+<body>
+
+<section class="slide"><div class="title">
+  <h1>NeuroSonic</h1>
+  <p style="font-size:30px;margin:0 0 26px">Offline spoken walking-path awareness and navigation,<br>iPhone client + laptop GPU</p>
+  <p class="muted">Research prototype · results measured on the laptop, 2026-11-03</p>
+  <div class="callout">Not a safety device. It does not replace a white cane, a guide dog or human assistance.</div>
+</div></section>
+
+<section class="slide">
+  <h2>Problem and objectives</h2>
+  <div class="cols">
+    <div><p><strong>Need:</strong> a short spoken message when something is in, or moving into, the walking path, plus turn-by-turn
+      guidance, without depending on the internet.</p>
+      <p><strong>Starting point:</strong> WOAD (near-IR + depth model) needs a CS30 sensor that a phone does not have.</p></div>
+    <div><ul>
+      <li>≈ 5 frames/s, answer well under 200 ms</li>
+      <li>detector chosen by measurement and licence</li>
+      <li>movement alerts without false alarms from the user's own walking</li>
+      <li>local functions work offline; cloud is opt-in</li>
+      <li>no distances; never "safe"</li>
+    </ul></div>
+  </div>
+  <div class="foot"><span>NeuroSonic</span><span>2</span></div>
+</section>
+
+<section class="slide">
+  <h2>Architecture</h2>
+  <img class="fig" src="figures/fig1_architecture.png" alt="Architecture diagram">
+  <div class="foot"><span>Phone = camera, mic, GPS, speaker (Safari). Laptop = all AI, over local Wi-Fi.</span><span>3</span></div>
+</section>
+
+<section class="slide">
+  <h2>Per-frame perception pipeline</h2>
+  <img class="fig" src="figures/fig6_perception_pipeline.png" alt="Pipeline diagram" style="margin-top:40px">
+  <ul style="margin-top:36px">
+    <li>RF-DETR Nano on the GPU (FP16), automatic fall-back to SSDLite on the CPU</li>
+    <li>camera motion from optical flow + RANSAC → tracks move <em>relative to the background</em></li>
+    <li>walking-path states confirmed over 2–3 frames; spoken only on change</li>
+  </ul>
+  <div class="foot"><span>NeuroSonic</span><span>4</span></div>
+</section>
+
+<section class="slide">
+  <h2>Detector selection: same images, same harness</h2>
+  <div class="cols">
+    <img class="fig" src="figures/fig3_person_detection_quality.png" alt="Detection quality chart" style="max-height:420px">
+    <img class="fig" src="figures/fig2_detector_latency.png" alt="Latency chart" style="max-height:420px">
+  </div>
+  <p style="font-size:20px;margin-top:14px"><strong>RF-DETR Nano:</strong> best person AP@0.5 (0.660) and recall (0.729), 21 ms on the GPU, Apache-2.0.
+    YOLO26 is faster but AGPL-3.0 and lower recall. Data: 365 near-IR images, 129 people (not phone images).</p>
+  <div class="foot"><span>outputs/benchmarks/phase1/results.json</span><span>5</span></div>
+</section>
+
+<section class="slide">
+  <h2>Movement events: conservative by design</h2>
+  <div class="cols">
+    <div><ul>
+      <li><strong>Entering:</strong> outside the path 1.5 s ago, inside now, moving towards it ≥ 0.12 widths/s</li>
+      <li><strong>Crossing:</strong> centre &lt; 35 % → &gt; 65 % (or back) within 3 s</li>
+      <li>only people, vehicles, animals; confirmed tracks (≥ 3 updates, ≥ 0.4 s)</li>
+      <li>silent while the camera shakes or zooms, once per track, ≥ 3 s apart</li>
+    </ul></div>
+    <div><ul>
+      <li>"Caution. A person is moving into your path from the left."</li>
+      <li>"A bicycle is crossing in front of you, from left to right."</li>
+      <li class="muted">No "approaching": box growth is mostly the user's own walking.</li>
+    </ul></div>
+  </div>
+  <div class="foot"><span>neurosonic/events.py, neurosonic/tracking.py</span><span>6</span></div>
+</section>
+
+<section class="slide">
+  <h2>Serving at 5 frames/s: three measured problems</h2>
+  <div class="cols">
+    <img class="fig" src="figures/fig4_cpu_thread_fix.png" alt="CPU thread fix chart" style="max-height:400px">
+    <div><ul>
+      <li><strong>Idle CPU threads:</strong> 712 % → 121 % of one core with 2 PyTorch threads</li>
+      <li><strong>GPU power state:</strong> at 5 fps the GPU drops to P8 (~390 MHz): same inference ~16 ms → ~74 ms</li>
+      <li><strong>FP16:</strong> at 5 fps median 66.5 → 53.2 ms, same person AP@0.5 (0.660)</li>
+      <li><strong>One inference thread</strong> instead of a new HTTP thread per frame</li>
+    </ul></div>
+  </div>
+  <div class="foot"><span>Lesson: benchmark at the application's frame rate</span><span>7</span></div>
+</section>
+
+<section class="slide">
+  <h2>10-minute soak tests</h2>
+  <div class="cols">
+    <img class="fig" src="figures/fig5_soak_test.png" alt="Soak test chart" style="max-height:540px">
+    <div><ul>
+      <li>2980 frames each, <strong>0 errors</strong>, 4.97 frames/s</li>
+      <li>request median 70–78 ms after vs 62–104 ms before</li>
+      <li>worst p90 92 ms (was 111 ms)</li>
+      <li>no memory growth trend; GPU memory flat</li>
+      <li>7 / 7 slow (20 s) cloud requests answered while frames kept flowing</li>
+      <li class="muted">laptop loopback, not Wi-Fi; 10 min cannot rule out a slow leak over hours</li>
+    </ul></div>
+  </div>
+  <div class="foot"><span>tools/soak_test.py · outputs/benchmarks/soak/</span><span>8</span></div>
+</section>
+
+<section class="slide">
+  <h2>The phone interface (Chrome, iPhone-size, fake camera)</h2>
+  <div class="shots">
+    <figure><img src="../docs/images/01_live_rfdetr_event_alert.png" alt="Entering event"><figcaption>entering event</figcaption></figure>
+    <figure><img src="../docs/images/02_live_rfdetr_blocked_path.png" alt="Blocked path"><figcaption>"Stop. The walking path may be blocked."</figcaption></figure>
+    <figure><img src="../docs/images/03_navigation_route.png" alt="Navigation"><figcaption>offline route, spoken turns</figcaption></figure>
+    <figure><img src="../docs/images/04_how_it_works.png" alt="How it works"><figcaption>How it works</figcaption></figure>
+  </div>
+  <div class="foot"><span>Camera images: recorded cyclist composited over a recorded corridor, not field footage</span><span>9</span></div>
+</section>
+
+<section class="slide">
+  <h2>Testing</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="big">204</div><div class="lab">Python + Node tests: OK in both environments (GPU and CPU-only)</div></div>
+    <div class="kpi"><div class="big">7 / 7</div><div class="lab">headless-Chrome tests at iPhone size, network blocked</div></div>
+    <div class="kpi"><div class="big">67 ms</div><div class="lab">median capture → answer, 4.91 frames/s (loopback)</div></div>
+  </div>
+  <ul style="margin-top:26px">
+    <li>event → neural voice starts in 257 ms; "still waiting" spoken at 15 s during a slow cloud reply</li>
+    <li>no event for a static car while the camera pans, a shaky camera, slow drift, or chairs</li>
+    <li>quality gate: GPU and CPU launches, frames, speech, search, routing, voice command</li>
+  </ul>
+  <div class="foot"><span>publication/TESTING_AND_VALIDATION_REPORT.md</span><span>10</span></div>
+</section>
+
+<section class="slide">
+  <h2>Limitations: what is <em>not</em> shown yet</h2>
+  <ul>
+    <li><strong>No iPhone or field validation:</strong> RF-DETR on real iPhone frames, Wi-Fi latency, streets, users</li>
+    <li>Detector quality from near-IR proxy data; live tests use a fake camera and a composited clip</li>
+    <li>23 COCO classes only: no steps, kerbs, holes, poles; no distance; no "approaching"</li>
+    <li>Phone needs the laptop and Wi-Fi; Safari stops the camera when the screen locks</li>
+    <li>Cloud description: the one approved live request timed out</li>
+  </ul>
+  <div class="callout">Supplementary information only. Use with a cane and, in tests, a sighted companion.</div>
+  <div class="foot"><span>NeuroSonic</span><span>11</span></div>
+</section>
+
+<section class="slide">
+  <h2>Next steps</h2>
+  <div class="cols">
+    <div><p><strong>1. Evidence</strong> (docs/IPHONE_VALIDATION_PROTOCOL.md)</p>
+      <ul><li>23 scenarios × 5 trials: path states, events, low light, blur, navigation, GPS, voice, cloud</li>
+          <li>record results in docs/validation_results_template.csv</li></ul></div>
+    <div><p><strong>2. Then capability</strong></p>
+      <ul><li>monocular depth → "approaching" alerts</li>
+          <li>kerbs, steps, potholes with openly licensed data</li>
+          <li>native app with on-device inference</li></ul></div>
+  </div>
+  <div class="foot"><span>NeuroSonic</span><span>12</span></div>
+</section>
+
+</body>
+</html>

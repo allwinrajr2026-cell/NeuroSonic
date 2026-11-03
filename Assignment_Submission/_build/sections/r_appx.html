@@ -1,0 +1,87 @@
+<h2 class="unnum">Appendix A: API Endpoints</h2>
+<table id="t-api"><caption>HTTP API of the laptop server (16 GET, 12 POST)</caption>
+<tr><th>Method</th><th>Path</th><th>Purpose</th></tr>
+<tr><td>GET</td><td><code>/api/status</code></td><td>server, model and feature status</td></tr>
+<tr><td>GET</td><td><code>/api/events</code></td><td>recent alert events</td></tr>
+<tr><td>GET</td><td><code>/api/replay/state</code>, <code>/api/replay/frame.jpg</code></td><td>WOAD replay state and current frame</td></tr>
+<tr><td>GET</td><td><code>/api/history</code>, <code>/api/stats</code></td><td>text history and statistics</td></tr>
+<tr><td>GET</td><td><code>/api/places</code></td><td>saved places</td></tr>
+<tr><td>GET</td><td><code>/api/tts/status</code>, <code>/api/tts</code></td><td>neural voice status; synthesised WAV (range requests)</td></tr>
+<tr><td>GET</td><td><code>/api/voice/reports</code></td><td>playback reports from phones</td></tr>
+<tr><td>GET</td><td><code>/api/map/info</code>, <code>/api/map/data</code>, <code>/api/map/search</code></td><td>offline map metadata, drawing data, place search</td></tr>
+<tr><td>GET</td><td><code>/api/voicecmd/status</code></td><td>offline speech-recognition status</td></tr>
+<tr><td>GET</td><td><code>/api/awareness/status</code></td><td>detector, precision, weights, per-client statistics</td></tr>
+<tr><td>GET</td><td><code>/api/vision/status</code></td><td>optional cloud-description status</td></tr>
+<tr><td>POST</td><td><code>/api/replay/start</code>, <code>/api/replay/stop</code></td><td>control WOAD replay</td></tr>
+<tr><td>POST</td><td><code>/api/detect</code></td><td>WOAD detection on an uploaded NIR + depth pair</td></tr>
+<tr><td>POST</td><td><code>/api/alerts</code></td><td>record client-side alerts in the history</td></tr>
+<tr><td>POST</td><td><code>/api/history/clear</code></td><td>clear history</td></tr>
+<tr><td>POST</td><td><code>/api/places</code>, <code>/api/places/delete</code></td><td>save / delete a place</td></tr>
+<tr><td>POST</td><td><code>/api/voice/report</code></td><td>phone reports how a clip was played</td></tr>
+<tr><td>POST</td><td><code>/api/route</code></td><td>offline A* walking route</td></tr>
+<tr><td>POST</td><td><code>/api/voicecmd</code></td><td>recognise a spoken command (WAV)</td></tr>
+<tr><td>POST</td><td><code>/api/awareness/frame</code></td><td>analyse one camera frame (JPEG)</td></tr>
+<tr><td>POST</td><td><code>/api/vision/describe</code></td><td>optional cloud scene description (opt-in)</td></tr>
+</table>
+
+<h2 class="unnum">Appendix B: Software, Models and Licences</h2>
+<table id="t-lic"><caption>Main third-party components</caption>
+<tr><th>Component</th><th>Use</th><th>Licence</th></tr>
+<tr><td>PyTorch, torchvision</td><td>inference</td><td>BSD-style</td></tr>
+<tr><td>RF-DETR (rfdetr 1.11.2), Nano weights</td><td>primary detector</td><td>Apache-2.0</td></tr>
+<tr><td>SSDLite320-MobileNetV3 (torchvision)</td><td>CPU fall-back</td><td>BSD-3</td></tr>
+<tr><td>YOLO26 (ultralytics)</td><td>benchmark only</td><td>AGPL-3.0</td></tr>
+<tr><td>OpenCV</td><td>optical flow, RANSAC</td><td>Apache-2.0</td></tr>
+<tr><td>Piper 1.8.0; voice en_IN-spicor</td><td>speech synthesis</td><td>GPL-3.0+; voice AGPL-3.0</td></tr>
+<tr><td>Vosk, small Indian-English model</td><td>speech recognition</td><td>Apache-2.0</td></tr>
+<tr><td>OpenStreetMap data (Vellore extract)</td><td>map and routing</td><td>ODbL 1.0</td></tr>
+<tr><td>COCO annotations</td><td>detector training (third party)</td><td>CC BY 4.0</td></tr>
+<tr><td>WOAD code, checkpoint, dataset</td><td>base paper, research path</td><td>see original repository</td></tr>
+</table>
+<p>The GPL/AGPL voice components constrain redistribution and must be reviewed before any commercial release.</p>
+
+<h2 class="unnum">Appendix C: Installation, Launch and Reproduction</h2>
+<pre>cd F:\Projects\WOAD-Research\implementation
+powershell -ExecutionPolicy Bypass -File .\START_NEUROSONIC.ps1     # GPU (RF-DETR); add -Cpu for SSDLite
+powershell -ExecutionPolicy Bypass -File .\STOP_NEUROSONIC.ps1
+
+# manual (foreground)
+..\.venv-gpu\Scripts\python neurosonic_app.py --host 0.0.0.0 --https
+
+# tests
+..\.venv-gpu\Scripts\python -m unittest discover -s tests -t .
+
+# results used in this report
+outputs\benchmarks\phase1\results.json        detector comparison
+outputs\benchmarks\precision\results.json     FP32 vs FP16
+outputs\benchmarks\soak\*.json                10-minute soak tests
+outputs\eval\nc10_*_person\metrics.json       WOAD evaluation
+tools\make_publication_figures.py              figures</pre>
+<p>On the iPhone, the start script prints the address to open in Safari (on 3 November 2026:
+<code>https://192.168.1.5:8765</code>, with the one-time certificate setup page at <code>http://192.168.1.5:8766</code>).
+The address depends on the Wi-Fi network.</p>
+
+<h2 class="unnum">Appendix D: Physical Validation Protocol (Summary)</h2>
+<p>None of these tests has been performed yet. Each scenario is repeated five times; every trial is recorded,
+including failures and missed alerts; latency is measured, not estimated. Safety rules: the tester walks with a
+sighted companion or their usual mobility aid; vehicles are observed only from a safe place; NeuroSonic is never relied
+on.</p>
+<table id="t-protocol"><caption>Validation scenarios</caption>
+<tr><th>Code</th><th>Scenario</th><th>Pass criterion (summary)</th></tr>
+<tr><td>P1</td><td>Person walks into the path from the side</td><td>entering or caution message</td></tr>
+<tr><td>P2</td><td>Person approaching head-on</td><td>"Caution", then "Stop" before arm's reach</td></tr>
+<tr><td>P3</td><td>Person crossing 6&ndash;10 m ahead</td><td>crossing message with correct direction, or none</td></tr>
+<tr><td>V1</td><td>Car passing (observed safely)</td><td>no false "Stop" for cars outside the path</td></tr>
+<tr><td>V2</td><td>Motorcycle / bicycle</td><td>correct class</td></tr>
+<tr><td>S1</td><td>Static obstacle in the path</td><td>caution/stop; no "moving into your path"</td></tr>
+<tr><td>S2</td><td>Obstacle at the side</td><td>no "Stop"</td></tr>
+<tr><td>W1</td><td>Walking, chest-mounted, corridor with people</td><td>few false events per minute</td></tr>
+<tr><td>W2</td><td>Hand-held, phone swinging</td><td>events suppressed</td></tr>
+<tr><td>L1&ndash;L3</td><td>Daylight; dim light; lens covered</td><td>as P1; "cannot clearly assess" when dark; recovery</td></tr>
+<tr><td>B1</td><td>Blur</td><td>uncertain rather than "appears clear"</td></tr>
+<tr><td>R1, R2</td><td>Alert latency; interruption of navigation speech</td><td>&le; 2 s target; interruption and replay</td></tr>
+<tr><td>G1&ndash;G3</td><td>GPS fix; short route walk; off-route</td><td>turns at about 70 m and 25 m; re-route</td></tr>
+<tr><td>N1, N2</td><td>Wi-Fi drop; internet off, Wi-Fi on</td><td>clear messages; local functions keep working</td></tr>
+<tr><td>C1, C2</td><td>Cloud description; slow cloud</td><td>result or clear failure; guidance continues</td></tr>
+<tr><td>T1</td><td>15-minute session</td><td>no crash; about 5 frames/s; battery and temperature noted</td></tr>
+</table>

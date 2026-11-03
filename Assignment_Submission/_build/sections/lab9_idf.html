@@ -1,0 +1,159 @@
+<div class="box"><p><b>Note on format.</b> This draft follows the usual structure of an Invention Disclosure Form
+(Part B: technical disclosure). If the institute's IPR cell provides its own IDF-B template, the text below can be
+transferred section by section. Highlighted fields must be completed by the inventor(s). <b>Do not publish the paper
+drafts (DA1&ndash;DA3, Lab 10) or the demonstration video publicly before the IPR cell has advised on filing</b>; public
+disclosure before filing can destroy novelty in many jurisdictions.</p></div>
+
+<h2>1. Title of the Invention</h2>
+<p>System and method for camera-motion-compensated spoken walking-path event alerts, using an unmodified smartphone
+browser as a sensing thin client and a nearby offline inference host, for pedestrians with visual impairment.</p>
+
+<h2>2. Inventor(s) and Applicant</h2>
+<table><tr><th>Name</th><th>Affiliation</th><th>Contact</th><th>Contribution</th></tr>
+<tr><td>Allwin Raj</td><td><span class="placeholder">[School / Department, Register no.]</span>, VIT Vellore</td><td>theallwinraj@gmail.com</td><td><span class="placeholder">[%]</span></td></tr>
+<tr><td><span class="placeholder">[Guide / co-inventor, if any]</span></td><td><span class="placeholder">[ ]</span></td><td><span class="placeholder">[ ]</span></td><td><span class="placeholder">[%]</span></td></tr>
+</table>
+<p>Applicant: <span class="placeholder">[Vellore Institute of Technology, per institute IPR policy]</span>.
+Funding: <span class="placeholder">[none / scheme]</span>.</p>
+
+<h2>3. Field of the Invention</h2>
+<p>Assistive technology for persons with visual impairment; real-time computer vision (object detection, multi-object
+tracking, ego-motion estimation); human&ndash;computer interaction by speech; pedestrian navigation. Suggested
+classification areas for the search (to be confirmed by the IPR cell): A61H&nbsp;3/06 (walking aids for blind persons),
+G06T&nbsp;7/246 (motion analysis using feature-based methods), G01C&nbsp;21/36 (route guidance input/output),
+G10L&nbsp;13/00 (speech synthesis), G08B&nbsp;21/02 (alarms for ensuring the safety of persons).</p>
+
+<h2>4. Background and Problem</h2>
+<p>At least 2.2 billion people have a vision impairment and 43.3 million were blind in 2020 [[who,gbd]]. Electronic
+travel aids either measure range (ultrasonic canes [[pat_polaroid,p_wewalk]]), recognise objects on demand (phone apps
+[[p_perkins]]), or use dedicated depth wearables, robots or garments [[woad,cabot,pat_ford]]. A camera carried by a
+walking person moves continuously; in the image, every static object therefore appears to move. Systems that detect
+objects frame by frame cannot tell a person stepping into the user's way from a parked car that merely appears to move
+because the user turns. Warning about all apparent motion produces false alarms; warning about none misses the most
+important events. Dedicated hardware is expensive, and cloud services need connectivity and send images off the device.</p>
+
+<h2>5. Prior Art Known to the Inventor</h2>
+<table><tr><th>Document</th><th>Disclosure</th><th>Difference from the present invention</th></tr>
+<tr><td>US 4,280,204 [[pat_polaroid]]</td><td>ultrasonic cane, two range modes</td><td>no recognition, no motion semantics</td></tr>
+<tr><td>US 2005/0208457 A1 [[pat_caltech]]</td><td>head-mounted camera, object classification on request, speech</td><td>single images on request; no tracking, no ego-motion compensation, no path events</td></tr>
+<tr><td>US 9,429,446 B1 [[pat_searle]]</td><td>hand-held device; camera/sonar; path planning; spoken directions</td><td>no background-relative motion; no suppression during camera motion</td></tr>
+<tr><td>US 9,846,231 B2 [[pat_st]]</td><td>wearable ultrasound gated by gait phase (accelerometer)</td><td>different sensor; gating by foot contact, not by image ego-motion</td></tr>
+<tr><td>US 10,299,982 B2 [[pat_frankel]]</td><td>phone camera builds a 3-D room model, touch exploration</td><td>static model; not live walking alerts</td></tr>
+<tr><td>US 10,809,079 B2 [[pat_ford]]</td><td>vest with GPS, cameras, ultrasonic; static/dynamic obstacles for routing</td><td>dedicated garment; no disclosure (in the reviewed text) of image ego-motion-compensated entering/crossing events from a phone browser client</td></tr>
+<tr><td>US 11,318,050 B2 [[pat_aph]]</td><td>phone location sensors; direction-filtered narration</td><td>no camera perception</td></tr>
+<tr><td>Gao et al., WOAD [[woad]]</td><td>NIR + ToF glasses, FPGA, phone detector, audio/haptic alerts</td><td>custom sensor and glasses; frame-wise detection in the released code</td></tr>
+<tr><td>ByteTrack [[bytetrack]]; LK/RANSAC [[lk,ransac]]</td><td>general tracking and motion estimation methods</td><td>general methods; not their application as claimed here</td></tr>
+</table>
+<p>The search was limited to US documents on Google Patents and to the publications reviewed in DA1; it is not a
+professional search. Indian (InPASS) and WIPO (PATENTSCOPE) searches are still required.</p>
+
+<h2>6. Summary of the Invention</h2>
+<p>A smartphone runs only a web page. It captures camera frames at a rate set by the host (for example every 200&nbsp;ms
+when a GPU detector is available, 400&nbsp;ms otherwise), keeps at most one frame in flight, and plays the speech the host
+returns. A nearby host on the same local network, without internet, (i) detects obstacle-class objects;
+(ii) estimates the camera's own motion from background feature points outside the detected objects; (iii) predicts
+each tracked object's position under that camera motion and associates detections in two confidence stages;
+(iv) stores each object's displacement <em>relative to the background</em>; (v) maintains a confirmed walking-path state
+for a lower-central image region; and (vi) emits a spoken "entering" or "crossing" event only when a confirmed track
+of a person, vehicle or animal moves into or across the walking-path region faster than a threshold relative to the
+background, while suppressing all events during strong or unknown camera motion and in uncertain or blocked views. All
+messages come from a fixed vocabulary that never states distance or safety.</p>
+
+<h2>7. Detailed Description</h2>
+<h3 class="unnum">7.1 Architecture</h3>
+<figure id="f-idfarch" class="half"><img src="pub:fig1_architecture.png" alt="architecture"><figcaption>System architecture (phone thin client and local host).</figcaption></figure>
+<figure id="f-idfpipe" class="half"><img src="pub:fig6_perception_pipeline.png" alt="pipeline"><figcaption>Per-frame processing on the host.</figcaption></figure>
+<h3 class="unnum">7.2 Ego-motion estimation</h3>
+<p>Up to 150 corner points are selected on a reduced grey image outside the detected boxes, tracked into the next frame
+by pyramidal Lucas&ndash;Kanade flow, and a similarity transform M (translation, scale, rotation) is fitted by RANSAC; if
+fewer than 12 points or inliers remain, the motion is marked unknown.</p>
+<h3 class="unnum">7.3 Motion-compensated association and background-relative motion</h3>
+<p>Each track's previous box is transformed by M to predict its current position. Detections of confidence &ge; 0.55 are
+matched first by IoU within each class; detections of confidence 0.40&ndash;0.55 may only extend existing tracks; tracks
+end after three missed frames. For each update, the background-relative displacement &Delta;<sub>rel</sub> =
+c<sub>t</sub> &minus; M(c<sub>t&minus;1</sub>) of the box centre c is stored.</p>
+<h3 class="unnum">7.4 Event rules and suppression</h3>
+<p><em>Entering:</em> a confirmed track (&ge; 3 updates over &ge; 0.4&nbsp;s) that was outside the walking-path region at the
+start of a 1.5&nbsp;s window, overlaps it now and moves towards it at &ge; 0.12 image widths per second relative to the
+background. <em>Crossing:</em> the centre passes from below 35&nbsp;% to above 65&nbsp;% of the width (or back) within 3&nbsp;s
+at &ge; 0.15 widths/s with the box bottom in the lower half. <em>Suppression:</em> no event while the camera shifts more than
+6&nbsp;% of the width per frame, zooms more than 4&nbsp;%, or its motion is unknown; none in blocked, uncertain or
+unavailable views; one event per track; events at least 3&nbsp;s apart.</p>
+<h3 class="unnum">7.5 Thin client and offline host</h3>
+<p>The phone uses only a standard browser over HTTPS with a locally generated certificate authority (required by the
+browser for camera and microphone access). The host also performs offline speech synthesis, offline command
+recognition and offline route planning; images are processed in memory and never stored.</p>
+
+<h2>8. Features Believed to Be New (for the IPR Cell's Assessment)</h2>
+<ol>
+<li>Announcing an object as <em>entering</em> or <em>crossing</em> a walking-path image region on the basis of its
+<em>background-relative</em> velocity, computed from ego-motion estimated on feature points excluded from detected
+objects.</li>
+<li>Combining that rule with suppression of announcements when the estimated ego-motion exceeds translation or scale
+limits or is unknown, and with confirmed walking-path states.</li>
+<li>Two-stage confidence association in which the prediction step is the estimated camera transform rather than a
+motion model of the object.</li>
+<li>A thin-client arrangement in which an unmodified smartphone browser supplies frames at a host-selected interval with
+a single frame in flight, and the host returns speech from a fixed, distance-free vocabulary, all without internet.</li>
+</ol>
+<p>Whether these features, alone or in combination, are novel and inventive can only be decided after a professional
+search. General methods used (Lucas&ndash;Kanade flow, RANSAC, IoU association, transformer detectors) are prior art in
+themselves and are not claimed as such.</p>
+
+<h2>9. Draft Claims (for discussion only)</h2>
+<ol>
+<li>A method for alerting a pedestrian, comprising: receiving successive images from a camera carried by the
+pedestrian; detecting objects of predetermined classes in each image; estimating a geometric transform of the camera
+between successive images from feature points located outside the detected objects; predicting the position of each
+previously tracked object by applying the transform; associating detections with predicted tracks; computing for each
+track a displacement relative to the background as the difference between the observed position and the position
+predicted by the transform; and generating a spoken alert that the object is entering or crossing a predefined
+walking-path region of the image when the background-relative displacement rate towards or across the region exceeds a
+threshold.</li>
+<li>The method of claim 1, wherein no alert is generated while the estimated transform exceeds a translation or scale
+limit, or cannot be estimated.</li>
+<li>The method of claim 1, wherein association is performed first for detections above a first confidence and then,
+for remaining tracks only, for detections between a second, lower confidence and the first.</li>
+<li>The method of claim 1, wherein an alert is generated at most once per track and at least a minimum interval after
+the previous alert.</li>
+<li>The method of claim 1, wherein the images are captured by a web browser of a smartphone and sent over a local
+network to a host that performs the detecting, estimating, associating and generating without access to the internet,
+and returns synthesised speech to the browser.</li>
+<li>The method of claim 1, wherein the spoken alerts are selected from a vocabulary that contains no distance values
+and no statement that the path is safe.</li>
+<li>A system comprising a smartphone running a web client and a host computer configured to perform the method of any
+of claims 1 to 6.</li>
+</ol>
+
+<h2>10. Advantages</h2>
+<ul>
+<li>Uses hardware many users already have (a phone and a laptop) instead of custom wearables costing hundreds to
+thousands of US dollars [[p_aarp]].</li>
+<li>Reduces false alarms from the user's own movement while still announcing objects that move into the way.</li>
+<li>Works offline; images never leave the local network unless the user opts in to cloud description.</li>
+<li>Honest wording reduces the risk of over-reliance.</li>
+</ul>
+
+<h2>11. Reduction to Practice and Evidence</h2>
+<p>Implemented and tested on a laptop (RTX&nbsp;4050 Laptop GPU): RF-DETR Nano detector (person AP@0.5 0.660, recall 0.729
+on 365 near-IR images); about 5 frames/s with a median capture-to-answer time of 67&nbsp;ms in browser tests; ten-minute
+soak test with 2980 frames and 0 errors; 22 perception tests including no event for a static car during a synthetic
+pan and correct entering and crossing events. Physical tests with an iPhone and with users are <b>pending</b>.
+Technology readiness: laboratory validation (approximately TRL&nbsp;4).</p>
+
+<h2>12. Applications and Commercial Potential</h2>
+<p>Supplementary mobility aid for people with low vision or blindness; training aid for orientation and mobility
+instructors; awareness module for low-cost robots or carts. A future native phone app with on-device inference would
+remove the laptop. Potential partners: NGOs and rehabilitation centres for the visually impaired, assistive-technology
+manufacturers.</p>
+
+<h2>13. Disclosure Status and Third-Party Rights</h2>
+<table><tr><th>Question</th><th>Answer</th></tr>
+<tr><td>Published or presented publicly?</td><td><span class="placeholder">[Confirm: course reviews only / any public posting, GitHub, video, conference?]</span></td></tr>
+<tr><td>Planned publication date</td><td><span class="placeholder">[ ]</span> (file first)</td></tr>
+<tr><td>Third-party code and models</td><td>RF-DETR (Apache-2.0), OpenCV (Apache-2.0), PyTorch (BSD), Piper (GPL-3.0+; voice AGPL-3.0), Vosk (Apache-2.0), OpenStreetMap (ODbL); base-paper code used only as a research baseline</td></tr>
+<tr><td>Agreements / funding obligations</td><td><span class="placeholder">[ ]</span></td></tr>
+</table>
+<h2>14. Declaration</h2>
+<p>I declare that the information given above is true to the best of my knowledge.</p>
+<div class="sig"><div>Signature of inventor(s)<br>Allwin Raj</div><div>Date: <span class="placeholder">[ ]</span></div></div>

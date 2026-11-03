@@ -1,0 +1,60 @@
+<h2>Technology Trend: Introduction and Adaptation Status</h2>
+<p>{{f-timeline}} places the surveyed documents on a timeline. Five technology trends run through them. For each we
+describe the technology, its state of adoption in assistive products, and how it is adapted in this project.</p>
+<figure id="f-timeline" class="wide"><img src="fig:figD_trend_timeline.png" alt="Timeline of surveyed approaches from 1981 to 2025">
+<figcaption>Timeline of the surveyed patents, publications and products (positions evenly spaced; years from the cited
+documents): from ultrasonic canes to camera-based, learning-based wearables.</figcaption></figure>
+
+<h3>From range sensing to recognition</h3>
+<p>Early ETAs measured distance with ultrasound [[pat_polaroid,pat_st]], and ultrasonic smart canes are still the
+most widely available products [[p_wewalk,p_smartcane]]. Since about 2016, deep convolutional detectors such as
+YOLO [[yolo]], SSD [[ssd]] and mobile networks such as MobileNetV3 [[mbv3]] made it feasible to name objects in real
+time. Products like Seeing AI and Lookout show that recognition is now <em>commercially mature</em> for on-demand
+use [[p_perkins,p_lookout]]. <em>Adaptation here:</em> NeuroSonic detects 23 obstacle-relevant classes from the
+COCO dataset [[coco]] in every frame, rather than on demand.</p>
+
+<h3>Transformer-based detection</h3>
+<p>DETR [[detr]] reformulated detection as set prediction with transformers [[transformer]], removing the hand-tuned
+non-maximum suppression step. Real-time variants now exist; RF-DETR [[rfdetr]] builds on the self-supervised DINOv2
+backbone [[dinov2]] and is released under the permissive Apache-2.0 licence. The base paper also uses transformer
+blocks, but for <em>fusion</em> of two modalities inside a YOLOv5 detector [[woad]]. <em>Status:</em> research and
+open-source tools are mature; we did not find a surveyed assistive product that states it uses a detection
+transformer. <em>Adaptation here:</em> four detectors were benchmarked on the same images, and RF-DETR Nano was
+selected for its accuracy, recall and licence (Review&nbsp;3).</p>
+
+<h3>Multi-modal and depth sensing</h3>
+<p>Research wearables overwhelmingly combine RGB or infrared with depth [[woad,bai2019,lin2019,tang2025]], and the
+NOA harness brings depth cameras to a product [[p_noa]]. Depth gives distance directly, which simplifies warnings.
+<em>Status:</em> established in research, early in products, and expensive. <em>Adaptation here:</em> the phone
+camera has no depth stream that a browser can use, so NeuroSonic deliberately makes no distance statements and uses
+image-space motion instead; monocular depth estimation is listed as future work.</p>
+
+<h3>Edge, offloading and dedicated hardware</h3>
+<p>Systems differ in where they compute: on an FPGA plus phone [[woad]], on a separate processor [[lin2019]], fully on
+the wearable [[tang2025]], or in the cloud [[p_perkins]]. Offloading to a nearby, more powerful computer over a local
+network is a middle path: lower latency and better privacy than the cloud, more capacity than a phone. <em>Status:</em>
+standard in robotics and gaming, uncommon in assistive products. <em>Adaptation here:</em> the iPhone is a thin
+browser client; a laptop GPU on the same Wi-Fi performs detection, tracking, speech recognition, speech synthesis and
+routing, with no internet required.</p>
+
+<h3>Vision-language models and offline speech</h3>
+<p>Large multimodal models now describe whole scenes in natural language and answer questions about a photo, as in Be
+My AI [[p_perkins]]; APIs such as Gemini [[gemini]] make this available to developers. They depend on the internet and
+can state things with unjustified confidence. In parallel, offline speech technology has improved: Kaldi-based Vosk
+recognises speech locally [[kaldi]], and Piper [[piper]], built on VITS [[vits]], synthesises natural speech on a CPU.
+<em>Status:</em> cloud description is commercially deployed; high-quality offline speech is mature in open source.
+<em>Adaptation here:</em> local speech in and out is the default; cloud scene description is optional, opt-in, rate
+limited and filtered so that it never states distance or safety.</p>
+
+<table id="t-trends"><caption>Technology trends and adaptation status</caption>
+<tr><th>Trend</th><th>Maturity in products</th><th>Adapted in NeuroSonic</th></tr>
+<tr><td>Ultrasonic range sensing</td><td>mature (smart canes)</td><td>no (cane remains the user's primary aid)</td></tr>
+<tr><td>CNN object recognition</td><td>mature (apps, on demand)</td><td>yes, continuous, 23 classes</td></tr>
+<tr><td>Detection transformers</td><td>open source; not seen in surveyed products</td><td>yes (RF-DETR Nano, FP16)</td></tr>
+<tr><td>Depth / multi-modal fusion</td><td>research; early products</td><td>no (base paper only); future work</td></tr>
+<tr><td>Multi-object tracking</td><td>robotics; trajectory prediction in NOA</td><td>yes, with camera-motion compensation</td></tr>
+<tr><td>Local offloading (LAN)</td><td>uncommon</td><td>yes (phone &rarr; laptop GPU)</td></tr>
+<tr><td>Vision-language description</td><td>deployed (cloud)</td><td>optional, opt-in</td></tr>
+<tr><td>Offline neural speech in/out</td><td>open source</td><td>yes (Piper, Vosk)</td></tr>
+<tr><td>Offline maps and routing</td><td>common in navigation apps</td><td>yes (OpenStreetMap, A*)</td></tr>
+</table>

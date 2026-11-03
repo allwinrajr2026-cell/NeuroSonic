@@ -1,0 +1,34 @@
+# NeuroSonic / WOAD - pinned to the versions the test suite passed on (Windows 11, Python 3.12.10, CPU).
+#
+# CPU install (as tested):
+#   pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+# NVIDIA GPU (optional, untested here): install the matching CUDA build of torch/torchvision from
+#   https://pytorch.org/get-started/locally/ and keep the other pins.
+
+# --- WOAD detection (woad/, woad_detect.py, tools/)
+torch==2.15.0
+torchvision==0.29.2
+numpy==2.5.4
+opencv-python==5.0.0.93
+
+# --- NeuroSonic local neural voice (neurosonic/tts.py), added 2026-11-02
+# piper-tts is GPL-3.0-or-later (bundles espeak-ng); its dependencies onnxruntime (MIT), pathvalidate (MIT),
+# protobuf (BSD-3), flatbuffers (Apache-2.0) are installed automatically. The voice model itself is a separate
+# download (models/tts/README.md, AGPL-3.0). Without these the app still runs and phones use their built-in voice.
+piper-tts==1.8.0
+onnxruntime==1.31.1
+
+# --- NeuroSonic offline voice commands (neurosonic/voicecmd.py), added 2026-11-02
+# vosk is Apache-2.0; the Indian-English model is a separate download (models/asr/README.md).
+# Live camera awareness (neurosonic/awareness.py) reuses torch/torchvision above; weights in models/rgb/.
+vosk==0.3.45
+
+# --- OPTIONAL online scene description (neurosonic/vision/), added 2026-11-02 (Sprint 1)
+# google-genai is Apache-2.0. It is imported only when the Gemini provider is used; without it the app runs and
+# online description reports "not available". The API key is read on the laptop from GEMINI_API_KEY only.
+google-genai==2.34.0
+
+# The web server, SQLite store, offline map/routing and TLS use only the Python standard library
+# (plus numpy above; the `openssl` command is needed for --https).
+# Test runner: the standard library's unittest (no extra dependency); browser-logic tests use Node.js if present.
+#   python -m unittest discover -s tests -t . -v

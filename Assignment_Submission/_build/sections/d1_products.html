@@ -1,0 +1,59 @@
+<h2>Survey: Comparative Analysis of Company Products</h2>
+<p>Products were chosen to represent the four commercial categories: smart canes, wearable cameras, smartphone apps and
+robotic or harness guides. Prices are quoted only where an established retailer or a consumer organisation published
+them, and they change frequently; they are indicative.</p>
+<h3>Smart canes</h3>
+<p><strong>WeWALK</strong> is a smart handle that attaches to a standard white cane. It detects obstacles above
+chest level with an ultrasonic sensor and warns with vibration, connects to a smartphone, and has a touch pad for
+features such as public-transport information; battery life is quoted as up to five hours, and AARP lists it at
+US$599 [[p_aarp,p_wewalk]]. <strong>SmartCane</strong>, developed at IIT&nbsp;Delhi's Assistech laboratory with the
+Saksham Trust and manufactured by Phoenix Medical Systems, attaches to a white cane and uses ultrasonic sensing to
+detect obstacles above knee height, signalling distance with vibration patterns; it has long-range (about 3&nbsp;m)
+and short-range (about 1.8&nbsp;m) modes, and its translational development was funded by the Wellcome Trust
+[[p_smartcane]]. Smart canes extend the cane's range upwards, but they measure distance only; they do not recognise
+objects or describe motion.</p>
+<h3>Wearable cameras</h3>
+<p><strong>OrCam MyEye</strong> is a small camera that clips magnetically onto eyeglasses and works offline, without a
+smartphone or Wi-Fi; it reads text and, in the Pro version, recognises faces, colours and bank notes, controlled by
+gestures and voice commands. AARP lists the MyEye Pro at US$4,250; RNIB lists the Pro at &pound;3,700 and the cheaper
+Smart version at &pound;2,700 (both ex VAT) [[p_aarp,p_rnib]]. It is a reading and recognition aid rather than a
+mobility aid.</p>
+<h3>Smartphone apps</h3>
+<p><strong>Microsoft Seeing AI</strong> is free, with no subscriptions or in-app purchases, and organises tasks into
+"channels" (reading text, identifying products, recognising currency) [[p_perkins]]. <strong>Google Lookout</strong>
+(Android) offers several modes, including an Explore mode that identifies objects on the device, plus text and product
+recognition [[p_lookout]]. <strong>Be My Eyes</strong> connects a blind user by live video to a sighted volunteer, and
+its <em>Be My AI</em> feature describes a photo and lets the user ask questions about it [[p_perkins]]. These apps
+are free or low-cost and use a phone the user already has, but they work on single photos or on demand, need the
+user to point the phone, and several of their richer functions need the internet.</p>
+<h3>Harness and robotic guides</h3>
+<p><strong>biped.ai NOA</strong> is a shoulder-worn harness with depth cameras covering a wide field of view (a 170&deg;
+field is reported) that predicts object trajectories a few seconds ahead and warns with 3-D sound; a RealSense case
+study states that it uses the D430 depth module [[p_noa]]. <strong>Glidance Glide</strong> is a two-wheeled,
+self-guided mobility aid pushed by the user, which uses cameras and sensors to steer around hazards; prices reported
+in early 2025 were US$1,500 plus a monthly subscription, and it was still in development and testing at the time of
+the reports [[p_glide]].</p>
+
+<table id="t-prod" class="wide"><caption>Comparative analysis of company products (indicative; checked 2026-11-03)</caption>
+<tr><th>Product</th><th>Category</th><th>Sensing</th><th>Recognition</th><th>Motion / path events</th><th>Navigation</th><th>Offline</th><th>Indicative price</th></tr>
+<tr><td>WeWALK [[p_aarp,p_wewalk]]</td><td>smart cane handle</td><td>ultrasonic</td><td>no</td><td>no</td><td>via phone app</td><td>obstacle sensing yes</td><td>US$599</td></tr>
+<tr><td>SmartCane [[p_smartcane]]</td><td>smart cane add-on</td><td>ultrasonic</td><td>no</td><td>no</td><td>no</td><td>yes</td><td>not verified</td></tr>
+<tr><td>OrCam MyEye Pro [[p_aarp,p_rnib]]</td><td>wearable camera</td><td>camera</td><td>text, faces, colours, notes</td><td>no</td><td>no</td><td>yes</td><td>US$4,250</td></tr>
+<tr><td>Seeing AI [[p_perkins]]</td><td>phone app</td><td>phone camera</td><td>text, products, currency, scenes</td><td>no</td><td>no</td><td>partly</td><td>free</td></tr>
+<tr><td>Google Lookout [[p_lookout]]</td><td>phone app (Android)</td><td>phone camera</td><td>objects, text, products</td><td>no</td><td>no</td><td>partly (Explore on device)</td><td>free</td></tr>
+<tr><td>Be My Eyes / Be My AI [[p_perkins]]</td><td>phone app</td><td>phone camera</td><td>human volunteer; AI photo description</td><td>no</td><td>no</td><td>no</td><td>free</td></tr>
+<tr><td>biped NOA [[p_noa]]</td><td>shoulder harness</td><td>depth cameras</td><td>obstacles</td><td>trajectory prediction</td><td>GPS guidance (reported)</td><td>see vendor</td><td>not verified</td></tr>
+<tr><td>Glidance Glide [[p_glide]]</td><td>wheeled robot guide</td><td>cameras, sensors</td><td>hazards</td><td>steers around</td><td>yes</td><td>see vendor</td><td>US$1,500 + subscription (2025 reports)</td></tr>
+<tr><td><strong>NeuroSonic</strong></td><td>phone + laptop prototype</td><td>phone camera, mic, GPS</td><td>23 obstacle classes</td><td>entering / crossing events</td><td>offline map, A* routing</td><td>yes (all local functions)</td><td>existing phone + laptop</td></tr>
+</table>
+<h3>Observations from the product survey</h3>
+<ul>
+<li><strong>A price gap.</strong> Dedicated wearables cost from about US$600 (cane handle) to over US$4,000 (wearable
+camera), whereas the phone apps are free. A system that uses hardware people already own addresses the affordability
+issue raised by the statistics.</li>
+<li><strong>A capability gap in the free apps.</strong> The free apps recognise and describe, but on demand; they do not
+continuously warn about objects moving into the walking path. Continuous, motion-aware warning is offered only by
+dedicated hardware such as NOA.</li>
+<li><strong>Connectivity.</strong> Richer descriptions depend on the internet; mobility support should not, because
+connectivity is unreliable exactly where people walk.</li>
+</ul>

@@ -1,0 +1,52 @@
+<div class="box"><p><b>How to read this document.</b> Quartiles change every year and differ by subject category.
+Values below were checked on 3 November 2026 from SCImago pages or search snippets of them; where we could not confirm
+a value it says <i>verify</i>. Before submitting, open each venue's SCImago page (scimagojr.com) and the publisher's
+current author guidelines, and confirm Scopus indexing of any conference in its call for papers.</p></div>
+
+<h2>1. What the Work Can Support Today</h2>
+<p>The evidence available now is: a survey; a reproducibility study of a 2025 <i>Nature Communications</i> system with
+a bit-identical re-implementation and a dataset audit; a controlled detector comparison; and a full system
+implementation with laptop benchmarks, soak tests and automated tests. There is <b>no</b> iPhone field test and <b>no</b>
+user study yet. Journals in assistive technology normally expect user evaluation, so the realistic plan is a
+conference paper or book chapter now, and a journal article after the validation protocol (and, for users, ethics
+approval) is completed.</p>
+
+<h2>2. Candidate Venues</h2>
+<table id="t-venues"><caption>Candidate Scopus-indexed venues</caption>
+<tr><th>Venue</th><th>Type, publisher</th><th>Scopus quartile (as checked)</th><th>Fit</th><th>What it needs from us</th></tr>
+<tr><td>IEEE Sensors Journal [[sjr_ieeesensors]]</td><td>journal, IEEE</td><td>Q1 (2024: Electrical &amp; Electronic Eng.; Instrumentation)</td><td>moderate: sensing systems; ours is camera-only</td><td>field results; stronger sensing contribution</td></tr>
+<tr><td>Sensors [[sjr_sensors]]</td><td>open-access journal, MDPI</td><td>Q1&ndash;Q2 depending on category (2024 SJR 0.764)</td><td>good: related works published there [[real2019,xu2023]]</td><td>field and user results; APC</td></tr>
+<tr><td>IEEE Access [[sjr_access]]</td><td>open-access journal, IEEE</td><td><i>verify</i> (2024 SJR 0.849)</td><td>good for applied systems</td><td>complete evaluation; APC</td></tr>
+<tr><td>Disability and Rehabilitation: Assistive Technology</td><td>journal, Taylor &amp; Francis</td><td><i>verify</i> (an aggregator lists JCR Q2)</td><td>excellent topic fit</td><td>user study is essential</td></tr>
+<tr><td>Scientific Reports</td><td>open-access journal, Springer Nature</td><td><i>verify</i></td><td>published a 2025 related study [[ghahr2025]]</td><td>rigorous evaluation; APC</td></tr>
+<tr><td>Lecture Notes in Networks and Systems [[sjr_lnns]]</td><td>conference proceedings / book series, Springer</td><td>Q4 (best quartile; 2025 SJR 0.165)</td><td>good for the system paper now</td><td>conference acceptance; usually 10&ndash;15 pages</td></tr>
+<tr><td>IEEE conference in IEEE Xplore</td><td>conference proceedings</td><td>conference proceedings are Scopus-indexed but have no quartile</td><td>good for the system or reproducibility paper now</td><td>check that the CFP states Scopus / IEEE Xplore indexing</td></tr>
+<tr><td>Book chapter (edited volume, Springer / CRC / IGI)</td><td>book chapter</td><td>depends on the series</td><td>good for the consolidated report (&ge; 15 pages)</td><td>call for chapters on assistive technology or AI for healthcare</td></tr>
+<tr><td>Indian patent (provisional, then complete)</td><td>IPR, Indian Patent Office via VIT IPR cell</td><td>not applicable</td><td>features in Lab 9 IDF</td><td>file before any public disclosure</td></tr>
+</table>
+
+<h2>3. Recommended Plan</h2>
+<ol>
+<li><b>IPR first (now).</b> Submit the Lab&nbsp;9 IDF to the IPR cell. Keep the GitHub repository private and the video
+unlisted until the cell advises, because publication before filing can destroy novelty.</li>
+<li><b>Conference paper or book chapter (next).</b> Adapt the Lab&nbsp;10 draft as a system paper: "laptop-assisted,
+offline phone-based awareness with motion-compensated events, and lessons from serving a GPU at a fixed frame rate".
+Target: an IEEE conference indexed in IEEE Xplore, or a Springer conference published in LNNS (Q4). For a book chapter,
+the consolidated report already exceeds the 15-page requirement.</li>
+<li><b>Contact the base-paper authors (before publishing the reproducibility findings).</b> Ask whether the labelled
+person/Ebike/Car data of the reported run is available. Good practice, and it may let the reported accuracy be
+re-measured.</li>
+<li><b>Journal article (after validation).</b> Run the 23-scenario iPhone protocol; obtain ethics approval for a study
+with visually impaired participants; then submit to <i>Sensors</i> or <i>IEEE Access</i>, or, with a substantial user
+study, <i>Disability and Rehabilitation: Assistive Technology</i>.</li>
+</ol>
+
+<h2>4. Checklist Before Any Submission</h2>
+<ul>
+<li>Confirm the author list, affiliation and guide's name (author line currently "Allwin Raj, VIT Vellore").</li>
+<li>Confirm the venue's current quartile and indexing on SCImago and in the call for papers; avoid venues that are not
+listed there or that promise publication for a fee without review.</li>
+<li>Convert the draft to the venue's official template (IEEE LaTeX/Word or Springer LNCS/LNNS).</li>
+<li>Keep the separation of laptop results, simulated browser results and pending field tests.</li>
+<li>Check licences of third-party components and figures (all figures in the drafts are our own).</li>
+</ul>

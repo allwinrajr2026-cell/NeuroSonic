@@ -1,0 +1,42 @@
+# --- secrets and private data (never commit) ---
+data/
+logs/
+*.key
+*.pem
+*.sqlite3
+.env
+*.env
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv*/
+venv/
+
+# --- model weights, voices and datasets (large, third-party licences; see models/*/README.md) ---
+models/**/*
+!models/*/
+!models/*/README.md
+weights/
+demo_data/
+*.pt
+*.pth
+*.onnx
+*.zip
+
+# --- generated outputs (only benchmarks/ and eval/ are kept) ---
+outputs/*
+!outputs/benchmarks/
+!outputs/eval/
+backups/
+PROJECT_DOCUMENTATION/handbook_src/handbook.html
+PROJECT_DOCUMENTATION/handbook_src/_pass1.pdf
+Assignment_Submission/_build/html/
+
+# --- editors / OS ---
+.vscode/
+.idea/
+*.code-workspace
+Thumbs.db
+.DS_Store
+desktop.ini
