@@ -12,7 +12,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from docs import DOCS
+from docs import DEMO_LINE, DOCS
 from refs import REFS
 
 HERE = Path(__file__).resolve().parent
@@ -89,7 +89,7 @@ def build(key, spec):
         css += (HERE / "form.css").read_text(encoding="utf-8")
     front = img_paths(spec.get("front", ""))
     if style == "ieee":
-        doc = f"""<div class="cols"><header class="title-block"><h1>{spec['title']}</h1>{spec['authors']}</header>
+        doc = f"""<div class="cols"><header class="title-block"><h1>{spec['title']}</h1>{spec['authors']}<div class="note-top demo">{DEMO_LINE}</div></header>
 {spec.get('abstract', '')}{body}
 {'<h2 class="norule">References</h2><ol class="refs">' + refs + '</ol>' if refs else ''}</div>"""
     else:

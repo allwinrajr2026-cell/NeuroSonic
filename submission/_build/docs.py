@@ -132,8 +132,13 @@ DOCS = {
 }
 
 
+DEMO_URL = "https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing"
+DEMO_LINE = f'Live demo video: <a href="{DEMO_URL}">{DEMO_URL}</a>'
+
+
 def form_front(title, meta):
-    return f'<div class="doc-title"><h1>{title}</h1><div class="meta">{meta}</div></div>'
+    return (f'<div class="doc-title"><h1>{title}</h1><div class="meta">{meta}</div>'
+            f'<div class="meta">{DEMO_LINE}</div></div>')
 
 
 META = ("NeuroSonic project &middot; Allwin Raj R (26MAI0072), Madhu Sudharshanan (26MAI0071) &middot; "

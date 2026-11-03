@@ -1,5 +1,7 @@
 # NeuroSonic: technical documentation (index)
 
+> **Live demo video:** [https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing](https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing)
+
 These documents describe the NeuroSonic source code as it is in this repository. Function names and line numbers
 were checked against the code with an automatically generated symbol index (`SYMBOL_INDEX.md`). Measured results come
 from test runs, captured API responses and the result files in `../outputs/`.

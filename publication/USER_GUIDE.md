@@ -1,5 +1,7 @@
 # NeuroSonic: user guide and demonstration instructions
 
+> **Live demo video:** [https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing](https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing)
+
 NeuroSonic is an assistive **research prototype**:
 
 * It is **not** a safety device and not a replacement for a cane, guide dog or human assistance.

@@ -1,5 +1,7 @@
 # NeuroSonic: installation and deployment guide
 
+> **Live demo video:** [https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing](https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing)
+
 ## 1. Hardware and software used
 
 | Item | Value |
