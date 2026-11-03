@@ -171,6 +171,9 @@ WOAD demo data will be skipped or will fail until those files are in place (see 
 
 ## Licences and credits
 
+This repository is licensed under the **GNU Affero General Public License v3.0** ([`LICENSE`](LICENSE)), the same
+licence as the original WOAD code it builds on. Third-party models and data keep their own licences:
+
 - **Base paper:** Y. Gao *et al.*, "A wearable obstacle avoidance device for visually impaired individuals with
   cross-modal learning," *Nature Communications* 16, 2857 (2025), doi:10.1038/s41467-025-58085-x. Original code:
   [MMCNJUPT/WOAD](https://github.com/MMCNJUPT/WOAD) (AGPL-3.0). `woad/arch/` and `woad/metrics.py` are copied from
