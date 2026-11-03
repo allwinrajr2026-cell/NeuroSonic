@@ -26,7 +26,9 @@ detector, **WOAD** (Gao et al., *Nature Communications* 16, 2857, 2025).
 
 ## Demo video
 
-[`demo/NEUROSONIC_DEMO.mp4`](demo/NEUROSONIC_DEMO.mp4): a recorded demonstration of the system (23 MB).
+**▶ [Main live demo (Google Drive)](https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing)**: the system working live.
+
+A second recording is in the repository: [`demo/NEUROSONIC_DEMO.mp4`](demo/NEUROSONIC_DEMO.mp4) (23 MB).
 
 ---
 
@@ -178,11 +180,12 @@ All deliverables are in [`submission/`](submission), numbered in the order of th
 | 4 | Project demo: existing implementation vs. proposed work | [`04_Project_Demo_Existing_vs_Proposed.pdf`](submission/04_Project_Demo_Existing_vs_Proposed.pdf) | 2 |
 | 5 | Final consolidated project report (≥ 20 pages; one upload for DA1–DA3) | [`05_Final_Consolidated_Project_Report.pdf`](submission/05_Final_Consolidated_Project_Report.pdf) | 65 |
 | 6 | IEEE 2-column paper draft (Lab 10, ≥ 14 pages) | [`06_Lab10_IEEE_Two_Column_Paper_Draft.pdf`](submission/06_Lab10_IEEE_Two_Column_Paper_Draft.pdf) | 20 |
-| 7 | GitHub link (dataset, source code, other files) and demo video link ([video](demo/NEUROSONIC_DEMO.mp4)) | [`07_GitHub_Dataset_and_Video_Links.pdf`](submission/07_GitHub_Dataset_and_Video_Links.pdf) | 2 |
+| 7 | GitHub link (dataset, source code, other files) and demo video link ([live demo](https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing)) | [`07_GitHub_Dataset_and_Video_Links.pdf`](submission/07_GitHub_Dataset_and_Video_Links.pdf) | 3 |
 | 8 | Scopus-indexed venues (Q1–Q4), book chapter, IPR | [`08_Publication_Venue_Identification.pdf`](submission/08_Publication_Venue_Identification.pdf) | 3 |
 | 9 | Lab 9: IPR invention disclosure form (IDF) Part B draft | [`09_Lab9_IPR_IDF_B_Draft.pdf`](submission/09_Lab9_IPR_IDF_B_Draft.pdf) | 8 |
 
-The demonstration video is [`demo/NEUROSONIC_DEMO.mp4`](demo/NEUROSONIC_DEMO.mp4). The final report is the edited
+The main live demo video is on [Google Drive](https://drive.google.com/file/d/1yJS2f8_ee3ZwV55mkA9e1c6mm9f5xkYd/view?usp=sharing); a second recording is
+[`demo/NEUROSONIC_DEMO.mp4`](demo/NEUROSONIC_DEMO.mp4). The final report is the edited
 version (LibreOffice). The other PDFs are generated from the HTML sources in `submission/_build/` (`python build.py`,
 headless Chrome).
 
